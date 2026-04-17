@@ -1,11 +1,11 @@
 import { toast, Bounce } from "react-toastify";
 import { endpoints } from "../api/endpoints";
 import { api } from "../api/telemetry";
-import type { sessionsType } from "../utils/types";
+import type { sessionType } from "../utils/types";
 
 export async function getAllSessions(
   meeting_key: number,
-): Promise<sessionsType[]> {
+): Promise<sessionType[]> {
   try {
     const today = new Date();
 
@@ -14,8 +14,7 @@ export async function getAllSessions(
     );
 
     const filteredSessions = res.data.filter(
-      (elem: sessionsType) =>
-        new Date(elem.date_start) <= today && !elem.is_cancelled,
+      (elem: sessionType) => new Date(elem.date_start) <= today,
     );
 
     return filteredSessions;

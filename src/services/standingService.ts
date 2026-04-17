@@ -1,13 +1,13 @@
 import { endpoints } from "../api/endpoints";
 import { api } from "../api/telemetry";
-import type { driversStandingsType, teamsStandingsType } from "../utils/types";
+import type { driverStandingsType, teamStandingsType } from "../utils/types";
 import { Bounce, toast } from "react-toastify";
 
 export async function getStandings(
   session_key: number,
-): Promise<{ drivers: driversStandingsType[]; teams: teamsStandingsType[] }> {
-  let driversRes = [] as driversStandingsType[];
-  let teamsRes = [] as teamsStandingsType[];
+): Promise<{ drivers: driverStandingsType[]; teams: teamStandingsType[] }> {
+  let driversRes = [] as driverStandingsType[];
+  let teamsRes = [] as teamStandingsType[];
 
   try {
     driversRes = await api.get(

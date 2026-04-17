@@ -1,12 +1,12 @@
 import { endpoints } from "../api/endpoints";
 import { api } from "../api/telemetry";
-import type { intervalsType } from "../utils/types";
+import type { intervalType } from "../utils/types";
 import { Bounce, toast } from "react-toastify";
 
 export async function getDriverIntervals(
   session_key: number,
   driver_number: number,
-): Promise<intervalsType[]> {
+): Promise<intervalType[]> {
   try {
     const res = await api.get(
       `${endpoints.intervals}?session_key=${session_key}&driver_number=${driver_number}`,

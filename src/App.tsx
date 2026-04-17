@@ -8,6 +8,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import GlobalStyles from "./style/GlobalStyles";
 import { queryClient } from "./hooks/queryClient";
 import { ToastContainer, Bounce } from "react-toastify";
+import Live from "./pages/Live";
+import Analyze from "./pages/Analyze";
 
 function App() {
   return (
@@ -30,11 +32,12 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route element={<MainLayout />}>
-              <Route index element={<Navigate replace to={"dashboard"} />} />
               <Route path="/" element={<Dashboard />}>
                 <Route path="championships" element={<Championships />} />
-                <Route path="/*" element={<Navigate to="/" replace />} />
+                <Route path="live" element={<Live />} />
+                <Route path="analyze" element={<Analyze />} />
               </Route>
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>
         </BrowserRouter>

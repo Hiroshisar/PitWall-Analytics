@@ -139,7 +139,7 @@ export const StyledSidebar = styled.div`
 
 export const StyledDashboard = styled.div`
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
   row-gap: 5px;
   padding: 1rem;
   width: 100%;
@@ -152,14 +152,39 @@ export const DashboardRow = styled.div`
   flex-wrap: nowrap;
   justify-content: space-evenly;
   padding: 2px;
-  margin-top: 1rem;
   gap: 10px;
 `;
 
-export const DashboardRowItem = styled.div`
+export const DashboardItem = styled.div`
   background-color: var(--color-grey-700);
   border-color: var(--color-grey-400);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
   width: 100%;
+  padding: 2px;
+  padding-left: 3rem;
+  vertical-align: middle;
+`;
+
+export const DashboardMain = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  column-gap: 5px;
+  padding: 1rem;
+  width: 100%;
+`;
+
+export const DashboardColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+  padding: 2px;
+  gap: 10px;
+`;
+
+export const Analyzebg = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: green;
 `;

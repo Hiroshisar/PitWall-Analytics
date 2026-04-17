@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { SessionState } from "../utils/types";
+import type { sessionStateType } from "../utils/types";
 
-const initialState: SessionState = {
+const initialState: sessionStateType = {
   selectedSessionKey: null,
 };
 

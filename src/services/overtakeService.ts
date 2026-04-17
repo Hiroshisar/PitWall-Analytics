@@ -1,11 +1,11 @@
 import { endpoints } from "../api/endpoints";
 import { api } from "../api/telemetry";
-import type { overtakesType } from "../utils/types";
+import type { overtakeType } from "../utils/types";
 import { Bounce, toast } from "react-toastify";
 
 export async function getOvertakes(
   session_key: number,
-): Promise<overtakesType[]> {
+): Promise<overtakeType[]> {
   try {
     const res = await api.get(
       `${endpoints.overtakes}?session_key=${session_key}`,

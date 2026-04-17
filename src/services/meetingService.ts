@@ -1,16 +1,16 @@
 import { endpoints } from "../api/endpoints";
 import { api } from "../api/telemetry";
-import type { meetingsType } from "../utils/types";
+import type { meetingType } from "../utils/types";
 import { Bounce, toast } from "react-toastify";
 
-export async function getMeeting(year: number): Promise<meetingsType[]> {
+export async function getMeeting(year: number): Promise<meetingType[]> {
   try {
     const today = new Date();
 
     const res = await api.get(`${endpoints.meetings}?year=${year}`);
 
     const filteredMeetings = res.data.filter(
-      (elem: meetingsType) =>
+      (elem: meetingType) =>
         new Date(elem.date_start) <= today && !elem.is_cancelled,
     );
 

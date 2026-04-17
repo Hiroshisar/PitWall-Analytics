@@ -11,7 +11,7 @@ export type carType = {
   throttle: number;
 };
 
-export type driversStandingsType = {
+export type driverStandingsType = {
   driver_number: number;
   meeting_key: number;
   points_current: number;
@@ -21,7 +21,7 @@ export type driversStandingsType = {
   session_key: number;
 };
 
-export type teamsStandingsType = {
+export type teamStandingsType = {
   meeting_key: number;
   points_current: number;
   points_start: number;
@@ -31,7 +31,7 @@ export type teamsStandingsType = {
   team_name: string;
 };
 
-export type driversType = {
+export type driverType = {
   broadcast_name: string;
   driver_number: number;
   first_name: string;
@@ -45,7 +45,7 @@ export type driversType = {
   team_name: string;
 };
 
-export type intervalsType = {
+export type intervalType = {
   date: string;
   driver_number: number;
   gap_to_leader: number;
@@ -54,7 +54,7 @@ export type intervalsType = {
   session_key: number;
 };
 
-export type lapsType = {
+export type lapType = {
   date_start: string;
   driver_number: number;
   duration_sector_1: number;
@@ -83,7 +83,7 @@ export type locationType = {
   z: number;
 };
 
-export type meetingsType = {
+export type meetingType = {
   circuit_key: number;
   circuit_info_url: string;
   circuit_image: string;
@@ -104,7 +104,7 @@ export type meetingsType = {
   year: number;
 };
 
-export type overtakesType = {
+export type overtakeType = {
   date: string;
   meeting_key: number;
   overtaken_driver_number: number;
@@ -146,7 +146,7 @@ export type raceControlType = {
   session_key: number;
 };
 
-export type sessionsType = {
+export type sessionType = {
   circuit_key: number;
   circuit_short_name: string;
   country_code: string;
@@ -185,7 +185,7 @@ export type startingGridType = {
   session_key: number;
 };
 
-export type stintsType = {
+export type stintType = {
   compound: string;
   driver_number: number;
   lap_end: number;
@@ -217,12 +217,11 @@ export type weatherType = {
   wind_speed: number;
 };
 
-export type MeetingState = {
-  year: number | null;
+export type meetingStateType = {
   selectedMeetingKey: number | null;
 };
 
-export type SessionState = {
+export type sessionStateType = {
   selectedSessionKey: number | null;
 };
 

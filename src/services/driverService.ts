@@ -1,9 +1,9 @@
 import { endpoints } from "../api/endpoints";
 import { api } from "../api/telemetry";
-import type { driversType } from "../utils/types";
+import type { driverType } from "../utils/types";
 import { Bounce, toast } from "react-toastify";
 
-export async function getDriver(driver_number: number): Promise<driversType[]> {
+export async function getDriver(driver_number: number): Promise<driverType[]> {
   try {
     const res = await api.get(
       `${endpoints.drivers}?driver_number=${driver_number}`,

@@ -1,12 +1,12 @@
 import { endpoints } from "../api/endpoints";
 import { api } from "../api/telemetry";
-import type { stintsType } from "../utils/types";
+import type { stintType } from "../utils/types";
 import { Bounce, toast } from "react-toastify";
 
 export async function getAllDriverStint(
   session_key: number,
   driver_number: number,
-): Promise<stintsType[]> {
+): Promise<stintType[]> {
   try {
     const res = await api.get(
       `${endpoints.stints}?session_key=${session_key}&driver_number=${driver_number}`,

@@ -1,8 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { MeetingState } from "../utils/types";
+import type { meetingStateType } from "../utils/types";
 
-const initialState: MeetingState = {
-  year: null,
+const initialState: meetingStateType = {
   selectedMeetingKey: null,
 };
 
@@ -10,14 +9,8 @@ export const meetingSlice = createSlice({
   name: "meeting",
   initialState,
   reducers: {
-    setSelectedMeeting(
-      state,
-      action: PayloadAction<{
-        year: number | null;
-        selectedMeetingKey: number | null;
-      }>,
-    ) {
-      state.selectedMeetingKey = action.payload.selectedMeetingKey;
+    setSelectedMeeting(state, action: PayloadAction<number | null>) {
+      state.selectedMeetingKey = action.payload;
     },
   },
 });

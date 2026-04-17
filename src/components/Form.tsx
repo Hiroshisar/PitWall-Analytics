@@ -7,25 +7,16 @@ import Spinner from "../ui/Spinner";
 import { useAppDispatch } from "../store/hooks";
 import { setSelectedMeeting } from "../store/meetingSlice";
 import { setSelectedSessionKey } from "../store/sessionSlice";
-import { useNavigate } from "react-router-dom";
 
 function Form() {
   const currentYear = new Date().getFullYear();
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
-  const [year, setYear] = useState(0);
+  const dispatch = useAppDispatch();
+
   const [meeting, setMeeting] = useState(0);
   const [session, setSession] = useState(0);
 
-  const [appliedYear, setAppliedYear] = useState(0);
   const [appliedMeeting, setAppliedMeeting] = useState(0);
-
-  useEffect(() => {
-    setAppliedYear(Number(year));
-    setMeeting(0);
-    setSession(0);
-  }, [year]);
 
   useEffect(() => {
     setAppliedMeeting(Number(meeting));
@@ -35,7 +26,7 @@ function Form() {
     data: meetings,
     isLoading: isLoadingMeetings,
     error: meetingError,
-  } = useFetchMeetings(appliedYear);
+  } = useFetchMeetings(currentYear);
 
   const {
     data: sessions,
@@ -45,12 +36,8 @@ function Form() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(
-      setSelectedMeeting({ year: appliedYear, selectedMeetingKey: meeting }),
-    );
+    dispatch(setSelectedMeeting(meeting));
     dispatch(setSelectedSessionKey(session));
-
-    navigate("/dashboard");
   };
 
   if (meetingError || sessionError) console.log();
@@ -58,19 +45,8 @@ function Form() {
   if (isLoadingMeetings || isLoadingSessions) <Spinner />;
   return (
     <>
+      <h2>{`Choose a race from ${currentYear}!`}</h2>
       <StyledForm onSubmit={handleSubmit}>
-        <StyledFromField>
-          <label htmlFor="year">Year</label>
-          <input
-            id="year"
-            type="number"
-            min={currentYear - 3}
-            max={currentYear}
-            value={year ? year : ""}
-            onChange={(e) => setYear(Number(e.target.value))}
-          />
-        </StyledFromField>
-
         <StyledFromField>
           <label htmlFor="weekend">Weekend</label>
           <select

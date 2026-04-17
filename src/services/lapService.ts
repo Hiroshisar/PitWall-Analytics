@@ -1,9 +1,9 @@
 import { endpoints } from "../api/endpoints";
 import { api } from "../api/telemetry";
-import type { lapsType } from "../utils/types";
+import type { lapType } from "../utils/types";
 import { Bounce, toast } from "react-toastify";
 
-export async function getLaps(session_key: number): Promise<lapsType[]> {
+export async function getLaps(session_key: number): Promise<lapType[]> {
   try {
     const res = await api.get(`${endpoints.laps}?session_key=${session_key}`);
 
