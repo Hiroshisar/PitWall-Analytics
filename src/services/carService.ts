@@ -3,22 +3,15 @@ import { api } from "../api/telemetry";
 import type { carType } from "../utils/types";
 import { getHttpStatus, notifyServiceError } from "./serviceError";
 
-async function requestCar(
-  driver_number: number,
-  session_key: number,
-): Promise<carType[]> {
-  const res = await api.get(
-    `${endpoints.car}?driver_number=${driver_number}&session_key=${session_key}`,
-  );
-  return res.data;
-}
-
 export async function getCar(
   driver_number: number,
   session_key: number,
 ): Promise<carType[]> {
   try {
-    return await requestCar(driver_number, session_key);
+    const res = await api.get(
+      `${endpoints.car}?driver_number=${driver_number}&session_key=${session_key}`,
+    );
+    return res.data;
   } catch (err: unknown) {
     notifyServiceError(err, "Unable to load car data", "car-data-error");
 
@@ -53,7 +46,7 @@ export async function getCarsByDrivers(
 
       for (const driverNumber of uniqueDriverNumbers) {
         try {
-          const cars = await requestCar(driverNumber, session_key);
+          const cars = await getCar(driverNumber, session_key);
           mergedCarsData.push(...cars);
           await new Promise((resolve) => setTimeout(resolve, 120));
         } catch {

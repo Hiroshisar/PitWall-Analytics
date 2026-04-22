@@ -225,6 +225,17 @@ export type sessionStateType = {
   selectedSessionKey: number | null;
 };
 
+export type DriverSeriesPoint = {
+  lapTimeSec: number;
+  speed: number;
+};
+
+export type DriverSeries = {
+  driver: driverType;
+  color: string;
+  points: DriverSeriesPoint[];
+};
+
 /**
  *
  * TYPES DELLA TELEMETRIA LIVE
