@@ -1,30 +1,82 @@
 import { endpoints } from "../api/endpoints";
 import { api } from "../api/telemetry";
 import type { carType } from "../utils/types";
-import { Bounce, toast } from "react-toastify";
+import { getHttpStatus, notifyServiceError } from "./serviceError";
 
-export async function getCar(driver_number: number): Promise<carType[]> {
+async function requestCar(
+  driver_number: number,
+  session_key: number,
+): Promise<carType[]> {
+  const res = await api.get(
+    `${endpoints.car}?driver_number=${driver_number}&session_key=${session_key}`,
+  );
+  return res.data;
+}
+
+export async function getCar(
+  driver_number: number,
+  session_key: number,
+): Promise<carType[]> {
   try {
-    const res = await api.get(
-      `${endpoints.car}?driver_number=${driver_number}`,
-    );
+    return await requestCar(driver_number, session_key);
+  } catch (err: unknown) {
+    notifyServiceError(err, "Unable to load car data", "car-data-error");
 
+    return [];
+  }
+}
+
+export async function getCarsByDrivers(
+  driver_numbers: number[],
+  session_key: number,
+): Promise<carType[]> {
+  const uniqueDriverNumbers = [...new Set(driver_numbers)].filter(
+    (driverNumber) => driverNumber > 0,
+  );
+
+  if (session_key <= 0 || uniqueDriverNumbers.length === 0) return [];
+
+  const params = new URLSearchParams({ session_key: String(session_key) });
+  uniqueDriverNumbers.forEach((driverNumber) => {
+    params.append("driver_number", String(driverNumber));
+  });
+
+  try {
+    const res = await api.get(`${endpoints.car}?${params.toString()}`);
     return res.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    if (err.status >= 400)
-      toast.error(`Unable to load car data`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
+  } catch (err: unknown) {
+    const status = getHttpStatus(err);
 
+    if (status === 400 || status === 404 || status === 422) {
+      const mergedCarsData: carType[] = [];
+      let hasFallbackErrors = false;
+
+      for (const driverNumber of uniqueDriverNumbers) {
+        try {
+          const cars = await requestCar(driverNumber, session_key);
+          mergedCarsData.push(...cars);
+          await new Promise((resolve) => setTimeout(resolve, 120));
+        } catch {
+          hasFallbackErrors = true;
+        }
+      }
+
+      if (hasFallbackErrors && mergedCarsData.length === 0) {
+        notifyServiceError(
+          err,
+          "Unable to load car data for selected drivers",
+          "cars-data-error",
+        );
+      }
+
+      return mergedCarsData;
+    }
+
+    notifyServiceError(
+      err,
+      "Unable to load car data for selected drivers",
+      "cars-data-error",
+    );
     return [];
   }
 }

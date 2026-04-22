@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getDriver } from "../services/driverService";
+import { getDrivers } from "../services/driverService";
 
-export function useFetchDriver(driver_number: number) {
+export function useFetchDrivers(session_key: number) {
   return useQuery({
-    queryKey: ["driver", driver_number],
-    queryFn: () => getDriver(driver_number),
-    enabled: driver_number > 0,
+    queryKey: ["driver", session_key],
+    queryFn: () => getDrivers(session_key),
+    enabled: session_key > 0,
   });
 }

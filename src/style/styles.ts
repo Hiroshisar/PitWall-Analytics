@@ -183,8 +183,75 @@ export const DashboardColumn = styled.div`
   gap: 10px;
 `;
 
-export const Analyzebg = styled.div`
-  width: 100%;
+export const StyledAnalyze = styled.div`
+  max-width: 100%;
   height: 100%;
-  background-color: green;
+`;
+
+export const StyledDriversList = styled.div`
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+
+  height: 20rem;
+
+  padding: 1.5rem 2rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+
+  gap: 1rem;
+
+  border: 1px solid var(--color-grey-600);
+  border-radius: 20px;
+`;
+
+export const StyledDriver = styled.div<{ selected?: boolean }>`
+  display: flex;
+  width: 45rem;
+  height: 100%;
+  align-items: center;
+
+  background-color: ${(props) =>
+    props.selected ? "var(--color-grey-200)" : "var(--color-grey-800)"};
+
+  color: ${(props) =>
+    props.selected ? "var(--color-grey-800)" : "var(--color-grey-200)"};
+
+  border: 1px solid var(--color-grey-300);
+  border-radius: 20px;
+`;
+
+export const StyleDriverGrid = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 3fr 1fr;
+  column-gap: 1rem;
+`;
+export const DriverPortrait = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 1rem;
+  margin-bottom: 2rem;
+`;
+
+export const DriverNumber = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: auto;
+
+  font-weight: 800;
+  font-size: xx-large;
+`;
+
+export const StyledDriverRow = styled.div`
+  display: grid;
+  grid-template-rows: auto auto;
+  align-items: center;
+
+  margin-left: 0.5rem;
+
+  p {
+    font-weight: 600;
+  }
 `;

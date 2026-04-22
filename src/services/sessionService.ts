@@ -1,11 +1,9 @@
-import { toast, Bounce } from "react-toastify";
 import { endpoints } from "../api/endpoints";
 import { api } from "../api/telemetry";
 import type { sessionType } from "../utils/types";
+import { notifyServiceError } from "./serviceError";
 
-export async function getAllSessions(
-  meeting_key: number,
-): Promise<sessionType[]> {
+export async function getSessions(meeting_key: number): Promise<sessionType[]> {
   try {
     const today = new Date();
 
@@ -18,20 +16,12 @@ export async function getAllSessions(
     );
 
     return filteredSessions;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    if (err.status >= 400)
-      toast.error(`Unable to load data for this weekend`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
+  } catch (err: unknown) {
+    notifyServiceError(
+      err,
+      "Unable to load data for this weekend",
+      "session-data-error",
+    );
 
     return [];
   }

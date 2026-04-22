@@ -1,29 +1,17 @@
 import { endpoints } from "../api/endpoints";
 import { api } from "../api/telemetry";
 import type { driverType } from "../utils/types";
-import { Bounce, toast } from "react-toastify";
+import { notifyServiceError } from "./serviceError";
 
-export async function getDriver(driver_number: number): Promise<driverType[]> {
+export async function getDrivers(session_key: number): Promise<driverType[]> {
   try {
     const res = await api.get(
-      `${endpoints.drivers}?driver_number=${driver_number}`,
+      `${endpoints.drivers}?session_key=${session_key}`,
     );
 
     return res.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    if (err.status >= 400)
-      toast.error(`Unable to load driver data`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
+  } catch (err: unknown) {
+    notifyServiceError(err, "Unable to load driver data", "driver-data-error");
 
     return [];
   }

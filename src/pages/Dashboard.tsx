@@ -2,7 +2,7 @@ import type { sessionType } from "../utils/types";
 import { useFetchMeetings } from "../hooks/useFetchMeetings";
 import Spinner from "../ui/Spinner";
 import { useEffect, useMemo } from "react";
-import { useFetchSessions } from "../hooks/useFetchSession";
+import { useFetchAllSessions } from "../hooks/useFetchSession";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setSelectedMeeting } from "../store/meetingSlice";
 import { setSelectedSessionKey } from "../store/sessionSlice";
@@ -34,7 +34,7 @@ function Dashboard() {
   const effectiveMeetingKey = selectedMeetingKey ?? 0;
 
   const { data: sessions, isLoading: isLoadingSessions } =
-    useFetchSessions(effectiveMeetingKey);
+    useFetchAllSessions(effectiveMeetingKey);
 
   const eligibleSessions = useMemo(() => {
     const endOfToday = new Date();
@@ -81,10 +81,9 @@ function Dashboard() {
     return <Navigate to={isLiveSession ? "/live" : "/analyze"} replace />;
 
   return (
-    <>
-      <div>Dashboard</div>
+    <div>
       <Outlet />
-    </>
+    </div>
   );
 }
 

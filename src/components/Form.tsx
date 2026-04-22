@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useFetchMeetings } from "../hooks/useFetchMeetings";
-import { useFetchSessions } from "../hooks/useFetchSession";
+import { useFetchAllSessions } from "../hooks/useFetchSession";
 import { formatDate } from "../utils/helpers";
 import { Button, StyledForm, StyledFromField } from "../style/styles";
 import Spinner from "../ui/Spinner";
@@ -32,7 +32,7 @@ function Form() {
     data: sessions,
     isLoading: isLoadingSessions,
     error: sessionError,
-  } = useFetchSessions(Number(appliedMeeting));
+  } = useFetchAllSessions(Number(appliedMeeting));
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
