@@ -1,73 +1,63 @@
-# React + TypeScript + Vite
+# PitWall Analytics
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+PitWall Analytics is a personal open source project built to explore Formula 1 session data and telemetry through a focused web interface. The application uses OpenF1 data to provide a practical driver comparison workflow centered on lap-based telemetry analysis.
 
-Currently, two official plugins are available:
+## What the program does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+PitWall Analytics currently focuses on helping users inspect and compare telemetry from a Formula 1 session.
 
-## React Compiler
+- It loads meeting and session data for the current season from OpenF1.
+- It automatically selects the latest available meeting and the most relevant session so the user can start analyzing data with minimal setup.
+- It fetches the drivers available in the selected session and lets the user choose one or more drivers to compare.
+- It retrieves lap data and car telemetry samples for the selected drivers.
+- It narrows telemetry samples down to a specific lap, so the comparison is based on the same lap number across the selected drivers.
+- It renders reusable comparison charts for speed, brake, RPM, and gear.
+- It presents session context such as circuit name, country, date, and lap selection in a dedicated session header.
+- It uses driver numbers, acronyms, portraits, and team colors to make side-by-side comparisons easier to read.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Current project scope
 
-## Expanding the ESLint configuration
+The main implemented area of the application is the analysis flow.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+The live feature is still under development and has not been implemented yet.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+The repository already contains additional service modules and structural groundwork for future sections related to weather, team radio, race control, positions, pit stops, overtakes, standings, track data, and other session resources.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Technical overview
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+PitWall Analytics is a React and TypeScript single-page application built with Vite.
+
+- React Router manages the application routes.
+- Redux Toolkit stores shared session and meeting state.
+- TanStack Query handles remote data fetching, caching, and asynchronous loading states.
+- Axios provides the HTTP client used to access OpenF1 endpoints.
+- Recharts powers the telemetry comparison charts.
+- Styled Components defines the visual layer and reusable layout primitives.
+
+## Data source
+
+This project is powered by OpenF1 data.
+
+Special thanks to OpenF1 for their work in making Formula 1 data openly accessible to developers and fans.
+
+Website: [www.openf1.org](https://www.openf1.org)
+
+## Getting started
+
+### Requirements
+
+- Node.js
+- npm
+
+### Install dependencies
+
+```bash
+npm install
+
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Open source and license
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+PitWall Analytics is a personal open source project.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+This repository is released under the MIT License. See [LICENSE](./LICENSE) for details.
