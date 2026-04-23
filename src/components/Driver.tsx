@@ -1,63 +1,51 @@
 import {
+  ColoredCircle,
   DriverNumber,
   DriverPortrait,
-  StyledDriver,
+  StyledDriverMain,
   StyledDriverRow,
-  StyledDriversList,
-  StyleDriverGrid,
-} from "../style/styles";
-import type { driverType } from "../utils/types";
+  StyledDriverSecondary,
+} from '../style/styles';
+import type { driverType } from '../utils/types';
 
 function Driver({
-  drivers,
-  selectedDrivers,
-  onSelect,
+  driver,
+  isItemSelected,
+  type = 'main',
 }: {
-  drivers: driverType[];
-  selectedDrivers: driverType[];
-  onSelect: (drivers: driverType[]) => void;
+  type: string;
+  driver: driverType;
+  isItemSelected: (number: number) => boolean;
 }) {
-  const isItemSelected = (driverNumber: number) =>
-    !!selectedDrivers.find((d) => d.driver_number === driverNumber);
-
-  const handleClick = (driverNumber: number) => {
-    if (isItemSelected(driverNumber))
-      onSelect(selectedDrivers.filter((d) => d.driver_number !== driverNumber));
-    else {
-      const selected = drivers.filter((d) => d.driver_number === driverNumber);
-      onSelect([...selectedDrivers, ...selected]);
-    }
-  };
   return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
-      <StyledDriversList>
-        {drivers.map((driver) => (
-          <div
-            key={`${driver.broadcast_name}-${driver.driver_number}`}
-            onClick={() => handleClick(driver.driver_number)}
-          >
-            <StyledDriver selected={isItemSelected(driver.driver_number)}>
-              <StyleDriverGrid>
-                <DriverPortrait>
-                  <img
-                    src={`./${driver.driver_number}.png`}
-                    alt={`${driver.broadcast_name}-${driver.driver_number}`}
-                    width={150}
-                  />
-                </DriverPortrait>
-                <StyledDriverRow>
-                  <h2>{driver.broadcast_name.toLocaleUpperCase()}</h2>
-                  <h3>{driver.team_name}</h3>
-                </StyledDriverRow>
-                <DriverNumber>
-                  <h2>{driver.driver_number}</h2>
-                </DriverNumber>
-              </StyleDriverGrid>
-            </StyledDriver>
+    <>
+      {type === 'main' && (
+        <StyledDriverMain selected={isItemSelected(driver.driver_number)}>
+          <DriverPortrait>
+            <img
+              src={`./${driver.driver_number}.png`}
+              alt={`${driver.broadcast_name}-${driver.driver_number}`}
+              width={150}
+            />
+          </DriverPortrait>
+          <StyledDriverRow>
+            <h3>{driver.last_name.toLocaleUpperCase()}</h3>
+            <h3>{driver.team_name}</h3>
+          </StyledDriverRow>
+          <DriverNumber>
+            <h2>{driver.driver_number}</h2>
+          </DriverNumber>
+        </StyledDriverMain>
+      )}
+      {type === 'secondary' && (
+        <StyledDriverSecondary>
+          <ColoredCircle color={driver.team_colour} />
+          <div>
+            <h3>{`${driver.name_acronym} ${driver.driver_number}`}</h3>
           </div>
-        ))}
-      </StyledDriversList>
-    </div>
+        </StyledDriverSecondary>
+      )}
+    </>
   );
 }
 

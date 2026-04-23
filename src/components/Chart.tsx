@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 import {
   CartesianGrid,
   Label,
@@ -8,34 +8,106 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
-import type { carType, DriverSeries, driverType } from "../utils/types";
-import { formatLapTime, normalizeHexColor } from "../utils/helpers";
+} from 'recharts';
+import type {
+  carType,
+  DriverSeries,
+  driverType,
+  TelemetryMetric,
+} from '../utils/types';
+import { formatLapTime, normalizeHexColor } from '../utils/helpers';
 
 const fallbackColors = [
-  "#4f46e5",
-  "#16a34a",
-  "#dc2626",
-  "#ea580c",
-  "#0284c7",
-  "#a21caf",
-  "#eab308",
-  "#475569",
+  '#4f46e5',
+  '#16a34a',
+  '#dc2626',
+  '#ea580c',
+  '#0284c7',
+  '#a21caf',
+  '#eab308',
+  '#475569',
 ];
 
-function getSpeedAtTime(
-  points: DriverSeries["points"],
+type TelemetryField = 'speed' | 'brake' | 'n_gear' | 'rpm' | 'throttle';
+type LineType = 'monotone' | 'stepAfter';
+type YAxisDomain = [number | string, number | string];
+
+type TelemetryMetricConfig = {
+  field: TelemetryField;
+  label: string;
+  yAxisLabel: string;
+  lineType: LineType;
+  interpolate: boolean;
+  yAxisDomain?: YAxisDomain;
+  formatValue: (value: number) => string;
+};
+
+const telemetryMetricConfigs: Record<TelemetryMetric, TelemetryMetricConfig> = {
+  speed: {
+    field: 'speed',
+    label: 'Speed',
+    yAxisLabel: 'Speed (km/h)',
+    lineType: 'monotone',
+    interpolate: true,
+    formatValue: (value) => `${Math.round(value)} km/h`,
+  },
+  brake: {
+    field: 'brake',
+    label: 'Brake',
+    yAxisLabel: 'Brake (%)',
+    lineType: 'stepAfter',
+    interpolate: false,
+    yAxisDomain: [0, 100],
+    formatValue: (value) => `${Math.round(value)}%`,
+  },
+  gear: {
+    field: 'n_gear',
+    label: 'Gear',
+    yAxisLabel: 'Gear',
+    lineType: 'stepAfter',
+    interpolate: false,
+    yAxisDomain: [0, 8],
+    formatValue: (value) => `${Math.round(value)}`,
+  },
+  rpm: {
+    field: 'rpm',
+    label: 'RPM',
+    yAxisLabel: 'RPM',
+    lineType: 'monotone',
+    interpolate: true,
+    formatValue: (value) => `${Math.round(value)} rpm`,
+  },
+  throttle: {
+    field: 'throttle',
+    label: 'Throttle',
+    yAxisLabel: 'Throttle (%)',
+    lineType: 'monotone',
+    interpolate: true,
+    yAxisDomain: [0, 100],
+    formatValue: (value) => `${Math.round(value)}%`,
+  },
+};
+
+export type ChartProps = {
+  carsData: carType[];
+  selectedDrivers: driverType[];
+  metric?: TelemetryMetric;
+};
+
+function getTelemetryValueAtTime(
+  points: DriverSeries['points'],
   targetTimeSec: number,
+  interpolate: boolean
 ): number | null {
   if (points.length === 0 || !Number.isFinite(targetTimeSec)) return null;
 
   if (targetTimeSec <= points[0].lapTimeSec) {
-    return points[0].speed;
+    return points[0].value;
   }
 
   const lastPoint = points[points.length - 1];
   if (targetTimeSec >= lastPoint.lapTimeSec) {
-    return lastPoint.speed;
+    return lastPoint.value;
   }
 
   for (let i = 1; i < points.length; i++) {
@@ -45,23 +117,31 @@ function getSpeedAtTime(
     if (targetTimeSec > nextPoint.lapTimeSec) continue;
 
     const deltaTime = nextPoint.lapTimeSec - prevPoint.lapTimeSec;
-    if (deltaTime <= 0) return nextPoint.speed;
+    if (!interpolate) {
+      return targetTimeSec >= nextPoint.lapTimeSec
+        ? nextPoint.value
+        : prevPoint.value;
+    }
+
+    if (deltaTime <= 0) return nextPoint.value;
 
     const progress = (targetTimeSec - prevPoint.lapTimeSec) / deltaTime;
-    return prevPoint.speed + (nextPoint.speed - prevPoint.speed) * progress;
+    return prevPoint.value + (nextPoint.value - prevPoint.value) * progress;
   }
 
   return null;
 }
 
-function CustomSpeedTooltip({
+function CustomTelemetryTooltip({
   active,
   label,
-  speedTelemetryData,
+  telemetryData,
+  metricConfig,
 }: {
   active?: boolean;
   label?: number | string;
-  speedTelemetryData: DriverSeries[];
+  telemetryData: DriverSeries[];
+  metricConfig: TelemetryMetricConfig;
 }) {
   if (!active) return null;
 
@@ -71,25 +151,29 @@ function CustomSpeedTooltip({
   return (
     <div
       style={{
-        background: "#ffffff",
-        border: "1px solid #d1d5db",
-        borderRadius: "8px",
-        padding: "8px 10px",
+        background: '#ffffff',
+        border: '1px solid #d1d5db',
+        borderRadius: '8px',
+        padding: '8px 10px',
       }}
     >
-      <div style={{ marginBottom: "6px", fontWeight: 600 }}>
+      <div style={{ marginBottom: '6px', fontWeight: 600 }}>
         Lap time: {formatLapTime(lapTimeSec)}
       </div>
-      {speedTelemetryData.map((driverSeries) => {
-        const speed = getSpeedAtTime(driverSeries.points, lapTimeSec);
+      {telemetryData.map((driverSeries) => {
+        const value = getTelemetryValueAtTime(
+          driverSeries.points,
+          lapTimeSec,
+          metricConfig.interpolate
+        );
 
         return (
           <div
             key={driverSeries.driver.driver_number}
             style={{ color: driverSeries.color, lineHeight: 1.4 }}
           >
-            {driverSeries.driver.name_acronym}{" "}
-            {speed === null ? "N/D" : `${Math.round(speed)} km/h`}
+            {driverSeries.driver.name_acronym}{' '}
+            {value === null ? 'N/D' : metricConfig.formatValue(value)}
           </div>
         );
       })}
@@ -97,14 +181,10 @@ function CustomSpeedTooltip({
   );
 }
 
-function Chart({
-  carsData,
-  selectedDrivers,
-}: {
-  carsData: carType[];
-  selectedDrivers: driverType[];
-}) {
-  const speedTelemetryData = useMemo<DriverSeries[]>(() => {
+function Chart({ carsData, selectedDrivers, metric = 'speed' }: ChartProps) {
+  const metricConfig = telemetryMetricConfigs[metric];
+
+  const telemetryData = useMemo<DriverSeries[]>(() => {
     const groupedCars: Record<number, carType[]> = {};
 
     for (const carSample of carsData) {
@@ -116,10 +196,10 @@ function Chart({
 
     return selectedDrivers.map((driver, index) => {
       const driverCarData = [...(groupedCars[driver.driver_number] ?? [])].sort(
-        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
       );
 
-      const firstSampleTime = new Date(driverCarData[0]?.date ?? "").getTime();
+      const firstSampleTime = new Date(driverCarData[0]?.date ?? '').getTime();
 
       const points = driverCarData.map((sample) => {
         const sampleTime = new Date(sample.date).getTime();
@@ -129,7 +209,7 @@ function Chart({
 
         return {
           lapTimeSec: Math.max(0, lapTimeSec),
-          speed: sample.speed,
+          value: sample[metricConfig.field],
         };
       });
 
@@ -143,7 +223,7 @@ function Chart({
         points,
       };
     });
-  }, [carsData, selectedDrivers]);
+  }, [carsData, metricConfig.field, selectedDrivers]);
 
   return (
     <ResponsiveContainer width="100%" height={280}>
@@ -152,8 +232,9 @@ function Chart({
         <XAxis
           type="number"
           dataKey="lapTimeSec"
-          domain={["dataMin", "dataMax"]}
+          domain={['dataMin', 'dataMax']}
           tickFormatter={formatLapTime}
+          tickCount={8}
         >
           <Label
             value="Lap Time (mm:ss.mmm)"
@@ -162,9 +243,15 @@ function Chart({
             fontSize={12}
           />
         </XAxis>
-        <YAxis type="number" dataKey="speed" width={72}>
+        <YAxis
+          type="number"
+          dataKey="value"
+          domain={metricConfig.yAxisDomain}
+          width={metric === 'rpm' ? 84 : 72}
+          allowDecimals={false}
+        >
           <Label
-            value="Speed (km/h)"
+            value={metricConfig.yAxisLabel}
             angle={-90}
             position="insideLeft"
             fontSize={12}
@@ -172,22 +259,23 @@ function Chart({
         </YAxis>
         <Tooltip
           content={(props) => (
-            <CustomSpeedTooltip
+            <CustomTelemetryTooltip
               active={props.active}
               label={props.label}
-              speedTelemetryData={speedTelemetryData}
+              telemetryData={telemetryData}
+              metricConfig={metricConfig}
             />
           )}
         />
-        {speedTelemetryData.map((driverSeries) => {
+        {telemetryData.map((driverSeries) => {
           if (driverSeries.points.length === 0) return null;
 
           return (
             <Line
               key={driverSeries.driver.driver_number}
-              type="monotone"
+              type={metricConfig.lineType}
               data={driverSeries.points}
-              dataKey="speed"
+              dataKey="value"
               name={`${driverSeries.driver.name_acronym} #${driverSeries.driver.driver_number}`}
               stroke={driverSeries.color}
               strokeWidth={2}

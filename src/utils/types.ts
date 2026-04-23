@@ -225,9 +225,11 @@ export type sessionStateType = {
   selectedSessionKey: number | null;
 };
 
+export type TelemetryMetric = 'speed' | 'brake' | 'gear' | 'rpm' | 'throttle';
+
 export type DriverSeriesPoint = {
   lapTimeSec: number;
-  speed: number;
+  value: number;
 };
 
 export type DriverSeries = {

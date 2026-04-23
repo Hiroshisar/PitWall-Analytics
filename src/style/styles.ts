@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css } from 'styled-components';
 
 export const StyledModal = styled.div`
   position: fixed;
@@ -6,7 +6,7 @@ export const StyledModal = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: var(--color-grey-500);
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--border-radius-3xl);
   box-shadow: var(--shadow-lg);
   padding: 2.2rem 3rem;
   transition: all 0.5s;
@@ -16,7 +16,7 @@ export const StyledForm = styled.form`
   background-color: var(--color-grey-400);
   color: var(--color-grey-600);
 
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--border-radius-3xl);
   box-shadow: var(--shadow-lg);
   padding: 3.2rem 4rem;
   transition: all 0.5s;
@@ -94,7 +94,7 @@ export const Button = styled.button`
   background: none;
   border: solid 1 var(--color-grey-800);
   padding: 0.4rem;
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-3xl);
   transform: translateX(0.8rem);
   transition: all 0.2s;
   width: 100%;
@@ -158,11 +158,9 @@ export const DashboardRow = styled.div`
 export const DashboardItem = styled.div`
   background-color: var(--color-grey-700);
   border-color: var(--color-grey-400);
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--border-radius-3xl);
   box-shadow: var(--shadow-lg);
   width: 100%;
-  padding: 2px;
-  padding-left: 3rem;
   vertical-align: middle;
 `;
 
@@ -183,49 +181,69 @@ export const DashboardColumn = styled.div`
   gap: 10px;
 `;
 
-export const StyledAnalyze = styled.div`
-  max-width: 100%;
-  height: 100%;
+export const DriversListContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  border: 1px solid var(--color-grey-600);
+  border-radius: var(--border-radius-3xl);
 `;
 
 export const StyledDriversList = styled.div`
   display: flex;
-  flex-direction: row;
-  overflow-x: auto;
+  flex-wrap: wrap;
+  justify-content: center;
 
-  height: 20rem;
+  overflow-x: none;
+
+  height: fit-content;
+  width: 100%;
 
   padding: 1.5rem 2rem;
-  margin-left: 2rem;
-  margin-right: 2rem;
-
   gap: 1rem;
-
-  border: 1px solid var(--color-grey-600);
-  border-radius: 20px;
 `;
 
-export const StyledDriver = styled.div<{ selected?: boolean }>`
+export const ColoredCircle = styled.div<{ color: string }>`
+  border: 1px solid white;
+  border-radius: 50%;
+  background-color: #${(props) => props.color};
+  height: 1.2rem;
+  width: 1.2rem;
+  margin-right: 1rem;
+`;
+
+export const StyledDriverMain = styled.div<{ selected: boolean }>`
   display: flex;
-  width: 45rem;
+  min-width: 10rem;
+  width: 40rem;
   height: 100%;
   align-items: center;
 
   background-color: ${(props) =>
-    props.selected ? "var(--color-grey-200)" : "var(--color-grey-800)"};
+    props.selected ? 'var(--color-grey-200)' : 'var(--color-grey-800)'};
 
   color: ${(props) =>
-    props.selected ? "var(--color-grey-800)" : "var(--color-grey-200)"};
+    props.selected ? 'var(--color-grey-800)' : 'var(--color-grey-200)'};
 
   border: 1px solid var(--color-grey-300);
-  border-radius: 20px;
-`;
-
-export const StyleDriverGrid = styled.div`
+  border-radius: var(--border-radius-3xl);
   display: grid;
   grid-template-columns: 2fr 3fr 1fr;
   column-gap: 1rem;
 `;
+
+export const StyledDriverSecondary = styled.div`
+  display: flex;
+  width: 12rem;
+  height: fit-content;
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--color-grey-300);
+  border-radius: var(--border-radius-3xl);
+`;
+
 export const DriverPortrait = styled.div`
   display: flex;
   justify-content: center;
@@ -254,4 +272,75 @@ export const StyledDriverRow = styled.div`
   p {
     font-weight: 600;
   }
+`;
+
+export const StyledAnalyze = styled.div`
+  min-width: 100%;
+  box-sizing: border-box;
+  height: fit-content;
+
+  padding: 3rem;
+
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 1rem;
+`;
+
+export const TelemetryContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  border: 1px solid var(--color-grey-600);
+  border-radius: var(--border-radius-3xl);
+  gap: 1rem;
+
+  padding: 1.5rem 2rem;
+`;
+
+export const StyledTelemetry = styled.div`
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 1rem;
+`;
+
+export const StyledSession = styled.div<{ isLive: boolean }>`
+  display: flex;
+  flex-direction: row;
+  justify-content: ${(props) => (props.isLive ? 'space-between' : 'center')};
+  gap: 5rem;
+  align-content: center;
+  border: 1px solid var(--color-grey-600);
+  border-radius: var(--border-radius-3xl);
+  box-shadow: var(--shadow-lg);
+  padding: 1.5rem 2rem;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  & > div {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+`;
+
+export const StyledSelect = styled.select`
+  width: 8rem;
+  text-align: center;
+  background-color: var(--color-grey-800);
+  color: var(--color-grey-300);
+`;
+
+export const StyledOption = styled.option`
+  color: var(--color-grey-300);
 `;
