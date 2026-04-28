@@ -238,6 +238,19 @@ export type DriverSeries = {
   points: DriverSeriesPoint[];
 };
 
+export type CircuitDataType = {
+  key: number;
+  info: string;
+  image: string;
+  short_name: string;
+  type: string;
+  countryCode: string;
+  flag: string;
+  countryKey: number;
+  countryNadme: string;
+  location: string;
+};
+
 /**
  *
  * TYPES DELLA TELEMETRIA LIVE

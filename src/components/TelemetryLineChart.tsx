@@ -39,8 +39,14 @@ type TelemetryMetricConfig = {
   lineType: LineType;
   interpolate: boolean;
   yAxisDomain?: YAxisDomain;
+  normalizeValue?: (value: number) => number;
   formatValue: (value: number) => string;
 };
+
+const capPercentageValue = (value: number) => Math.min(value, 100);
+
+const formatPercentageValue = (value: number) =>
+  `${Math.round(capPercentageValue(value))}%`;
 
 const telemetryMetricConfigs: Record<TelemetryMetric, TelemetryMetricConfig> = {
   speed: {
@@ -58,7 +64,8 @@ const telemetryMetricConfigs: Record<TelemetryMetric, TelemetryMetricConfig> = {
     lineType: 'stepAfter',
     interpolate: false,
     yAxisDomain: [0, 100],
-    formatValue: (value) => `${Math.round(value)}%`,
+    normalizeValue: capPercentageValue,
+    formatValue: formatPercentageValue,
   },
   gear: {
     field: 'n_gear',
@@ -84,7 +91,8 @@ const telemetryMetricConfigs: Record<TelemetryMetric, TelemetryMetricConfig> = {
     lineType: 'monotone',
     interpolate: true,
     yAxisDomain: [0, 100],
-    formatValue: (value) => `${Math.round(value)}%`,
+    normalizeValue: capPercentageValue,
+    formatValue: formatPercentageValue,
   },
 };
 
@@ -181,7 +189,11 @@ function CustomTelemetryTooltip({
   );
 }
 
-function Chart({ carsData, selectedDrivers, metric = 'speed' }: ChartProps) {
+function TelemetryLineChart({
+  carsData,
+  selectedDrivers,
+  metric = 'speed',
+}: ChartProps) {
   const metricConfig = telemetryMetricConfigs[metric];
 
   const telemetryData = useMemo<DriverSeries[]>(() => {
@@ -206,10 +218,11 @@ function Chart({ carsData, selectedDrivers, metric = 'speed' }: ChartProps) {
         const lapTimeSec = Number.isFinite(firstSampleTime)
           ? (sampleTime - firstSampleTime) / 1000
           : 0;
+        const rawValue = sample[metricConfig.field];
 
         return {
           lapTimeSec: Math.max(0, lapTimeSec),
-          value: sample[metricConfig.field],
+          value: metricConfig.normalizeValue?.(rawValue) ?? rawValue,
         };
       });
 
@@ -223,10 +236,10 @@ function Chart({ carsData, selectedDrivers, metric = 'speed' }: ChartProps) {
         points,
       };
     });
-  }, [carsData, metricConfig.field, selectedDrivers]);
+  }, [carsData, metricConfig, selectedDrivers]);
 
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ResponsiveContainer width="100%" height={400}>
       <LineChart margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
@@ -249,6 +262,7 @@ function Chart({ carsData, selectedDrivers, metric = 'speed' }: ChartProps) {
           domain={metricConfig.yAxisDomain}
           width={metric === 'rpm' ? 84 : 72}
           allowDecimals={false}
+          tickCount={8}
         >
           <Label
             value={metricConfig.yAxisLabel}
@@ -289,4 +303,4 @@ function Chart({ carsData, selectedDrivers, metric = 'speed' }: ChartProps) {
   );
 }
 
-export default Chart;
+export default TelemetryLineChart;

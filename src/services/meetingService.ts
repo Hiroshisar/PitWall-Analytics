@@ -1,7 +1,7 @@
-import { endpoints } from "../api/endpoints";
-import { api } from "../api/telemetry";
-import type { meetingType } from "../utils/types";
-import { notifyServiceError } from "./serviceError";
+import { endpoints } from '../api/endpoints';
+import { api } from '../api/telemetry';
+import type { meetingType } from '../utils/types';
+import { notifyServiceError } from './serviceError';
 
 export async function getMeeting(year: number): Promise<meetingType[]> {
   try {
@@ -11,7 +11,7 @@ export async function getMeeting(year: number): Promise<meetingType[]> {
 
     const filteredMeetings = res.data.filter(
       (elem: meetingType) =>
-        new Date(elem.date_start) <= today && !elem.is_cancelled,
+        new Date(elem.date_start) <= today && !elem.is_cancelled
     );
 
     return filteredMeetings;
@@ -19,7 +19,7 @@ export async function getMeeting(year: number): Promise<meetingType[]> {
     notifyServiceError(
       err,
       `Unable to load data for year ${year}`,
-      "meeting-data-error",
+      'meeting-data-error'
     );
 
     return [];

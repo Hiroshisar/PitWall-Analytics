@@ -32,34 +32,39 @@ function Session({
           <div>
             <h3>{session.session_name}</h3>
             {maxNumberOfLaps ? (
-              <h3>
-                Giro{' '}
-                <StyledSelect
-                  value={selectedLap ?? '0'}
-                  onChange={(e) => setSelectedLap(Number(e.target.value))}
-                >
-                  <StyledOption value="0" disabled>
-                    ---
-                  </StyledOption>
-                  {Array.from(
-                    {
-                      length: maxNumberOfLaps ?? 0,
-                    },
-                    (_, index) => (
-                      <StyledOption key={index} value={index + 1}>
-                        {index + 1}
-                      </StyledOption>
-                    )
-                  )}
-                </StyledSelect>
-              </h3>
+              <>
+                <h3>
+                  Giro{' '}
+                  <StyledSelect
+                    value={selectedLap ?? '0'}
+                    onChange={(e) => setSelectedLap(Number(e.target.value))}
+                  >
+                    <StyledOption value="0" disabled>
+                      ---
+                    </StyledOption>
+                    {Array.from(
+                      {
+                        length: maxNumberOfLaps ?? 0,
+                      },
+                      (_, index) => (
+                        <StyledOption key={index} value={index + 1}>
+                          {index + 1}
+                        </StyledOption>
+                      )
+                    )}
+                  </StyledSelect>
+                </h3>
+              </>
             ) : null}
           </div>
         </div>
         {isLive ? (
           <>
             <div>
-              <Timer />
+              <Timer
+                dateStart={new Date().toString()}
+                dateEnd={session.date_end}
+              />
             </div>
             <div>
               <Weather />

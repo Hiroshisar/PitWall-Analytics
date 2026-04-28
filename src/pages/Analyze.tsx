@@ -22,9 +22,15 @@ import { useQuery } from '@tanstack/react-query';
 import { getCarsByDrivers } from '../services/carService';
 import { getLapsByDrivers } from '../services/lapService';
 import DriversList from '../components/DriversList';
-import Chart from '../components/Chart';
+import TelemetryLineChart from '../components/TelemetryLineChart';
 
-const telemetryMetrics: TelemetryMetric[] = ['speed', 'brake', 'rpm', 'gear'];
+const telemetryMetrics: TelemetryMetric[] = [
+  'speed',
+  'throttle',
+  'brake',
+  'rpm',
+  'gear',
+];
 
 function Analyze() {
   const [selectedDrivers, setSelectedDrivers] = useState<driverType[]>([]);
@@ -160,7 +166,7 @@ function Analyze() {
               {telemetryMetrics.map((metric) => (
                 <StyledTelemetry key={metric}>
                   <h2>{metric.toUpperCase()}</h2>
-                  <Chart
+                  <TelemetryLineChart
                     carsData={selectedLapCarsData ?? []}
                     metric={metric}
                     selectedDrivers={selectedDrivers ?? []}
