@@ -1,10 +1,10 @@
-import { StyledSidebar } from "../style/styles";
+import { StyledSidebar } from '../style/styles';
 
 function Sidebar() {
   return (
     <>
       <StyledSidebar>
-        <p>SIDEBAR</p>
+        <img src="/logo.png" alt="Logo" style={{ width: '100%' }} />
       </StyledSidebar>
     </>
   );

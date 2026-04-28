@@ -4,8 +4,15 @@ import type {
   driverType,
   LocationSeriesPoint,
   locationType,
+  meetingType,
 } from '../utils/types';
 import { normalizeHexColor } from '../utils/helpers';
+import { queryClient } from '../hooks/queryClient';
+import { getLocationsByDrivers } from '../services/locationService';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../store/store';
+import { useQuery } from '@tanstack/react-query';
+import Spinner from '../ui/Spinner';
 
 const fallbackColors = [
   '#4f46e5',
@@ -33,12 +40,6 @@ type CoordinateBounds = {
   maxX: number;
   minY: number;
   maxY: number;
-};
-
-type MapProps = {
-  circuitImage?: string;
-  locationsData: locationType[];
-  selectedDrivers: driverType[];
 };
 
 function useImageSize(src?: string) {
@@ -95,15 +96,39 @@ function getMarkerPosition(
   };
 }
 
-function Map({ circuitImage, locationsData, selectedDrivers }: MapProps) {
+function Map({ selectedDrivers }: { selectedDrivers: driverType[] }) {
+  const meetings =
+    queryClient.getQueryData<meetingType[]>([
+      'meetings',
+      new Date().getFullYear(),
+    ]) ?? [];
+
+  const sessionKey = useSelector(
+    (state: RootState) => state.session.selectedSessionKey
+  );
+  const circuitImage: string =
+    meetings[meetings.length - 1].circuit_image ?? '';
+
   const circuitImageSize = useImageSize(circuitImage);
   const width = circuitImageSize?.width ?? 1000;
   const height = circuitImageSize?.height ?? mapHeight;
 
+  const driversNumbers = selectedDrivers.map((driver) => driver.driver_number);
+
+  const {
+    data: locationByDriverData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['locations', sessionKey, driversNumbers],
+    queryFn: () => getLocationsByDrivers(sessionKey ?? 0, driversNumbers),
+    enabled: (sessionKey ?? 0) > 0 && driversNumbers.length > 0,
+  });
+
   const locationData = useMemo<DriverLocationSeries[]>(() => {
     const groupedLocations: Record<number, locationType[]> = {};
 
-    for (const locationSample of locationsData) {
+    for (const locationSample of locationByDriverData ?? []) {
       if (!groupedLocations[locationSample.driver_number]) {
         groupedLocations[locationSample.driver_number] = [];
       }
@@ -124,7 +149,6 @@ function Map({ circuitImage, locationsData, selectedDrivers }: MapProps) {
         const lapTimeSec = Number.isFinite(firstSampleTime)
           ? (locationTime - firstSampleTime) / 1000
           : 0;
-
         return {
           lapTimeSec: Math.max(0, lapTimeSec),
           x: location.x,
@@ -143,7 +167,7 @@ function Map({ circuitImage, locationsData, selectedDrivers }: MapProps) {
         points,
       };
     });
-  }, [locationsData, selectedDrivers]);
+  }, [locationByDriverData, selectedDrivers]);
 
   const coordinateBounds = useMemo<CoordinateBounds | null>(() => {
     const points = locationData.flatMap((driverSeries) => driverSeries.points);
@@ -176,12 +200,20 @@ function Map({ circuitImage, locationsData, selectedDrivers }: MapProps) {
         {
           driver: driverSeries.driver,
           color: driverSeries.color,
-          position: getMarkerPosition(lastPoint, coordinateBounds, width, height),
+          position: getMarkerPosition(
+            lastPoint,
+            coordinateBounds,
+            width,
+            height
+          ),
         },
       ];
     });
   }, [coordinateBounds, height, locationData, width]);
 
+  if (!meetings) return [];
+  if (isLoading) return <Spinner />;
+  if (isError) return <div>Alcuni dati non sono disponibili al momento.</div>;
   return (
     <svg
       width="100%"

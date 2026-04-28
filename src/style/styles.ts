@@ -191,7 +191,8 @@ export const DriversListContainer = styled.div`
 
 export const StyledDriversList = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
 
   overflow-x: none;
@@ -201,6 +202,14 @@ export const StyledDriversList = styled.div`
 
   padding: 1.5rem 2rem;
   gap: 1rem;
+`;
+
+export const StyledDriversGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
 `;
 
 export const ColoredCircle = styled.div<{ color: string }>`
@@ -313,10 +322,12 @@ export const StyledTelemetry = styled.div`
   padding: 1rem;
 `;
 
-export const StyledSession = styled.div<{ isLive: boolean }>`
+export const StyledSession = styled.div<{
+  $islive: boolean;
+}>`
   display: flex;
   flex-direction: row;
-  justify-content: ${(props) => (props.isLive ? 'space-between' : 'center')};
+  justify-content: ${(props) => (props.$islive ? 'space-between' : 'center')};
   gap: 5rem;
   align-content: center;
   border: 1px solid var(--color-grey-600);

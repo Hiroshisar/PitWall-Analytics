@@ -18,11 +18,11 @@ function Session({
 }) {
   if (!session) return null;
 
-  const isLive = checkIfIsLiveSession(session.date_start, session.date_end);
+  const islive = checkIfIsLiveSession(session.date_start, session.date_end);
 
   return (
     <>
-      <StyledSession isLive={isLive}>
+      <StyledSession $islive={islive}>
         <div>
           <div>
             <h2>{session.circuit_short_name}</h2>
@@ -58,7 +58,7 @@ function Session({
             ) : null}
           </div>
         </div>
-        {isLive ? (
+        {islive ? (
           <>
             <div>
               <Timer

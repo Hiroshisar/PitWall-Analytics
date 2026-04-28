@@ -32,6 +32,7 @@ const telemetryMetrics: TelemetryMetric[] = [
 ];
 
 function Analyze() {
+  //TODO implementare rimozione pilota selezionato con bottone nella lista della telemetria.
   const [selectedDrivers, setSelectedDrivers] = useState<driverType[]>([]);
   const [isSelectionConfirmed, setIsSelectionConfirmed] =
     useState<boolean>(false);
@@ -157,6 +158,7 @@ function Analyze() {
             <DriversListContainer>
               <DriversList drivers={selectedDrivers} type="secondary" />
             </DriversListContainer>
+
             <TelemetryContainer>
               {telemetryMetrics.map((metric) => (
                 <StyledTelemetry key={metric}>

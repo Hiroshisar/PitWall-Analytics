@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import { DriversListContainer, StyledDriversList } from '../style/styles';
+import {
+  DriversListContainer,
+  StyledDriversGrid,
+  StyledDriversList,
+} from '../style/styles';
 import type { driverType } from '../utils/types';
 import Driver from './Driver';
 
@@ -12,6 +16,7 @@ function DriversList({
   type: string;
   onSelect?: (drivers: driverType[]) => void;
 }) {
+  drivers.sort((a, b) => a.team_name.localeCompare(b.team_name));
   const [tempDrivers, setTempDrivers] = useState<driverType[]>([]);
 
   const handleConfirmSelection = () => {
@@ -32,18 +37,13 @@ function DriversList({
       setTempDrivers([...tempDrivers, ...selected]);
     }
   };
+
+  // TODO implementare uno useMemo per ordinare i piloti in base al nome del team e poi mostrarli con "nome team:" -> piloti
+
   return (
     <DriversListContainer>
       <StyledDriversList>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            gap: '1rem',
-            justifyContent: 'center',
-          }}
-        >
+        <StyledDriversGrid>
           {drivers.map((driver) => (
             <div
               key={`${driver.broadcast_name}-${driver.driver_number}`}
@@ -56,7 +56,7 @@ function DriversList({
               />
             </div>
           ))}
-        </div>
+        </StyledDriversGrid>
         {onSelect ? (
           <div>
             <button

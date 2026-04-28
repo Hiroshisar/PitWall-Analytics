@@ -241,68 +241,70 @@ function TelemetryLineChart({
   }, [carsData, metricConfig, selectedDrivers]);
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <LineChart margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis
-          type="number"
-          dataKey="lapTimeSec"
-          domain={['dataMin', 'dataMax']}
-          tickFormatter={formatLapTime}
-          tickCount={8}
-        >
-          <Label
-            value="Lap Time (mm:ss.mmm)"
-            position="insideBottom"
-            offset={-6}
-            fontSize={12}
-          />
-        </XAxis>
-        <YAxis
-          type="number"
-          dataKey="value"
-          domain={metricConfig.yAxisDomain}
-          width={metric === 'rpm' ? 84 : 72}
-          allowDecimals={false}
-          tickCount={8}
-        >
-          <Label
-            value={metricConfig.yAxisLabel}
-            angle={-90}
-            position="insideLeft"
-            fontSize={12}
-          />
-        </YAxis>
-        <Tooltip
-          content={(props) => (
-            <CustomTelemetryTooltip
-              active={props.active}
-              label={props.label}
-              telemetryData={telemetryData}
-              metricConfig={metricConfig}
+    <>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            type="number"
+            dataKey="lapTimeSec"
+            domain={['dataMin', 'dataMax']}
+            tickFormatter={formatLapTime}
+            tickCount={8}
+          >
+            <Label
+              value="Lap Time (mm:ss.mmm)"
+              position="insideBottom"
+              offset={-6}
+              fontSize={12}
             />
-          )}
-        />
-        {telemetryData.map((driverSeries) => {
-          if (driverSeries.points.length === 0) return null;
+          </XAxis>
+          <YAxis
+            type="number"
+            dataKey="value"
+            domain={metricConfig.yAxisDomain}
+            width={metric === 'rpm' ? 84 : 72}
+            allowDecimals={false}
+            tickCount={8}
+          >
+            <Label
+              value={metricConfig.yAxisLabel}
+              angle={-90}
+              position="insideLeft"
+              fontSize={12}
+            />
+          </YAxis>
+          <Tooltip
+            content={(props) => (
+              <CustomTelemetryTooltip
+                active={props.active}
+                label={props.label}
+                telemetryData={telemetryData}
+                metricConfig={metricConfig}
+              />
+            )}
+          />
+          {telemetryData.map((driverSeries) => {
+            if (driverSeries.points.length === 0) return null;
 
-          return (
-            <Line
-              key={driverSeries.driver.driver_number}
-              type={metricConfig.lineType}
-              data={driverSeries.points}
-              dataKey="value"
-              name={`${driverSeries.driver.name_acronym} #${driverSeries.driver.driver_number}`}
-              stroke={driverSeries.color}
-              strokeWidth={2}
-              dot={false}
-              activeDot={true}
-              isAnimationActive={true}
-            />
-          );
-        })}
-      </LineChart>
-    </ResponsiveContainer>
+            return (
+              <Line
+                key={driverSeries.driver.driver_number}
+                type={metricConfig.lineType}
+                data={driverSeries.points}
+                dataKey="value"
+                name={`${driverSeries.driver.name_acronym} #${driverSeries.driver.driver_number}`}
+                stroke={driverSeries.color}
+                strokeWidth={2}
+                dot={false}
+                activeDot={true}
+                isAnimationActive={true}
+              />
+            );
+          })}
+        </LineChart>
+      </ResponsiveContainer>
+    </>
   );
 }
 
