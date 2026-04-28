@@ -36,7 +36,8 @@ function Dashboard() {
     dispatch(setSelectedMeeting(latestMeeting.meeting_key));
   }, [selectedMeetingKey, latestMeeting, dispatch]);
 
-  const effectiveMeetingKey = selectedMeetingKey ?? latestMeeting?.meeting_key ?? 0;
+  const effectiveMeetingKey =
+    selectedMeetingKey ?? latestMeeting?.meeting_key ?? 0;
 
   const { data: sessions, isLoading: isLoadingSessions } =
     useFetchAllSessions(effectiveMeetingKey);
@@ -72,6 +73,7 @@ function Dashboard() {
   const isLiveSession: boolean = useMemo(() => {
     if (!effectiveSession) return false;
 
+    // return true;
     return checkIfIsLiveSession(
       effectiveSession.date_start,
       effectiveSession.date_end

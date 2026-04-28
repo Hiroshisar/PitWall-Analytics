@@ -48,7 +48,9 @@ function Live() {
           </DashboardColumn>
           <DashboardColumn>
             <DashboardRow>
-              <DashboardItem>Mappa</DashboardItem>
+              <DashboardItem>
+                <h2>MAP</h2>
+              </DashboardItem>
             </DashboardRow>
             <DashboardRow>
               <DashboardItem>Race control</DashboardItem>

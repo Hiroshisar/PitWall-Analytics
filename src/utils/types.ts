@@ -238,6 +238,19 @@ export type DriverSeries = {
   points: DriverSeriesPoint[];
 };
 
+export type LocationSeriesPoint = {
+  lapTimeSec: number;
+  x: number;
+  y: number;
+  z: number;
+};
+
+export type DriverLocationSeries = {
+  driver: driverType;
+  color: string;
+  points: LocationSeriesPoint[];
+};
+
 export type CircuitDataType = {
   key: number;
   info: string;
@@ -247,7 +260,7 @@ export type CircuitDataType = {
   countryCode: string;
   flag: string;
   countryKey: number;
-  countryNadme: string;
+  countryName: string;
   location: string;
 };
 

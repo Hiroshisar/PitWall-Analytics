@@ -1,28 +1,27 @@
+import { useQuery } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import DriversList from '../components/DriversList';
+import Session from '../components/Session';
+import TelemetryLineChart from '../components/TelemetryLineChart';
+import { queryClient } from '../hooks/queryClient';
 import { useFetchDrivers } from '../hooks/useFetchDriver';
+import { getCarsByDrivers } from '../services/carService';
+import { getLapsByDrivers } from '../services/lapService';
+import type { RootState } from '../store/store';
 import {
   DriversListContainer,
   StyledAnalyze,
   StyledTelemetry,
   TelemetryContainer,
 } from '../style/styles';
-import type { RootState } from '../store/store';
-import { queryClient } from '../hooks/queryClient';
+import Spinner from '../ui/Spinner';
 import type {
   carType,
   driverType,
-  lapType,
   sessionType,
   TelemetryMetric,
 } from '../utils/types';
-import Spinner from '../ui/Spinner';
-import { useMemo, useState } from 'react';
-import Session from '../components/Session';
-import { useQuery } from '@tanstack/react-query';
-import { getCarsByDrivers } from '../services/carService';
-import { getLapsByDrivers } from '../services/lapService';
-import DriversList from '../components/DriversList';
-import TelemetryLineChart from '../components/TelemetryLineChart';
 
 const telemetryMetrics: TelemetryMetric[] = [
   'speed',
@@ -34,7 +33,8 @@ const telemetryMetrics: TelemetryMetric[] = [
 
 function Analyze() {
   const [selectedDrivers, setSelectedDrivers] = useState<driverType[]>([]);
-  const [isButtonClicked, setIsButtonClicked] = useState<boolean>(false);
+  const [isSelectionConfirmed, setIsSelectionConfirmed] =
+    useState<boolean>(false);
   const [selectedLap, setSelectedLap] = useState<number>(1);
 
   const sessionData = useSelector((store: RootState) => store.session);
@@ -51,7 +51,6 @@ function Analyze() {
   const { data: drivers, isLoading: isLoadingDrivers } = useFetchDrivers(
     selectedSessionKey ?? 0
   );
-  let maxNumberOfLaps: number = 0;
 
   const sessionKey = selectedSessionKey ?? 0;
 
@@ -70,40 +69,14 @@ function Analyze() {
     enabled: sessionKey > 0 && driverNumbers.length > 0,
   });
 
-  const { data: lapsData = [] } = useQuery({
+  const {
+    data: lapsData = [],
+    isLoading: isLoadingLaps,
+    isError: isErrorLaps,
+  } = useQuery({
     queryKey: ['laps', sessionKey, driverNumbers],
     queryFn: () => getLapsByDrivers(sessionKey, driverNumbers),
     enabled: sessionKey > 0 && driverNumbers.length > 0,
-  });
-
-  const carsByDriver = useMemo(() => {
-    const groupedCars: Record<number, { car: carType[]; laps: lapType[] }> = {};
-    for (const carSample of carsData) {
-      if (!groupedCars[carSample.driver_number]) {
-        groupedCars[carSample.driver_number] = { car: [], laps: [] };
-      }
-      groupedCars[carSample.driver_number].car.push(carSample);
-    }
-    for (const lapSample of lapsData) {
-      if (!groupedCars[lapSample.driver_number]) {
-        groupedCars[lapSample.driver_number] = { car: [], laps: [] };
-      }
-      groupedCars[lapSample.driver_number].laps.push(lapSample);
-    }
-    return groupedCars;
-  }, [carsData, lapsData]);
-
-  selectedDrivers.map((driver) => {
-    const driversNumberOfLaps: number[] = [];
-    const driverSessionData = carsByDriver[driver.driver_number] ?? {
-      car: [],
-      laps: [],
-    };
-    driversNumberOfLaps.push(driverSessionData.laps.length);
-
-    driversNumberOfLaps.sort((a, b) => a - b);
-
-    maxNumberOfLaps = driversNumberOfLaps[0] ?? 0;
   });
 
   const selectedLapCarsData = useMemo<carType[]>(() => {
@@ -130,26 +103,48 @@ function Analyze() {
 
   const handleDriversSelection = (drivers: driverType[]) => {
     setSelectedDrivers(drivers);
-    setIsButtonClicked(true);
+    setIsSelectionConfirmed(true);
   };
+
+  const maxNumberOfLaps = useMemo<number>(() => {
+    if (lapsData.length === 0) return 0;
+    if (selectedDrivers.length === 0) return 0;
+
+    const groupedLaps: Record<number, number> = {};
+
+    for (const lap of lapsData) {
+      groupedLaps[lap.driver_number] =
+        (groupedLaps[lap.driver_number] ?? 0) + 1;
+    }
+
+    const lapsByDriver = selectedDrivers
+      .map((driver) => groupedLaps[driver.driver_number] ?? 0)
+      .filter((lapCount) => lapCount > 0);
+
+    if (lapsByDriver.length === 0) return 0;
+
+    return Math.min(...lapsByDriver);
+  }, [lapsData, selectedDrivers]);
 
   if (!selectedSessions) return;
   const session = selectedSessions[selectedSessions.length - 1];
 
-  if (isLoadingDrivers) return <Spinner />;
+  if (isLoadingDrivers || isLoadingLaps) return <Spinner />;
 
   return (
     <>
       <StyledAnalyze>
-        {isLoadingCars && <Spinner />}
-        {isErrorCars && <div>Alcuni dati non sono disponibili al momento.</div>}
+        {(isLoadingCars || isLoadingDrivers) && <Spinner />}
+        {(isErrorCars || isErrorLaps) && (
+          <div>Alcuni dati non sono disponibili al momento.</div>
+        )}
         <Session
           session={session}
           selectedLap={selectedLap ?? 0}
           setSelectedLap={setSelectedLap}
           maxNumberOfLaps={maxNumberOfLaps}
         />
-        {!isButtonClicked ? (
+        {!isSelectionConfirmed ? (
           <div>
             <DriversList
               drivers={drivers ? drivers : []}

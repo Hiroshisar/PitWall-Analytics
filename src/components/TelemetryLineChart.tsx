@@ -109,35 +109,37 @@ function getTelemetryValueAtTime(
 ): number | null {
   if (points.length === 0 || !Number.isFinite(targetTimeSec)) return null;
 
-  if (targetTimeSec <= points[0].lapTimeSec) {
-    return points[0].value;
-  }
+  if (targetTimeSec <= points[0].lapTimeSec) return points[0].value;
 
   const lastPoint = points[points.length - 1];
-  if (targetTimeSec >= lastPoint.lapTimeSec) {
-    return lastPoint.value;
-  }
+  if (targetTimeSec >= lastPoint.lapTimeSec) return lastPoint.value;
 
-  for (let i = 1; i < points.length; i++) {
-    const prevPoint = points[i - 1];
-    const nextPoint = points[i];
+  let left = 0;
+  let right = points.length - 1;
 
-    if (targetTimeSec > nextPoint.lapTimeSec) continue;
+  while (left <= right) {
+    const middle = Math.floor((left + right) / 2);
+    const middlePoint = points[middle];
 
-    const deltaTime = nextPoint.lapTimeSec - prevPoint.lapTimeSec;
-    if (!interpolate) {
-      return targetTimeSec >= nextPoint.lapTimeSec
-        ? nextPoint.value
-        : prevPoint.value;
+    if (middlePoint.lapTimeSec === targetTimeSec) return middlePoint.value;
+
+    if (middlePoint.lapTimeSec < targetTimeSec) {
+      left = middle + 1;
+    } else {
+      right = middle - 1;
     }
-
-    if (deltaTime <= 0) return nextPoint.value;
-
-    const progress = (targetTimeSec - prevPoint.lapTimeSec) / deltaTime;
-    return prevPoint.value + (nextPoint.value - prevPoint.value) * progress;
   }
 
-  return null;
+  const prevPoint = points[Math.max(0, right)];
+  const nextPoint = points[Math.min(points.length - 1, left)];
+
+  if (!interpolate) return prevPoint.value;
+
+  const deltaTime = nextPoint.lapTimeSec - prevPoint.lapTimeSec;
+  if (deltaTime <= 0) return nextPoint.value;
+
+  const progress = (targetTimeSec - prevPoint.lapTimeSec) / deltaTime;
+  return prevPoint.value + (nextPoint.value - prevPoint.value) * progress;
 }
 
 function CustomTelemetryTooltip({
@@ -294,6 +296,7 @@ function TelemetryLineChart({
               stroke={driverSeries.color}
               strokeWidth={2}
               dot={false}
+              activeDot={true}
               isAnimationActive={true}
             />
           );
