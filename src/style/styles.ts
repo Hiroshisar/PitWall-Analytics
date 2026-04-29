@@ -1,5 +1,14 @@
 import styled, { css } from 'styled-components';
 
+export type DriversListVariant = 'main' | 'secondary';
+
+const driverCardBase = css`
+  display: grid;
+  align-items: center;
+  border: 1px solid var(--color-grey-300);
+  border-radius: var(--border-radius-3xl);
+`;
+
 export const StyledModal = styled.div`
   position: fixed;
   top: 50%;
@@ -37,7 +46,7 @@ export const StyledForm = styled.form`
   }
 `;
 
-export const StyledFromField = styled.div`
+export const StyledFormField = styled.div`
   display: flex;
   flex-direction: column;
 `;
@@ -92,7 +101,7 @@ export const SpinnerRing = styled.div`
 
 export const Button = styled.button`
   background: none;
-  border: solid 1 var(--color-grey-800);
+  border: 1px solid var(--color-grey-800);
   padding: 0.4rem;
   border-radius: var(--border-radius-3xl);
   transform: translateX(0.8rem);
@@ -157,7 +166,7 @@ export const DashboardRow = styled.div`
 
 export const DashboardItem = styled.div`
   background-color: var(--color-grey-700);
-  border-color: var(--color-grey-400);
+  border: 1px solid var(--color-grey-400);
   border-radius: var(--border-radius-3xl);
   box-shadow: var(--shadow-lg);
   width: 100%;
@@ -179,6 +188,8 @@ export const DashboardColumn = styled.div`
   justify-content: space-evenly;
   padding: 2px;
   gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 export const DriversListContainer = styled.div`
@@ -189,68 +200,109 @@ export const DriversListContainer = styled.div`
   border-radius: var(--border-radius-3xl);
 `;
 
-export const StyledDriversList = styled.div`
+export const StyledDriversList = styled.div<{ $variant: DriversListVariant }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  overflow-x: none;
-
+  overflow-x: hidden;
   height: fit-content;
   width: 100%;
-
-  padding: 1.5rem 2rem;
-  gap: 1rem;
+  padding: ${(props) =>
+    props.$variant === 'main' ? '1.5rem 2rem' : '1rem 1.2rem'};
+  gap: ${(props) => (props.$variant === 'main' ? '1rem' : '0.8rem')};
 `;
 
-export const StyledDriversGrid = styled.div`
+export const StyledDriversGrid = styled.div<{ $variant: DriversListVariant }>`
   display: grid;
-  grid-template-columns: repeat(2, max-content);
+  grid-template-columns: ${(props) =>
+    props.$variant === 'main' ? 'max-content' : '1fr'};
   gap: 1rem;
   justify-content: center;
   width: 100%;
 `;
 
-export const ColoredCircle = styled.div<{ color: string }>`
+export const ColoredCircle = styled.div<{ $color: string }>`
   border: 1px solid white;
   border-radius: 50%;
-  background-color: #${(props) => props.color};
+  background-color: #${(props) => props.$color};
   height: 1.2rem;
   width: 1.2rem;
   margin-right: 1rem;
 `;
 
-export const StyledDriverMain = styled.div<{ selected: boolean }>`
-  display: flex;
+export const StyledDriverMain = styled.div<{ $selected: boolean }>`
+  ${driverCardBase}
+
   min-width: 10rem;
-  width: 40rem;
+  width: 35rem;
   height: 100%;
-  align-items: center;
 
   background-color: ${(props) =>
-    props.selected ? 'var(--color-grey-200)' : 'var(--color-grey-800)'};
+    props.$selected ? 'var(--color-grey-200)' : 'var(--color-grey-800)'};
 
   color: ${(props) =>
-    props.selected ? 'var(--color-grey-800)' : 'var(--color-grey-200)'};
+    props.$selected ? 'var(--color-grey-800)' : 'var(--color-grey-200)'};
 
-  border: 1px solid var(--color-grey-300);
-  border-radius: var(--border-radius-3xl);
-  display: grid;
   grid-template-columns: 2fr 3fr 1fr;
   column-gap: 1rem;
 `;
 
 export const StyledDriverSecondary = styled.div`
-  display: flex;
-  width: 12rem;
-  height: fit-content;
-  vertical-align: middle;
-  align-items: center;
-  justify-content: center;
+  ${driverCardBase}
 
-  border: 1px solid var(--color-grey-300);
-  border-radius: var(--border-radius-3xl);
+  position: relative;
+  display: inline-flex;
+  width: fit-content;
+  justify-content: center;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  overflow: hidden;
+  transition:
+    padding 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease;
+
+  .remove-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0;
+    min-width: 0;
+    margin-left: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-red-700);
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transform: translateX(-0.4rem) scale(0.85);
+    transition:
+      width 200ms ease,
+      margin-left 200ms ease,
+      opacity 200ms ease,
+      transform 200ms ease;
+  }
+
+  &:hover,
+  &:focus-within {
+    padding-right: 0.9rem;
+
+    .remove-button {
+      width: 2.2rem;
+      margin-left: 0.6rem;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0) scale(1);
+    }
+  }
+
+  .remove-button svg {
+    width: 1.8rem;
+    height: 1.8rem;
+    flex-shrink: 0;
+  }
 `;
 
 export const DriverPortrait = styled.div`
@@ -263,18 +315,19 @@ export const DriverPortrait = styled.div`
 
 export const DriverNumber = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: auto;
 
   font-weight: 800;
-  font-size: xx-large;
+  font-size: large;
+  padding: 5px;
+
+  justify-content: start;
 `;
 
 export const StyledDriverRow = styled.div`
   display: grid;
   grid-template-rows: auto auto;
   align-items: center;
+  text-align: center;
 
   margin-left: 0.5rem;
 
@@ -290,8 +343,6 @@ export const StyledAnalyze = styled.div`
 
   padding: 3rem;
 
-  display: grid;
-  grid-template-rows: 1fr auto 1fr;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -322,6 +373,68 @@ export const StyledTelemetry = styled.div`
   padding: 1rem;
 `;
 
+export const StyledSelect = styled.select`
+  width: 8rem;
+  text-align: center;
+  background-color: var(--color-grey-800);
+  color: var(--color-grey-300);
+`;
+
+export const StyledOption = styled.option`
+  color: var(--color-grey-300);
+`;
+
+export const StyledTeamName = styled.h3`
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-left: 3rem;
+`;
+
+export const StyledTeamNameContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const StyledDriversRowContainer = styled.div<{
+  $variant: DriversListVariant;
+}>`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: ${(props) => (props.$variant === 'main' ? 'nowrap' : 'wrap')};
+  gap: 1rem;
+  justify-content: center;
+`;
+
+export const StyledDriversGridColumn = styled.div<{
+  $variant: DriversListVariant;
+}>`
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: ${(props) => (props.$variant === 'main' ? 'column' : 'row')};
+  justify-content: center;
+  gap: ${(props) => (props.$variant === 'main' ? '2rem' : '1rem')};
+  margin-bottom: ${(props) => (props.$variant === 'main' ? '2rem' : '0')};
+`;
+
+export const StyledDriversGridRows = styled.div<{
+  $variant: DriversListVariant;
+}>`
+  display: grid;
+  grid-template-rows: ${(props) =>
+    props.$variant === 'main' ? 'auto auto' : 'auto'};
+  gap: 0.8rem;
+`;
+
+export const DriverListItem = styled.div<{ $isInteractive: boolean }>`
+  cursor: ${(props) => (props.$isInteractive ? 'pointer' : 'default')};
+`;
+
+export const DriversConfirmButton = styled.button`
+  width: 30rem;
+  height: 5rem;
+  color: var(--color-grey-900);
+`;
+
 export const StyledSession = styled.div<{
   $islive: boolean;
 }>`
@@ -343,15 +456,4 @@ export const StyledSession = styled.div<{
     flex-direction: row;
     gap: 1rem;
   }
-`;
-
-export const StyledSelect = styled.select`
-  width: 8rem;
-  text-align: center;
-  background-color: var(--color-grey-800);
-  color: var(--color-grey-300);
-`;
-
-export const StyledOption = styled.option`
-  color: var(--color-grey-300);
 `;

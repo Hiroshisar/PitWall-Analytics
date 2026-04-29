@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { useFetchMeetings } from "../hooks/useFetchMeetings";
-import { useFetchAllSessions } from "../hooks/useFetchSession";
-import { formatDate } from "../utils/helpers";
-import { Button, StyledForm, StyledFromField } from "../style/styles";
-import Spinner from "../ui/Spinner";
-import { useAppDispatch } from "../store/hooks";
-import { setSelectedMeeting } from "../store/meetingSlice";
-import { setSelectedSessionKey } from "../store/sessionSlice";
+import { useEffect, useState } from 'react';
+import { useFetchMeetings } from '../hooks/useFetchMeetings';
+import { useFetchAllSessions } from '../hooks/useFetchSession';
+import { formatDate } from '../utils/helpers';
+import { Button, StyledForm, StyledFormField } from '../style/styles';
+import Spinner from '../ui/Spinner';
+import { useAppDispatch } from '../store/hooks';
+import { setSelectedMeeting } from '../store/meetingSlice';
+import { setSelectedSessionKey } from '../store/sessionSlice';
 
 function Form() {
   const currentYear = new Date().getFullYear();
@@ -47,15 +47,15 @@ function Form() {
     <>
       <h2>{`Choose a race from ${currentYear}!`}</h2>
       <StyledForm onSubmit={handleSubmit}>
-        <StyledFromField>
+        <StyledFormField>
           <label htmlFor="weekend">Weekend</label>
           <select
             id="weekend"
-            value={meeting ? meeting : ""}
+            value={meeting ? meeting : ''}
             onChange={(e) => setMeeting(Number(e.target.value))}
             disabled={meetings && meetings.length ? false : true}
           >
-            <option value={""}>--- SELECT ONE ---</option>
+            <option value={''}>--- SELECT ONE ---</option>
             {meetings?.map((m) => (
               <option
                 key={`${m.circuit_short_name} - ${m.date_start}`}
@@ -65,17 +65,17 @@ function Form() {
               </option>
             ))}
           </select>
-        </StyledFromField>
+        </StyledFormField>
 
-        <StyledFromField>
+        <StyledFormField>
           <label htmlFor="session">Session</label>
           <select
             id="session"
-            value={session ? session : ""}
+            value={session ? session : ''}
             onChange={(e) => setSession(Number(e.target.value))}
             disabled={sessions && sessions.length ? false : true}
           >
-            <option value={""}>--- SELECT ONE ---</option>
+            <option value={''}>--- SELECT ONE ---</option>
             {sessions?.map((s) => (
               <option
                 key={`${s.session_key} - ${s.date_start}`}
@@ -85,7 +85,7 @@ function Form() {
               </option>
             ))}
           </select>
-        </StyledFromField>
+        </StyledFormField>
 
         <div>
           <Button type="submit" disabled={session ? false : true}>

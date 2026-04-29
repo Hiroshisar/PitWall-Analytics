@@ -10,7 +10,6 @@ import { getCarsByDrivers } from '../services/carService';
 import { getLapsByDrivers } from '../services/lapService';
 import type { RootState } from '../store/store';
 import {
-  DriversListContainer,
   StyledAnalyze,
   StyledTelemetry,
   TelemetryContainer,
@@ -32,7 +31,6 @@ const telemetryMetrics: TelemetryMetric[] = [
 ];
 
 function Analyze() {
-  //TODO implementare rimozione pilota selezionato con bottone nella lista della telemetria.
   const [selectedDrivers, setSelectedDrivers] = useState<driverType[]>([]);
   const [isSelectionConfirmed, setIsSelectionConfirmed] =
     useState<boolean>(false);
@@ -155,9 +153,11 @@ function Analyze() {
           </div>
         ) : (
           <>
-            <DriversListContainer>
-              <DriversList drivers={selectedDrivers} type="secondary" />
-            </DriversListContainer>
+            <DriversList
+              drivers={selectedDrivers}
+              onSelect={handleDriversSelection}
+              type="secondary"
+            />
 
             <TelemetryContainer>
               {telemetryMetrics.map((metric) => (
