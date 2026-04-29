@@ -1,6 +1,6 @@
-import { Outlet } from "react-router-dom";
-import Sidebar from "../ui/Sidebar";
-import { StyledMainLayout } from "../style/styles";
+import { Outlet } from 'react-router-dom';
+import Sidebar from '../ui/Sidebar';
+import { StyledMainLayout } from '../style/styles';
 
 function MainLayout() {
   return (

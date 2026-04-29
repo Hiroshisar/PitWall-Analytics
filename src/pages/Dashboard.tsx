@@ -86,11 +86,7 @@ function Dashboard() {
   if (location.pathname === '/')
     return <Navigate to={isLiveSession ? '/live' : '/analyze'} replace />;
 
-  return (
-    <div>
-      <Outlet />
-    </div>
-  );
+  return <Outlet />;
 }
 
 export default Dashboard;

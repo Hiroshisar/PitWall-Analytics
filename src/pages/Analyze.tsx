@@ -126,55 +126,49 @@ function Analyze() {
   }, [lapsData, selectedDrivers]);
 
   if (!selectedSessions) return;
-  const session = selectedSessions[selectedSessions.length - 1];
 
   if (isLoadingDrivers || isLoadingLaps) return <Spinner />;
 
   return (
-    <>
-      <StyledAnalyze>
-        {(isLoadingCars || isLoadingDrivers) && <Spinner />}
-        {(isErrorCars || isErrorLaps) && (
-          <div>Alcuni dati non sono disponibili al momento.</div>
-        )}
-        <Session
-          session={session}
-          selectedLap={selectedLap ?? 0}
-          setSelectedLap={setSelectedLap}
-          maxNumberOfLaps={maxNumberOfLaps}
+    <StyledAnalyze>
+      {(isLoadingCars || isLoadingDrivers) && <Spinner />}
+      {(isErrorCars || isErrorLaps) && (
+        <div>Alcuni dati non sono disponibili al momento.</div>
+      )}
+      <Session
+        selectedLap={selectedLap ?? 0}
+        setSelectedLap={setSelectedLap}
+        maxNumberOfLaps={maxNumberOfLaps}
+      />
+      {!isSelectionConfirmed ? (
+        <DriversList
+          drivers={drivers ? drivers : []}
+          onSelect={handleDriversSelection}
+          type="main"
         />
-        {!isSelectionConfirmed ? (
-          <div>
-            <DriversList
-              drivers={drivers ? drivers : []}
-              onSelect={handleDriversSelection}
-              type="main"
-            />
-          </div>
-        ) : (
-          <>
-            <DriversList
-              drivers={selectedDrivers}
-              onSelect={handleDriversSelection}
-              type="secondary"
-            />
+      ) : (
+        <>
+          <DriversList
+            drivers={selectedDrivers}
+            onSelect={handleDriversSelection}
+            type="secondary"
+          />
 
-            <TelemetryContainer>
-              {telemetryMetrics.map((metric) => (
-                <StyledTelemetry key={metric}>
-                  <h2>{metric.toUpperCase()}</h2>
-                  <TelemetryLineChart
-                    carsData={selectedLapCarsData ?? []}
-                    metric={metric}
-                    selectedDrivers={selectedDrivers ?? []}
-                  />
-                </StyledTelemetry>
-              ))}
-            </TelemetryContainer>
-          </>
-        )}
-      </StyledAnalyze>
-    </>
+          <TelemetryContainer>
+            {telemetryMetrics.map((metric) => (
+              <StyledTelemetry key={metric}>
+                <h2>{metric.toUpperCase()}</h2>
+                <TelemetryLineChart
+                  carsData={selectedLapCarsData ?? []}
+                  metric={metric}
+                  selectedDrivers={selectedDrivers ?? []}
+                />
+              </StyledTelemetry>
+            ))}
+          </TelemetryContainer>
+        </>
+      )}
+    </StyledAnalyze>
   );
 }
 

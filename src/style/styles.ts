@@ -122,16 +122,19 @@ export const Button = styled.button`
 
 export const StyledMainLayout = styled.div`
   display: grid;
-  grid-template-columns: 15rem minmax(0, 1fr);
-  gap: 1rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0;
   width: 100%;
   min-height: 100vh;
-  padding-left: 10px;
   box-sizing: border-box;
+  margin-left: 1rem;
 
   & > :nth-child(2) {
     min-width: 0;
-    width: 100%;
+    width: calc(100% - 2rem);
+    min-height: calc(100vh - 2rem);
+    margin: 1rem;
+    box-sizing: border-box;
     overflow-x: hidden;
     overflow-wrap: anywhere;
   }
@@ -142,17 +145,28 @@ export const StyledSidebar = styled.div`
   top: 10px;
   align-self: start;
   height: calc(100vh - 20px);
+  width: 250px;
+
+  justify-items: center;
+  align-items: center;
+
   overflow-y: auto;
-  box-sizing: border-box;
+  overflow-x: hidden;
+
+  border: 1px solid var(--color-grey-600);
+  border-radius: var(--border-radius-3xl);
+  box-shadow: var(--shadow-lg);
+
+  padding: 3px;
 `;
 
 export const StyledDashboard = styled.div`
   display: grid;
   grid-template-rows: auto 1fr;
   row-gap: 5px;
-  padding: 1rem;
   width: 100%;
-  min-height: 100vh;
+  min-height: 100%;
+  box-sizing: border-box;
 `;
 
 export const DashboardRow = styled.div`
@@ -196,8 +210,11 @@ export const DriversListContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+  box-sizing: border-box;
+  margin-right: auto;
   border: 1px solid var(--color-grey-600);
   border-radius: var(--border-radius-3xl);
+  box-shadow: var(--shadow-lg);
 `;
 
 export const StyledDriversList = styled.div<{ $variant: DriversListVariant }>`
@@ -215,9 +232,8 @@ export const StyledDriversList = styled.div<{ $variant: DriversListVariant }>`
 
 export const StyledDriversGrid = styled.div<{ $variant: DriversListVariant }>`
   display: grid;
-  grid-template-columns: ${(props) =>
-    props.$variant === 'main' ? 'max-content' : '1fr'};
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: ${(props) => (props.$variant === 'main' ? '2rem' : '1rem')};
   justify-content: center;
   width: 100%;
 `;
@@ -251,6 +267,7 @@ export const StyledDriverMain = styled.div<{ $selected: boolean }>`
 export const StyledDriverSecondary = styled.div`
   ${driverCardBase}
 
+  min-width: 14.5rem;
   position: relative;
   display: inline-flex;
   width: fit-content;
@@ -341,12 +358,12 @@ export const StyledAnalyze = styled.div`
   box-sizing: border-box;
   height: fit-content;
 
-  padding: 3rem;
+  padding: 1rem;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
 
   gap: 1rem;
 `;
@@ -375,9 +392,12 @@ export const StyledTelemetry = styled.div`
 
 export const StyledSelect = styled.select`
   width: 8rem;
-  text-align: center;
   background-color: var(--color-grey-800);
   color: var(--color-grey-300);
+  border: 1px solid var(--color-grey-600);
+  border-radius: 15px;
+  text-align: center;
+  max-height: 8rem;
 `;
 
 export const StyledOption = styled.option`
@@ -408,12 +428,16 @@ export const StyledDriversRowContainer = styled.div<{
 export const StyledDriversGridColumn = styled.div<{
   $variant: DriversListVariant;
 }>`
-  display: flex;
+  display: ${(props) => (props.$variant === 'main' ? 'grid' : 'flex')};
+  grid-template-columns: ${(props) =>
+    props.$variant === 'main' ? 'repeat(2, minmax(0, 1fr))' : 'none'};
   flex-wrap: wrap;
-  flex-direction: ${(props) => (props.$variant === 'main' ? 'column' : 'row')};
+  flex-direction: row;
   justify-content: center;
+  align-items: start;
   gap: ${(props) => (props.$variant === 'main' ? '2rem' : '1rem')};
   margin-bottom: ${(props) => (props.$variant === 'main' ? '2rem' : '0')};
+  width: 100%;
 `;
 
 export const StyledDriversGridRows = styled.div<{
@@ -423,6 +447,7 @@ export const StyledDriversGridRows = styled.div<{
   grid-template-rows: ${(props) =>
     props.$variant === 'main' ? 'auto auto' : 'auto'};
   gap: 0.8rem;
+  justify-content: center;
 `;
 
 export const DriverListItem = styled.div<{ $isInteractive: boolean }>`
@@ -440,20 +465,28 @@ export const StyledSession = styled.div<{
 }>`
   display: flex;
   flex-direction: row;
-  justify-content: ${(props) => (props.$islive ? 'space-between' : 'center')};
-  gap: 5rem;
-  align-content: center;
+  margin-right: auto;
+  gap: 3rem;
   border: 1px solid var(--color-grey-600);
   border-radius: var(--border-radius-3xl);
   box-shadow: var(--shadow-lg);
   padding: 1.5rem 2rem;
+  align-items: center;
+  justify-content: ${(props) => (props.$islive ? 'space-between' : 'start')};
 
   width: 100%;
   box-sizing: border-box;
+`;
 
-  & > div {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-  }
+export const SessionNationAndDate = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+`;
+
+export const SessionData = styled.div`
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+  gap: 10px;
 `;

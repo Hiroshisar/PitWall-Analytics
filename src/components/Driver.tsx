@@ -29,7 +29,7 @@ function Driver({
         <RemoveButton
           className="remove-button"
           onClick={() => {
-            onRemove(driver.driver_number);
+            onRemove?.(driver.driver_number);
           }}
         />
       </StyledDriverSecondary>

@@ -3,7 +3,7 @@ import { api } from '../api/telemetry';
 import type { meetingType } from '../utils/types';
 import { notifyServiceError } from './serviceError';
 
-export async function getMeeting(year: number): Promise<meetingType[]> {
+export async function getMeetingByYear(year: number): Promise<meetingType[]> {
   try {
     const today = new Date();
 
@@ -23,5 +23,21 @@ export async function getMeeting(year: number): Promise<meetingType[]> {
     );
 
     return [];
+  }
+}
+
+export async function getMeetingByKey(key: number): Promise<meetingType> {
+  try {
+    const res = await api.get(`${endpoints.meetings}?meeting_key=${key}`);
+
+    return res.data;
+  } catch (err: unknown) {
+    notifyServiceError(
+      err,
+      `Unable to load data for meeting key ${key}`,
+      'meeting-data-error'
+    );
+
+    return {} as meetingType;
   }
 }
