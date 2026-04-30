@@ -2,10 +2,10 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../store/store';
 import type { sessionType } from '../utils/types';
 import {
-  DashboardRow,
-  StyledDashboard,
-  DashboardMain,
-  DashboardColumn,
+  LivePageRow,
+  StyledLivePage,
+  LivePageCenter,
+  LivePageColumn,
 } from '../style/styles';
 import { queryClient } from '../hooks/queryClient';
 import Session from '../components/Session.tsx';
@@ -30,27 +30,27 @@ function Live() {
   // TODO inserire controllo per live o no. se non live inserire un timer per la prossima sessione
 
   return (
-    <StyledDashboard>
-      <DashboardRow>
+    <StyledLivePage>
+      <LivePageRow>
         <Session />
-      </DashboardRow>
-      <DashboardRow>
-        <DashboardMain>
-          <DashboardColumn>
+      </LivePageRow>
+      <LivePageRow>
+        <LivePageCenter>
+          <LivePageColumn>
             <h1>Griglia</h1>
-          </DashboardColumn>
-          <DashboardColumn>
-            <DashboardRow>
+          </LivePageColumn>
+          <LivePageColumn>
+            <LivePageRow>
               <Map selectedDrivers={[]} />
-            </DashboardRow>
-            <DashboardRow>
+            </LivePageRow>
+            <LivePageRow>
               <h1>Race control</h1>
               <h1>Team radio</h1>
-            </DashboardRow>
-          </DashboardColumn>
-        </DashboardMain>
-      </DashboardRow>
-    </StyledDashboard>
+            </LivePageRow>
+          </LivePageColumn>
+        </LivePageCenter>
+      </LivePageRow>
+    </StyledLivePage>
   );
 }
 

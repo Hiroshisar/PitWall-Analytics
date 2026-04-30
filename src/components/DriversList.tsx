@@ -10,10 +10,12 @@ import {
   StyledDriversRowContainer,
   StyledTeamName,
   StyledTeamNameContainer,
+  AddDriverButton,
 } from '../style/styles';
 import type { DriversListVariant } from '../style/styles';
 import type { driverType } from '../utils/types';
 import Driver from './Driver';
+import { FaPlus } from 'react-icons/fa';
 
 type DriversListProps = {
   drivers: driverType[];
@@ -112,6 +114,18 @@ function DriversList({ drivers, onSelect, type = 'main' }: DriversListProps) {
                 </StyledDriversRowContainer>
               </StyledDriversGridRows>
             ))}
+            {type === 'secondary' && (
+              <DriverListItem
+                $isInteractive={true}
+                onClick={() => {
+                  console.log('click');
+                }}
+              >
+                <AddDriverButton>
+                  <FaPlus />
+                </AddDriverButton>
+              </DriverListItem>
+            )}
           </StyledDriversGridColumn>
         </StyledDriversGrid>
         {type === 'main' ? (

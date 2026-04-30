@@ -10,7 +10,7 @@ import { getCarsByDrivers } from '../services/carService';
 import { getLapsByDrivers } from '../services/lapService';
 import type { RootState } from '../store/store';
 import {
-  StyledAnalyze,
+  StyledTelemetryPage,
   StyledTelemetry,
   TelemetryContainer,
 } from '../style/styles';
@@ -128,9 +128,10 @@ function Telemetry() {
   if (!selectedSessions) return;
 
   if (isLoadingDrivers || isLoadingLaps) return <Spinner />;
-
+  // TODO rimuovere la lista dei piloti tipo main come prima visualizzazione, premendo il bottone di aggiunta nella
+  //  lista secondary deve apparire una modale con la lista main che popoli drivers
   return (
-    <StyledAnalyze>
+    <StyledTelemetryPage>
       {(isLoadingCars || isLoadingDrivers) && <Spinner />}
       {(isErrorCars || isErrorLaps) && (
         <div>Alcuni dati non sono disponibili al momento.</div>
@@ -140,6 +141,7 @@ function Telemetry() {
         setSelectedLap={setSelectedLap}
         maxNumberOfLaps={maxNumberOfLaps}
       />
+
       {!isSelectionConfirmed ? (
         <DriversList
           drivers={drivers ? drivers : []}
@@ -168,7 +170,7 @@ function Telemetry() {
           </TelemetryContainer>
         </>
       )}
-    </StyledAnalyze>
+    </StyledTelemetryPage>
   );
 }
 

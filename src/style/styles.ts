@@ -164,7 +164,7 @@ export const StyledSidebar = styled.div`
   gap: 0.5rem;
 `;
 
-export const StyledDashboard = styled.div`
+export const StyledLivePage = styled.div`
   display: grid;
   grid-template-rows: auto 1fr;
   row-gap: 5px;
@@ -173,7 +173,7 @@ export const StyledDashboard = styled.div`
   box-sizing: border-box;
 `;
 
-export const DashboardRow = styled.div`
+export const LivePageRow = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -182,16 +182,7 @@ export const DashboardRow = styled.div`
   gap: 10px;
 `;
 
-export const h1 = styled.div`
-  background-color: var(--color-grey-700);
-  border: 1px solid var(--color-grey-400);
-  border-radius: var(--border-radius-3xl);
-  box-shadow: var(--shadow-lg);
-  width: 100%;
-  vertical-align: middle;
-`;
-
-export const DashboardMain = styled.div`
+export const LivePageCenter = styled.div`
   display: grid;
   grid-template-columns: 1fr 4fr;
   column-gap: 5px;
@@ -199,7 +190,7 @@ export const DashboardMain = styled.div`
   width: 100%;
 `;
 
-export const DashboardColumn = styled.div`
+export const LivePageColumn = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -326,6 +317,19 @@ export const StyledDriverSecondary = styled.div`
   }
 `;
 
+export const AddDriverButton = styled.div`
+  ${driverCardBase}
+
+  min-width: 14.5rem;
+  position: relative;
+  display: inline-flex;
+  width: fit-content;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0.8rem;
+  overflow: hidden;
+`;
+
 export const DriverPortrait = styled.div`
   display: flex;
   justify-content: center;
@@ -357,12 +361,10 @@ export const StyledDriverRow = styled.div`
   }
 `;
 
-export const StyledAnalyze = styled.div`
+export const StyledTelemetryPage = styled.div`
   min-width: 100%;
   box-sizing: border-box;
   height: fit-content;
-
-  padding: 1rem;
 
   display: flex;
   flex-direction: column;
@@ -408,8 +410,8 @@ export const StyledOption = styled.option`
   color: var(--color-grey-300);
 `;
 
-export const StyledTeamName = styled.h3`
-  font-size: 1.8rem;
+export const StyledTeamName = styled.h2`
+  font-size: 2.5rem;
   font-weight: 700;
   margin-left: 3rem;
 `;

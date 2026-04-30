@@ -55,18 +55,16 @@ function Session({
       </SessionNationAndDate>
       <SessionData>
         <h2>{session.session_name}</h2>
-        <h3>
-          {maxNumberOfLaps && selectedLap ? (
-            <>
-              Giro{' '}
-              <Select
-                selectedLap={selectedLap}
-                max={maxNumberOfLaps}
-                onSelect={setSelectedLap}
-              />
-            </>
-          ) : null}{' '}
-        </h3>
+        {maxNumberOfLaps && selectedLap ? (
+          <h3>
+            Giro{' '}
+            <Select
+              selectedLap={selectedLap}
+              max={maxNumberOfLaps}
+              onSelect={setSelectedLap}
+            />
+          </h3>
+        ) : null}{' '}
       </SessionData>
       {islive ? (
         <>
