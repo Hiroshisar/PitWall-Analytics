@@ -6,12 +6,13 @@ import { useFetchAllSessions } from '../hooks/useFetchSession';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setSelectedMeeting } from '../store/meetingSlice';
 import { setSelectedSessionKey } from '../store/sessionSlice';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { checkIfIsLiveSession } from '../utils/helpers';
+import { Outlet, useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import Session from '../components/Session.tsx';
 
-function Dashboard() {
+function Home() {
   const today = new Date();
-  const location = useLocation();
+  const { pathname } = useLocation();
   const dispatch = useAppDispatch();
   const selectedMeetingKey = useAppSelector(
     (store) => store.meeting.selectedMeetingKey
@@ -45,7 +46,6 @@ function Dashboard() {
   const eligibleSessions = useMemo(() => {
     const endOfToday = new Date();
     endOfToday.setHours(23, 59, 59, 999);
-
     return (sessions ?? [])
       .filter((elem: sessionType) => !elem.is_cancelled)
       .filter((elem: sessionType) => new Date(elem.date_start) <= endOfToday);
@@ -70,23 +70,29 @@ function Dashboard() {
     dispatch(setSelectedSessionKey(effectiveSession.session_key));
   }, [effectiveSession, selectedSessionKey, dispatch]);
 
-  const isLiveSession: boolean = useMemo(() => {
-    if (!effectiveSession) return false;
-
-    // return true;
-    return checkIfIsLiveSession(
-      effectiveSession.date_start,
-      effectiveSession.date_end
-    );
-  }, [effectiveSession]);
-
   if (isLoadingMeetings || (effectiveMeetingKey > 0 && isLoadingSessions))
     return <Spinner />;
 
-  if (location.pathname === '/')
-    return <Navigate to={isLiveSession ? '/live' : '/analyze'} replace />;
+  if (pathname !== '/home') return <Outlet />;
 
-  return <Outlet />;
+  const StyledHomeTitleContainer = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `;
+  return (
+    <div>
+      <div>
+        <Session />
+      </div>
+
+      <StyledHomeTitleContainer>
+        <h1>Seleziona uno strumento</h1>
+      </StyledHomeTitleContainer>
+    </div>
+  );
 }
 
-export default Dashboard;
+export default Home;

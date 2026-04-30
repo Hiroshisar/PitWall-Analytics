@@ -1,20 +1,24 @@
-import { Button, StyledSidebar } from '../style/styles';
+import { StyledSidebar } from '../style/styles';
+import { Logo } from './Logo.tsx';
+import { Button } from './Button.tsx';
 
 const menu_options = [
-  'Dashboard',
-  'Standings (WIP)',
-  'Starting Grid (WIP)',
-  'Tyre Strategy (WIP)',
-  'Weather (WIP)',
-  'Telemetry (WIP)',
+  { label: 'Live', to: '/live' },
+  { label: 'Telemetry', to: '/telemetry' },
+  { label: 'Championships', to: '/championships' },
+  { label: 'Starting Grid', to: '/starting-grid' },
+  { label: 'Tyre Strategy', to: '/tyre-strategy' },
+  { label: 'Weather', to: '/weather' },
 ];
 
 function Sidebar() {
   return (
     <StyledSidebar>
-      <img src="/logo.png" alt="Logo" style={{ width: '100%' }} />
+      <Logo redirect={'/home'} />
       {menu_options.map((option) => (
-        <Button key={option}>{option}</Button>
+        <Button key={option.to} to={option.to}>
+          {option.label}
+        </Button>
       ))}
     </StyledSidebar>
   );

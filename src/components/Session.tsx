@@ -4,24 +4,23 @@ import type { RootState } from '../store/store';
 import {
   SessionData,
   SessionNationAndDate,
-  StyledOption,
-  StyledSelect,
   StyledSession,
 } from '../style/styles';
 import { checkIfIsLiveSession, formatDate } from '../utils/helpers';
 import type { meetingType, sessionType } from '../utils/types';
 import Flag from './Flag';
 import Timer from './Timer';
-import Weather from './Weather';
+import Weather from '../pages/Weather';
+import { Select } from '../ui/Select.tsx';
 
 function Session({
   selectedLap,
   maxNumberOfLaps,
-  setSelectedLap,
+  setSelectedLap = () => {},
 }: {
-  selectedLap: number;
-  maxNumberOfLaps: number;
-  setSelectedLap: (lap: number) => void;
+  selectedLap?: number;
+  maxNumberOfLaps?: number;
+  setSelectedLap?: (lap: number) => void;
 }) {
   const selectedMeetingKey = useSelector(
     (store: RootState) => store.meeting.selectedMeetingKey
@@ -57,27 +56,14 @@ function Session({
       <SessionData>
         <h2>{session.session_name}</h2>
         <h3>
-          {maxNumberOfLaps ? (
+          {maxNumberOfLaps && selectedLap ? (
             <>
               Giro{' '}
-              <StyledSelect
-                value={selectedLap ?? '0'}
-                onChange={(e) => setSelectedLap(Number(e.target.value))}
-              >
-                <StyledOption value="0" disabled>
-                  ---
-                </StyledOption>
-                {Array.from(
-                  {
-                    length: maxNumberOfLaps ?? 0,
-                  },
-                  (_, index) => (
-                    <StyledOption key={index} value={index + 1}>
-                      {index + 1}
-                    </StyledOption>
-                  )
-                )}
-              </StyledSelect>
+              <Select
+                selectedLap={selectedLap}
+                max={maxNumberOfLaps}
+                onSelect={setSelectedLap}
+              />
             </>
           ) : null}{' '}
         </h3>

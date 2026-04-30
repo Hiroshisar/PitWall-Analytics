@@ -99,14 +99,16 @@ export const SpinnerRing = styled.div`
   );
 `;
 
-export const Button = styled.button`
+export const StyledButton = styled.button`
   background: none;
-  border: 1px solid var(--color-grey-800);
-  padding: 0.4rem;
+  border: 1px solid var(--color-grey-600);
+  padding: 1rem 2rem;
+
+  width: 200px;
+
   border-radius: var(--border-radius-3xl);
   transform: translateX(0.8rem);
   transition: all 0.2s;
-  width: 100%;
   margin-top: 1rem;
 
   &:hover {
@@ -147,6 +149,8 @@ export const StyledSidebar = styled.div`
   height: calc(100vh - 20px);
   width: 250px;
 
+  display: flex;
+  flex-direction: column;
   justify-items: center;
   align-items: center;
 
@@ -157,7 +161,7 @@ export const StyledSidebar = styled.div`
   border-radius: var(--border-radius-3xl);
   box-shadow: var(--shadow-lg);
 
-  padding: 3px;
+  gap: 0.5rem;
 `;
 
 export const StyledDashboard = styled.div`
@@ -178,7 +182,7 @@ export const DashboardRow = styled.div`
   gap: 10px;
 `;
 
-export const DashboardItem = styled.div`
+export const h1 = styled.div`
   background-color: var(--color-grey-700);
   border: 1px solid var(--color-grey-400);
   border-radius: var(--border-radius-3xl);

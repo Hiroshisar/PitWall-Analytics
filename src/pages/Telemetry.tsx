@@ -30,7 +30,7 @@ const telemetryMetrics: TelemetryMetric[] = [
   'gear',
 ];
 
-function Analyze() {
+function Telemetry() {
   const [selectedDrivers, setSelectedDrivers] = useState<driverType[]>([]);
   const [isSelectionConfirmed, setIsSelectionConfirmed] =
     useState<boolean>(false);
@@ -172,4 +172,4 @@ function Analyze() {
   );
 }
 
-export default Analyze;
+export default Telemetry;

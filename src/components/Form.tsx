@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useFetchMeetings } from '../hooks/useFetchMeetings';
 import { useFetchAllSessions } from '../hooks/useFetchSession';
 import { formatDate } from '../utils/helpers';
-import { Button, StyledForm, StyledFormField } from '../style/styles';
+import { StyledButton, StyledForm, StyledFormField } from '../style/styles';
 import Spinner from '../ui/Spinner';
 import { useAppDispatch } from '../store/hooks';
 import { setSelectedMeeting } from '../store/meetingSlice';
@@ -88,9 +88,9 @@ function Form() {
         </StyledFormField>
 
         <div>
-          <Button type="submit" disabled={session ? false : true}>
+          <StyledButton type="submit" disabled={session ? false : true}>
             Cerca
-          </Button>
+          </StyledButton>
         </div>
       </StyledForm>
     </>

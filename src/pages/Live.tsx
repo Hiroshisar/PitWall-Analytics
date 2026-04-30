@@ -3,15 +3,16 @@ import type { RootState } from '../store/store';
 import type { sessionType } from '../utils/types';
 import {
   DashboardRow,
-  DashboardItem,
   StyledDashboard,
   DashboardMain,
   DashboardColumn,
 } from '../style/styles';
 import { queryClient } from '../hooks/queryClient';
-import { formatDate } from '../utils/helpers';
+import Session from '../components/Session.tsx';
+import Map from '../components/Map.tsx';
 
 function Live() {
+  // chissà se con i dati live questo sarà necessario?
   const meetingData = useSelector((store: RootState) => store.meeting);
   const sessionData = useSelector((store: RootState) => store.session);
 
@@ -24,37 +25,27 @@ function Live() {
   ]);
 
   const s = sessions?.find((s) => s.session_key === selectedSessionKey);
+  // rimuovere questo if
+  if (!s) return;
+  // TODO inserire controllo per live o no. se non live inserire un timer per la prossima sessione
 
   return (
     <StyledDashboard>
       <DashboardRow>
-        <DashboardItem>
-          <p>
-            {`${s?.circuit_short_name ?? 'Circuito'} (${s?.country_name ?? 'Nazione'})`}
-          </p>
-          <p>{s?.session_name ?? 'Sessione'}</p>
-        </DashboardItem>
-        <DashboardItem>
-          {formatDate(s?.date_start ?? '01/01/1970')}
-        </DashboardItem>
-        <DashboardItem>Timer</DashboardItem>
-        <DashboardItem>Meteo</DashboardItem>
-        <DashboardItem>Bandiere</DashboardItem>
+        <Session />
       </DashboardRow>
       <DashboardRow>
         <DashboardMain>
           <DashboardColumn>
-            <DashboardItem>Griglia</DashboardItem>
+            <h1>Griglia</h1>
           </DashboardColumn>
           <DashboardColumn>
             <DashboardRow>
-              <DashboardItem>
-                <h2>MAP</h2>
-              </DashboardItem>
+              <Map selectedDrivers={[]} />
             </DashboardRow>
             <DashboardRow>
-              <DashboardItem>Race control</DashboardItem>
-              <DashboardItem>Team radio</DashboardItem>
+              <h1>Race control</h1>
+              <h1>Team radio</h1>
             </DashboardRow>
           </DashboardColumn>
         </DashboardMain>
