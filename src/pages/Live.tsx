@@ -1,4 +1,10 @@
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import {
+  cacheOpenF1LiveMessage,
+  connectOpenF1LiveWebSocket,
+  type OpenF1LiveConnection,
+} from '../api/websocket';
 import type { RootState } from '../store/store';
 import type { sessionType } from '../utils/types';
 import {
@@ -10,6 +16,10 @@ import {
 import { queryClient } from '../hooks/queryClient';
 import Session from '../components/Session.tsx';
 import Map from '../components/Map.tsx';
+import { checkIfIsLiveSession } from '../utils/helpers.ts';
+import Timer from '../components/Timer.tsx';
+import { useFetchNextSession } from '../hooks/useFetchSession.ts';
+import Spinner from '../ui/Spinner.tsx';
 
 function Live() {
   // chissà se con i dati live questo sarà necessario?
@@ -24,33 +34,94 @@ function Live() {
     selectedMeetingKey,
   ]);
 
-  const s = sessions?.find((s) => s.session_key === selectedSessionKey);
-  // rimuovere questo if
-  if (!s) return;
-  // TODO inserire controllo per live o no. se non live inserire un timer per la prossima sessione
+  const selectedSession = sessions?.find(
+    (s) => s.session_key === selectedSessionKey
+  );
+
+  const { data: nextSession, isLoading: isLoadingNextSession } =
+    useFetchNextSession();
+
+  useEffect(() => {
+    if (!selectedSessionKey) return;
+
+    let isCancelled = false;
+    let liveConnection: OpenF1LiveConnection | null = null;
+
+    connectOpenF1LiveWebSocket({
+      sessionKey: selectedSessionKey,
+      onMessage: (message) => {
+        cacheOpenF1LiveMessage(queryClient, message);
+      },
+      onError: (error) => {
+        console.error('OpenF1 live stream error:', error);
+      },
+    })
+      .then((connection) => {
+        if (isCancelled) {
+          connection.close();
+          return;
+        }
+
+        liveConnection = connection;
+      })
+      .catch((error: unknown) => {
+        console.error('Unable to start OpenF1 live stream:', error);
+      });
+
+    return () => {
+      isCancelled = true;
+      liveConnection?.close();
+    };
+  }, [selectedSessionKey]);
+
+  if (!selectedSession) return;
+
+  const isLive = checkIfIsLiveSession(
+    selectedSession?.date_start,
+    selectedSession?.date_end
+  );
+
+  if (isLoadingNextSession) return <Spinner />;
 
   return (
-    <StyledLivePage>
-      <LivePageRow>
-        <Session />
-      </LivePageRow>
-      <LivePageRow>
-        <LivePageCenter>
-          <LivePageColumn>
-            <h1>Griglia</h1>
-          </LivePageColumn>
-          <LivePageColumn>
-            <LivePageRow>
-              <Map selectedDrivers={[]} />
-            </LivePageRow>
-            <LivePageRow>
-              <h1>Race control</h1>
-              <h1>Team radio</h1>
-            </LivePageRow>
-          </LivePageColumn>
-        </LivePageCenter>
-      </LivePageRow>
-    </StyledLivePage>
+    <>
+      {isLive ? (
+        <StyledLivePage>
+          <LivePageRow>
+            <Session />
+          </LivePageRow>
+          <LivePageRow>
+            <LivePageCenter>
+              <LivePageColumn>
+                <h1>Griglia</h1>
+              </LivePageColumn>
+              <LivePageColumn>
+                <LivePageRow>
+                  <Map selectedDrivers={[]} />
+                </LivePageRow>
+                <LivePageRow>
+                  <h1>Race control</h1>
+                  <h1>Team radio</h1>
+                </LivePageRow>
+              </LivePageColumn>
+            </LivePageCenter>
+          </LivePageRow>
+        </StyledLivePage>
+      ) : (
+        <StyledLivePage>
+          <LivePageRow>
+            <Session session={nextSession ? nextSession : undefined} />
+          </LivePageRow>
+          <LivePageCenter>
+            <h1>Next session in</h1>
+            <Timer
+              dateStart={new Date().toString()}
+              dateEnd={nextSession?.date_start ?? ''}
+            />
+          </LivePageCenter>
+        </StyledLivePage>
+      )}
+    </>
   );
 }
 

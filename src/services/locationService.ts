@@ -1,5 +1,5 @@
 import { endpoints } from '../api/endpoints';
-import { api } from '../api/telemetry';
+import { api } from '../api/telemetryApi';
 import type { locationType } from '../utils/types';
 import { getHttpStatus, notifyServiceError } from './serviceError';
 

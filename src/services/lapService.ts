@@ -1,20 +1,20 @@
-import { endpoints } from "../api/endpoints";
-import { api } from "../api/telemetry";
-import type { lapType } from "../utils/types";
-import { getHttpStatus, notifyServiceError } from "./serviceError";
+import { endpoints } from '../api/endpoints';
+import { api } from '../api/telemetryApi';
+import type { lapType } from '../utils/types';
+import { getHttpStatus, notifyServiceError } from './serviceError';
 
 export async function getLaps(
   session_key: number,
-  driver_number: number,
+  driver_number: number
 ): Promise<lapType[]> {
   try {
     const res = await api.get(
-      `${endpoints.laps}?session_key=${session_key}&driver_number=${driver_number}`,
+      `${endpoints.laps}?session_key=${session_key}&driver_number=${driver_number}`
     );
     console.log(res.data);
     return res.data;
   } catch (err: unknown) {
-    notifyServiceError(err, "Unable to load laps data", "laps-data-error");
+    notifyServiceError(err, 'Unable to load laps data', 'laps-data-error');
 
     return [];
   }
@@ -22,17 +22,17 @@ export async function getLaps(
 
 export async function getLapsByDrivers(
   session_key: number,
-  driver_numbers: number[],
+  driver_numbers: number[]
 ): Promise<lapType[]> {
   const uniqueDriverNumbers = [...new Set(driver_numbers)].filter(
-    (driverNumber) => driverNumber > 0,
+    (driverNumber) => driverNumber > 0
   );
 
   if (session_key <= 0 || uniqueDriverNumbers.length === 0) return [];
 
   const params = new URLSearchParams({ session_key: String(session_key) });
   uniqueDriverNumbers.forEach((driverNumber) => {
-    params.append("driver_number", String(driverNumber));
+    params.append('driver_number', String(driverNumber));
   });
 
   try {
@@ -58,8 +58,8 @@ export async function getLapsByDrivers(
       if (hasFallbackErrors && mergedLapsData.length === 0) {
         notifyServiceError(
           err,
-          "Unable to load laps data for selected drivers",
-          "laps-data-error",
+          'Unable to load laps data for selected drivers',
+          'laps-data-error'
         );
       }
 
@@ -68,8 +68,8 @@ export async function getLapsByDrivers(
 
     notifyServiceError(
       err,
-      "Unable to load laps data for selected drivers",
-      "laps-data-error",
+      'Unable to load laps data for selected drivers',
+      'laps-data-error'
     );
     return [];
   }

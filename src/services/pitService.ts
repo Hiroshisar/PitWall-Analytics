@@ -1,7 +1,7 @@
-import { endpoints } from "../api/endpoints";
-import { api } from "../api/telemetry";
-import type { pitType } from "../utils/types";
-import { notifyServiceError } from "./serviceError";
+import { endpoints } from '../api/endpoints';
+import { api } from '../api/telemetryApi';
+import type { pitType } from '../utils/types';
+import { notifyServiceError } from './serviceError';
 
 export async function getPitStops(session_key: number): Promise<pitType[]> {
   try {
@@ -9,7 +9,7 @@ export async function getPitStops(session_key: number): Promise<pitType[]> {
 
     return res.data;
   } catch (err: unknown) {
-    notifyServiceError(err, "Unable to load pit data", "pit-data-error");
+    notifyServiceError(err, 'Unable to load pit data', 'pit-data-error');
 
     return [];
   }

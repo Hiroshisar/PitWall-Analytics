@@ -16,10 +16,14 @@ import { Select } from '../ui/Select.tsx';
 function Session({
   selectedLap,
   maxNumberOfLaps,
+  session,
+  meeting,
   setSelectedLap = () => {},
 }: {
   selectedLap?: number;
   maxNumberOfLaps?: number;
+  session?: sessionType;
+  meeting?: meetingType;
   setSelectedLap?: (lap: number) => void;
 }) {
   const selectedMeetingKey = useSelector(
@@ -28,14 +32,15 @@ function Session({
   const selectedSessionKey = useSelector(
     (store: RootState) => store.session.selectedSessionKey
   );
+  if (!session)
+    session = queryClient
+      .getQueryData<sessionType[]>(['sessions', selectedMeetingKey])
+      ?.find((session) => session.session_key === selectedSessionKey);
 
-  const session = queryClient
-    .getQueryData<sessionType[]>(['sessions', selectedMeetingKey])
-    ?.find((session) => session.session_key === selectedSessionKey);
-
-  const meeting = queryClient
-    .getQueryData<meetingType[]>(['meetings', new Date().getFullYear()])
-    ?.find((meeting) => meeting.meeting_key === selectedMeetingKey);
+  if (!meeting)
+    meeting = queryClient
+      .getQueryData<meetingType[]>(['meetings', new Date().getFullYear()])
+      ?.find((meeting) => meeting.meeting_key === selectedMeetingKey);
 
   if (!session) return null;
   const islive = checkIfIsLiveSession(session.date_start, session.date_end);

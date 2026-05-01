@@ -34,8 +34,7 @@ function Timer({ dateStart, dateEnd }: { dateStart: string; dateEnd: string }) {
 
   return (
     <div>
-      <h2>Timer</h2>
-      <p>{formatTime(timeLeft)}</p>
+      <h1>{formatTime(timeLeft)}</h1>
       {!isRunning && <p>Tempo scaduto!</p>}
     </div>
   );

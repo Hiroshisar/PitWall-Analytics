@@ -1,5 +1,5 @@
 import { endpoints } from '../api/endpoints';
-import { api } from '../api/telemetry';
+import { api } from '../api/telemetryApi';
 import type { meetingType } from '../utils/types';
 import { notifyServiceError } from './serviceError';
 
