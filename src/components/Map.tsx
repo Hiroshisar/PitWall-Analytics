@@ -25,7 +25,7 @@ const fallbackColors = [
   '#475569',
 ];
 
-const circuitImageRotationDeg = 240;
+const circuitImageRotationDeg = 330;
 const mapHeight = 500;
 const markerRadius = 5;
 const markerStrokeWidth = 2;

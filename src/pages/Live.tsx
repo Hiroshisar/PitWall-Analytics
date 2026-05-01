@@ -20,6 +20,9 @@ import { checkIfIsLiveSession } from '../utils/helpers.ts';
 import Timer from '../components/Timer.tsx';
 import { useFetchNextSession } from '../hooks/useFetchSession.ts';
 import Spinner from '../ui/Spinner.tsx';
+import SessionGrid from '../components/SessionGrid.tsx';
+import RaceControl from '../components/RaceControl.tsx';
+import TeamRadio from '../components/TeamRadio.tsx';
 
 function Live() {
   // chissà se con i dati live questo sarà necessario?
@@ -80,6 +83,8 @@ function Live() {
     selectedSession?.date_start,
     selectedSession?.date_end
   );
+  // TODO rimuovere questo test
+  // const isLive = true;
 
   if (isLoadingNextSession) return <Spinner />;
 
@@ -93,15 +98,15 @@ function Live() {
           <LivePageRow>
             <LivePageCenter>
               <LivePageColumn>
-                <h1>Griglia</h1>
+                <SessionGrid sessionKey={selectedSessionKey ?? 0} />
               </LivePageColumn>
               <LivePageColumn>
                 <LivePageRow>
                   <Map selectedDrivers={[]} />
                 </LivePageRow>
                 <LivePageRow>
-                  <h1>Race control</h1>
-                  <h1>Team radio</h1>
+                  <RaceControl sessionKey={selectedSessionKey ?? 0} />
+                  <TeamRadio sessionKey={selectedSessionKey ?? 0} />
                 </LivePageRow>
               </LivePageColumn>
             </LivePageCenter>

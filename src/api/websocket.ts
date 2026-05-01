@@ -1,7 +1,7 @@
 import mqtt, { type IClientOptions, type MqttClient } from 'mqtt';
 import type { QueryClient, QueryKey } from '@tanstack/react-query';
 import { WEBSOCKET_URL } from './endpoints';
-import { getAccessToken } from './telemetryApi';
+import { getAccessToken, getOpenF1Username } from './telemetryApi';
 import type {
   carType,
   intervalType,
@@ -222,7 +222,7 @@ export async function connectOpenF1LiveWebSocket(
     ...options.mqttOptions,
     clientId: options.clientId ?? makeClientId(),
     password: accessToken,
-    username: options.username ?? DEFAULT_USERNAME,
+    username: options.username ?? getOpenF1Username() ?? DEFAULT_USERNAME,
   });
 
   const subscribe = (topic: OpenF1LiveTopic) => {

@@ -10,6 +10,14 @@ import { Outlet, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Session from '../components/Session.tsx';
 
+const StyledHomeTitleContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 function Home() {
   const today = new Date();
   const { pathname } = useLocation();
@@ -75,13 +83,6 @@ function Home() {
 
   if (pathname !== '/home') return <Outlet />;
 
-  const StyledHomeTitleContainer = styled.div`
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  `;
   return (
     <div>
       <div>

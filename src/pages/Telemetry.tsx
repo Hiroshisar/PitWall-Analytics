@@ -129,7 +129,8 @@ function Telemetry() {
 
   if (isLoadingDrivers || isLoadingLaps) return <Spinner />;
   // TODO rimuovere la lista dei piloti tipo main come prima visualizzazione, premendo il bottone di aggiunta nella
-  //  lista secondary deve apparire una modale con la lista main che popoli drivers
+  //  lista secondary deve apparire una modale con la lista main che popoli drivers. Quando si selezionano i piloti, deve apparire
+  //  il confronto tra i giri più veloci, non un giro specifico o vuoto
   return (
     <StyledTelemetryPage>
       {(isLoadingCars || isLoadingDrivers) && <Spinner />}
