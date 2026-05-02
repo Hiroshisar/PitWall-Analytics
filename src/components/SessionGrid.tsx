@@ -1,5 +1,20 @@
+import styled from 'styled-components';
 import { useFetchPosition } from '../hooks/useFetchPosition.ts';
 import { useEffect, useState } from 'react';
+
+const StyledSessionGridContainer = styled.div`
+  padding: 1rem;
+  margin: 0.5rem;
+
+  display: grid;
+
+  grid-template-rows: 1fr, auto;
+
+  width: 100%;
+  max-height: max(0px, calc(100dvh - 64rem));
+
+  overflow-y: auto;
+`;
 
 function SessionGrid({ sessionKey }: { sessionKey: number }) {
   const { data: sessionGrid } = useFetchPosition(sessionKey);
@@ -24,8 +39,7 @@ function SessionGrid({ sessionKey }: { sessionKey: number }) {
   cars.sort((a, b) => a.position - b.position);
 
   return (
-    <>
-      <h1>SESSION GRID</h1>
+    <StyledSessionGridContainer>
       {sessionGrid &&
         cars.map((row) => (
           <div>
@@ -34,7 +48,7 @@ function SessionGrid({ sessionKey }: { sessionKey: number }) {
             </h2>{' '}
           </div>
         ))}
-    </>
+    </StyledSessionGridContainer>
   );
 }
 

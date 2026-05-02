@@ -16,7 +16,6 @@ import {
 import { queryClient } from '../hooks/queryClient';
 import Session from '../components/Session.tsx';
 import Map from '../components/Map.tsx';
-import { checkIfIsLiveSession } from '../utils/helpers.ts';
 import Timer from '../components/Timer.tsx';
 import { useFetchNextSession } from '../hooks/useFetchSession.ts';
 import Spinner from '../ui/Spinner.tsx';
@@ -79,12 +78,9 @@ function Live() {
 
   if (!selectedSession) return;
 
-  const isLive = checkIfIsLiveSession(
-    selectedSession?.date_start,
-    selectedSession?.date_end
-  );
+  // const isLive = checkIfIsLiveSession(    selectedSession?.date_start,    selectedSession?.date_end  );
   // TODO rimuovere questo test
-  // const isLive = true;
+  const isLive = true;
 
   if (isLoadingNextSession) return <Spinner />;
 
@@ -102,7 +98,7 @@ function Live() {
               </LivePageColumn>
               <LivePageColumn>
                 <LivePageRow>
-                  <Map selectedDrivers={[]} />
+                  <Map sessionKey={selectedSessionKey ?? 0} />
                 </LivePageRow>
                 <LivePageRow>
                   <RaceControl sessionKey={selectedSessionKey ?? 0} />

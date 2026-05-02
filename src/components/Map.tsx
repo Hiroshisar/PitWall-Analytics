@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type {
   DriverLocationSeries,
-  driverType,
   LocationSeriesPoint,
   locationType,
   meetingType,
@@ -9,10 +8,9 @@ import type {
 import { normalizeHexColor } from '../utils/helpers';
 import { queryClient } from '../hooks/queryClient';
 import { getLocationsByDrivers } from '../services/locationService';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../store/store';
 import { useQuery } from '@tanstack/react-query';
 import Spinner from '../ui/Spinner';
+import { useFetchDrivers } from '../hooks/useFetchDriver';
 
 const fallbackColors = [
   '#4f46e5',
@@ -96,16 +94,15 @@ function getMarkerPosition(
   };
 }
 
-function Map({ selectedDrivers }: { selectedDrivers: driverType[] }) {
+function Map({ sessionKey }: { sessionKey: number }) {
+  const { data: drivers } = useFetchDrivers(sessionKey);
+
   const meetings =
     queryClient.getQueryData<meetingType[]>([
       'meetings',
       new Date().getFullYear(),
     ]) ?? [];
 
-  const sessionKey = useSelector(
-    (state: RootState) => state.session.selectedSessionKey
-  );
   const circuitImage: string =
     meetings[meetings.length - 1].circuit_image ?? '';
 
@@ -113,7 +110,7 @@ function Map({ selectedDrivers }: { selectedDrivers: driverType[] }) {
   const width = circuitImageSize?.width ?? 1000;
   const height = circuitImageSize?.height ?? mapHeight;
 
-  const driversNumbers = selectedDrivers.map((driver) => driver.driver_number);
+  const driversNumbers = drivers?.map((driver) => driver.driver_number) ?? [];
 
   const {
     data: locationByDriverData,
@@ -135,10 +132,11 @@ function Map({ selectedDrivers }: { selectedDrivers: driverType[] }) {
       groupedLocations[locationSample.driver_number].push(locationSample);
     }
 
-    return selectedDrivers.map((driver, index) => {
-      const driverLocationData = [
-        ...(groupedLocations[driver.driver_number] ?? []),
-      ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return (drivers ?? []).map((driver, index) => {
+      const driverLocationData =
+        [...(groupedLocations[driver.driver_number] ?? [])].sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+        ) ?? [];
 
       const firstSampleTime = new Date(
         driverLocationData[0]?.date ?? ''
@@ -167,7 +165,7 @@ function Map({ selectedDrivers }: { selectedDrivers: driverType[] }) {
         points,
       };
     });
-  }, [locationByDriverData, selectedDrivers]);
+  }, [locationByDriverData, drivers]);
 
   const coordinateBounds = useMemo<CoordinateBounds | null>(() => {
     const points = locationData.flatMap((driverSeries) => driverSeries.points);
