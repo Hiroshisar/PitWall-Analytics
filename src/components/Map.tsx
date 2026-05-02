@@ -23,7 +23,9 @@ const fallbackColors = [
   '#475569',
 ];
 
-const circuitImageRotationDeg = 330;
+const circuitImageRotationDeg = 0;
+const originalCircuitImageWidth = 960;
+const originalCircuitImageHeight = 720;
 const mapHeight = 500;
 const markerRadius = 5;
 const markerStrokeWidth = 2;
@@ -79,6 +81,13 @@ function getRotationTransform(width: number, height: number) {
   return `rotate(${circuitImageRotationDeg} ${width / 2} ${height / 2})`;
 }
 
+function getRenderedMapWidth(imageSize: ImageSize | null) {
+  const originalWidth = imageSize?.width ?? originalCircuitImageWidth;
+  const originalHeight = imageSize?.height ?? originalCircuitImageHeight;
+
+  return (originalWidth / originalHeight) * mapHeight;
+}
+
 function getMarkerPosition(
   point: LocationSeriesPoint,
   coordinateBounds: CoordinateBounds,
@@ -107,8 +116,8 @@ function Map({ sessionKey }: { sessionKey: number }) {
     meetings[meetings.length - 1].circuit_image ?? '';
 
   const circuitImageSize = useImageSize(circuitImage);
-  const width = circuitImageSize?.width ?? 1000;
-  const height = circuitImageSize?.height ?? mapHeight;
+  const width = getRenderedMapWidth(circuitImageSize);
+  const height = mapHeight;
 
   const driversNumbers = drivers?.map((driver) => driver.driver_number) ?? [];
 
