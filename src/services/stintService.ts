@@ -3,14 +3,9 @@ import { api } from '../api/telemetryApi';
 import type { stintType } from '../utils/types';
 import { notifyServiceError } from './serviceError';
 
-export async function getAllDriverStint(
-  session_key: number,
-  driver_number: number
-): Promise<stintType[]> {
+export async function getAllStints(session_key: number): Promise<stintType[]> {
   try {
-    const res = await api.get(
-      `${endpoints.stints}?session_key=${session_key}&driver_number=${driver_number}`
-    );
+    const res = await api.get(`${endpoints.stints}?session_key=${session_key}`);
 
     return res.data;
   } catch (err: unknown) {

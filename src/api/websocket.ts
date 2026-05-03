@@ -93,6 +93,9 @@ const DEFAULT_USERNAME = 'pitwall-analytics';
 const DEFAULT_RECONNECT_PERIOD_MS = 3_000;
 const DEFAULT_CONNECT_TIMEOUT_MS = 30_000;
 const DEFAULT_KEEPALIVE_SECONDS = 60;
+const MAX_RECENT_LOCATION_SAMPLES_PER_DRIVER = 90;
+const MAX_RECENT_CAR_SAMPLES_PER_DRIVER = 90;
+const MAX_RACE_CONTROL_MESSAGES = 80;
 
 const topicQueryKeyRoots: Record<OpenF1LiveTopic, string> = {
   'v1/car_data': 'cars',
@@ -148,27 +151,119 @@ function isMessageInScope(
   return true;
 }
 
-function upsertPayload<TPayload extends OpenF1RealtimeFields>(
-  current: TPayload[],
-  payload: TPayload
+function hasDriverNumber(
+  payload: OpenF1LivePayload
+): payload is OpenF1LivePayload & { driver_number: number } {
+  return (
+    'driver_number' in payload && typeof payload.driver_number === 'number'
+  );
+}
+
+function getPayloadSemanticKey(
+  topic: OpenF1LiveTopic,
+  payload: OpenF1LivePayload
 ) {
-  const existingIndex = current.findIndex((item) => {
-    if (item._key && payload._key) return item._key === payload._key;
-    if (item._id && payload._id) return item._id === payload._id;
+  if (hasDriverNumber(payload)) {
+    if (topic === 'v1/position' || topic === 'v1/intervals') {
+      return `driver:${payload.driver_number}`;
+    }
 
-    return false;
-  });
+    if (topic === 'v1/laps' && 'lap_number' in payload) {
+      return `driver:${payload.driver_number}:lap:${payload.lap_number}`;
+    }
 
-  if (existingIndex === -1) return [...current, payload];
+    if (topic === 'v1/pit' && 'lap_number' in payload && 'date' in payload) {
+      return `driver:${payload.driver_number}:pit:${payload.lap_number}:${payload.date}`;
+    }
 
-  const existing = current[existingIndex];
-  if (existing._id && payload._id && existing._id > payload._id) {
-    return current;
+    if (topic === 'v1/stints' && 'stint_number' in payload) {
+      return `driver:${payload.driver_number}:stint:${payload.stint_number}`;
+    }
+
+    if (topic === 'v1/starting_grid') {
+      return `driver:${payload.driver_number}`;
+    }
   }
 
-  const next = [...current];
-  next[existingIndex] = payload;
-  return next;
+  if (topic === 'v1/race_control' && 'date' in payload && 'message' in payload) {
+    return `race-control:${payload.date}:${payload.message}`;
+  }
+
+  return null;
+}
+
+function getPayloadIdentity(topic: OpenF1LiveTopic, payload: OpenF1LivePayload) {
+  const semanticKey = getPayloadSemanticKey(topic, payload);
+  if (semanticKey) return `${topic}:${semanticKey}`;
+  if (payload._key) return `${topic}:key:${payload._key}`;
+  if (payload._id) return `${topic}:id:${payload._id}`;
+
+  return null;
+}
+
+function upsertPayload(
+  topic: OpenF1LiveTopic,
+  current: OpenF1LivePayload[],
+  payload: OpenF1LivePayload
+) {
+  const identity = getPayloadIdentity(topic, payload);
+  if (!identity) return [...current, payload];
+
+  return [
+    ...current.filter((item) => getPayloadIdentity(topic, item) !== identity),
+    payload,
+  ];
+}
+
+function compactByDriverNumber(
+  items: OpenF1LivePayload[],
+  maxItemsPerDriver: number
+) {
+  const groupedItems = new Map<number, OpenF1LivePayload[]>();
+
+  for (const item of items) {
+    if (!hasDriverNumber(item)) continue;
+
+    const driverItems = groupedItems.get(item.driver_number) ?? [];
+    driverItems.push(item);
+
+    if (driverItems.length > maxItemsPerDriver) {
+      driverItems.splice(0, driverItems.length - maxItemsPerDriver);
+    }
+
+    groupedItems.set(item.driver_number, driverItems);
+  }
+
+  return Array.from(groupedItems.values()).flat();
+}
+
+function compactPayloads(topic: OpenF1LiveTopic, items: OpenF1LivePayload[]) {
+  switch (topic) {
+    case 'v1/location':
+      return compactByDriverNumber(items, MAX_RECENT_LOCATION_SAMPLES_PER_DRIVER);
+    case 'v1/car_data':
+      return compactByDriverNumber(items, MAX_RECENT_CAR_SAMPLES_PER_DRIVER);
+    case 'v1/position':
+    case 'v1/intervals':
+      return compactByDriverNumber(items, 1);
+    case 'v1/race_control':
+      return items.slice(-MAX_RACE_CONTROL_MESSAGES);
+    default:
+      return items;
+  }
+}
+
+function upsertPayloads(
+  topic: OpenF1LiveTopic,
+  current: OpenF1LivePayload[],
+  payloads: OpenF1LivePayload[]
+) {
+  const next = payloads.reduce(
+    (updatedItems, payload) => upsertPayload(topic, updatedItems, payload),
+    current
+  );
+
+  return compactPayloads(topic, next);
 }
 
 function queryKeyMatchesPayload(
@@ -187,21 +282,59 @@ export function cacheOpenF1LiveMessage(
   queryClient: QueryClient,
   message: OpenF1LiveMessage
 ) {
-  const keyRoot = topicQueryKeyRoots[message.topic];
-  const sessionKey = message.payload.session_key;
-  if (!keyRoot || !sessionKey) return;
+  cacheOpenF1LiveMessages(queryClient, [message]);
+}
 
-  const queries = queryClient
-    .getQueryCache()
-    .findAll({ queryKey: [keyRoot, sessionKey] });
+export function cacheOpenF1LiveMessages(
+  queryClient: QueryClient,
+  messages: OpenF1LiveMessage[]
+) {
+  const groupedMessages = new Map<
+    string,
+    {
+      keyRoot: string;
+      sessionKey: number;
+      topic: OpenF1LiveTopic;
+      messages: OpenF1LiveMessage[];
+    }
+  >();
 
-  for (const query of queries) {
-    if (!queryKeyMatchesPayload(query.queryKey, message.payload)) continue;
+  for (const message of messages) {
+    const keyRoot = topicQueryKeyRoots[message.topic];
+    const sessionKey = message.payload.session_key;
+    if (!keyRoot || !sessionKey) continue;
 
-    queryClient.setQueryData<OpenF1LivePayload[]>(
-      query.queryKey,
-      (current = []) => upsertPayload(current, message.payload)
-    );
+    const groupKey = `${message.topic}:${sessionKey}`;
+    const group = groupedMessages.get(groupKey) ?? {
+      keyRoot,
+      sessionKey,
+      topic: message.topic,
+      messages: [],
+    };
+
+    group.messages.push(message);
+    groupedMessages.set(groupKey, group);
+  }
+
+  for (const group of groupedMessages.values()) {
+    const queries = queryClient
+      .getQueryCache()
+      .findAll({ queryKey: [group.keyRoot, group.sessionKey] });
+
+    for (const query of queries) {
+      const payloads = group.messages
+        .filter((message) =>
+          queryKeyMatchesPayload(query.queryKey, message.payload)
+        )
+        .map((message) => message.payload);
+
+      if (payloads.length === 0) continue;
+
+      queryClient.setQueryData<OpenF1LivePayload[]>(
+        query.queryKey,
+        (current = []) => upsertPayloads(group.topic, current, payloads)
+      );
+    }
   }
 }
 

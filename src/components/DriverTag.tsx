@@ -1,24 +1,32 @@
 import styled from 'styled-components';
 
-const StyledDriverTag = styled.div`
+const StyledDriverTag = styled.h5<{ $color: string }>`
   height: auto;
   width: 80px;
 
-  display: flex;
+  padding: 2px;
 
   border: 1px solid var(--color-grey-600);
-  border-radius: var(--border-radius-3xl);
+  border-radius: var(--border-radius-lg);
+  background-color: ${(props) =>
+    props.$color ? `#${props.$color}` : 'transparent'};
 
-  justify-content: center;
-  align-items: center;
-
-  padding: 2px;
+  text-align: center;
+  vertical-align: center;
 `;
 
-function DriverTag({ driverTag }: { driverTag: string }) {
+function DriverTag({
+  driverTag,
+  position,
+  color = '',
+}: {
+  driverTag: string;
+  position: number;
+  color: string;
+}) {
   return (
-    <StyledDriverTag>
-      <h5>{driverTag}</h5>
+    <StyledDriverTag $color={color}>
+      {position} {driverTag}
     </StyledDriverTag>
   );
 }

@@ -43,6 +43,7 @@ export type driverType = {
   session_key: number;
   team_colour: string;
   team_name: string;
+  position?: number;
 };
 
 export type intervalType = {
@@ -223,6 +224,10 @@ export type meetingStateType = {
 
 export type sessionStateType = {
   selectedSessionKey: number | null;
+};
+
+export type driverStateType = {
+  drivers: driverType[];
 };
 
 export type TelemetryMetric = 'speed' | 'brake' | 'gear' | 'rpm' | 'throttle';

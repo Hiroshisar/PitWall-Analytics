@@ -3,15 +3,9 @@ import { api } from '../api/telemetryApi';
 import type { lapType } from '../utils/types';
 import { getHttpStatus, notifyServiceError } from './serviceError';
 
-export async function getLaps(
-  session_key: number,
-  driver_number: number
-): Promise<lapType[]> {
+export async function getLaps(session_key: number): Promise<lapType[]> {
   try {
-    const res = await api.get(
-      `${endpoints.laps}?session_key=${session_key}&driver_number=${driver_number}`
-    );
-    console.log(res.data);
+    const res = await api.get(`${endpoints.laps}?session_key=${session_key}`);
     return res.data;
   } catch (err: unknown) {
     notifyServiceError(err, 'Unable to load laps data', 'laps-data-error');
@@ -45,14 +39,12 @@ export async function getLapsByDrivers(
       const mergedLapsData: lapType[] = [];
       let hasFallbackErrors = false;
 
-      for (const driverNumber of uniqueDriverNumbers) {
-        try {
-          const laps = await getLaps(session_key, driverNumber);
-          mergedLapsData.push(...laps);
-          await new Promise((resolve) => setTimeout(resolve, 120));
-        } catch {
-          hasFallbackErrors = true;
-        }
+      try {
+        const laps = await getLaps(session_key);
+        mergedLapsData.push(...laps);
+        await new Promise((resolve) => setTimeout(resolve, 120));
+      } catch {
+        hasFallbackErrors = true;
       }
 
       if (hasFallbackErrors && mergedLapsData.length === 0) {

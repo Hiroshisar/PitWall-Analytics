@@ -1,7 +1,7 @@
 function DriverSector() {
   return (
     <>
-      <div>DriverSector</div>
+      <div>DriverMiniSector</div>
     </>
   );
 }

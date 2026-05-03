@@ -1,15 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import type {
-  DriverLocationSeries,
-  LocationSeriesPoint,
-  locationType,
-  meetingType,
-} from '../utils/types';
+import type { locationType, meetingType } from '../utils/types';
 import { normalizeHexColor } from '../utils/helpers';
 import { queryClient } from '../hooks/queryClient';
-import { getLocationsByDrivers } from '../services/locationService';
 import { useQuery } from '@tanstack/react-query';
-import Spinner from '../ui/Spinner';
 import { useFetchDrivers } from '../hooks/useFetchDriver';
 
 const fallbackColors = [
@@ -26,9 +19,10 @@ const fallbackColors = [
 const circuitImageRotationDeg = 0;
 const originalCircuitImageWidth = 960;
 const originalCircuitImageHeight = 720;
-const mapHeight = 500;
+const mapHeight = 720;
 const markerRadius = 5;
 const markerStrokeWidth = 2;
+const minCoordinateRange = 1_000;
 
 type ImageSize = {
   width: number;
@@ -89,7 +83,7 @@ function getRenderedMapWidth(imageSize: ImageSize | null) {
 }
 
 function getMarkerPosition(
-  point: LocationSeriesPoint,
+  point: Pick<locationType, 'x' | 'y'>,
   coordinateBounds: CoordinateBounds,
   width: number,
   height: number
@@ -103,6 +97,20 @@ function getMarkerPosition(
   };
 }
 
+function expandCoordinateBounds(bounds: CoordinateBounds): CoordinateBounds {
+  const xRange = bounds.maxX - bounds.minX;
+  const yRange = bounds.maxY - bounds.minY;
+  const xPadding = Math.max(0, minCoordinateRange - xRange) / 2;
+  const yPadding = Math.max(0, minCoordinateRange - yRange) / 2;
+
+  return {
+    minX: bounds.minX - xPadding,
+    maxX: bounds.maxX + xPadding,
+    minY: bounds.minY - yPadding,
+    maxY: bounds.maxY + yPadding,
+  };
+}
+
 function Map({ sessionKey }: { sessionKey: number }) {
   const { data: drivers } = useFetchDrivers(sessionKey);
 
@@ -113,114 +121,112 @@ function Map({ sessionKey }: { sessionKey: number }) {
     ]) ?? [];
 
   const circuitImage: string =
-    meetings[meetings.length - 1].circuit_image ?? '';
+    meetings[meetings.length - 1]?.circuit_image ?? '';
 
   const circuitImageSize = useImageSize(circuitImage);
   const width = getRenderedMapWidth(circuitImageSize);
   const height = mapHeight;
 
-  const driversNumbers = drivers?.map((driver) => driver.driver_number) ?? [];
+  const driversNumbers = useMemo(
+    () =>
+      (drivers ?? [])
+        .map((driver) => driver.driver_number)
+        .filter((driverNumber) => driverNumber > 0)
+        .sort((a, b) => a - b),
+    [drivers]
+  );
 
-  const {
-    data: locationByDriverData,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data: locationSamples = [] } = useQuery<locationType[]>({
     queryKey: ['locations', sessionKey, driversNumbers],
-    queryFn: () => getLocationsByDrivers(sessionKey ?? 0, driversNumbers),
-    enabled: (sessionKey ?? 0) > 0 && driversNumbers.length > 0,
+    queryFn: async () => [],
+    enabled: false,
+    initialData: [],
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   });
 
-  const locationData = useMemo<DriverLocationSeries[]>(() => {
-    const groupedLocations: Record<number, locationType[]> = {};
+  const latestLocationByDriverNumber = useMemo(() => {
+    const latestLocations = new globalThis.Map<number, locationType>();
 
-    for (const locationSample of locationByDriverData ?? []) {
-      if (!groupedLocations[locationSample.driver_number]) {
-        groupedLocations[locationSample.driver_number] = [];
+    for (const locationSample of locationSamples) {
+      const currentLocation = latestLocations.get(
+        locationSample.driver_number
+      );
+
+      if (
+        !currentLocation ||
+        new Date(locationSample.date).getTime() >=
+          new Date(currentLocation.date).getTime()
+      ) {
+        latestLocations.set(locationSample.driver_number, locationSample);
       }
-      groupedLocations[locationSample.driver_number].push(locationSample);
     }
 
-    return (drivers ?? []).map((driver, index) => {
-      const driverLocationData =
-        [...(groupedLocations[driver.driver_number] ?? [])].sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-        ) ?? [];
+    return latestLocations;
+  }, [locationSamples]);
 
-      const firstSampleTime = new Date(
-        driverLocationData[0]?.date ?? ''
-      ).getTime();
+  const currentCoordinateBounds = useMemo<CoordinateBounds | null>(() => {
+    const validLocations = locationSamples.filter(
+      (locationSample) =>
+        Number.isFinite(locationSample.x) && Number.isFinite(locationSample.y)
+    );
 
-      const points = driverLocationData.map((location) => {
-        const locationTime = new Date(location.date).getTime();
-        const lapTimeSec = Number.isFinite(firstSampleTime)
-          ? (locationTime - firstSampleTime) / 1000
-          : 0;
-        return {
-          lapTimeSec: Math.max(0, lapTimeSec),
-          x: location.x,
-          y: location.y,
-          z: location.z,
-        };
-      });
+    if (validLocations.length === 0) return null;
+
+    const bounds = validLocations.reduce<CoordinateBounds>(
+      (bounds, locationSample) => ({
+        minX: Math.min(bounds.minX, locationSample.x),
+        maxX: Math.max(bounds.maxX, locationSample.x),
+        minY: Math.min(bounds.minY, locationSample.y),
+        maxY: Math.max(bounds.maxY, locationSample.y),
+      }),
+      {
+        minX: validLocations[0].x,
+        maxX: validLocations[0].x,
+        minY: validLocations[0].y,
+        maxY: validLocations[0].y,
+      }
+    );
+
+    return expandCoordinateBounds(bounds);
+  }, [locationSamples]);
+
+  const driverPositions = useMemo(() => {
+    if (!currentCoordinateBounds) return [];
+
+    return (drivers ?? []).flatMap((driver, index) => {
+      const latestLocation = latestLocationByDriverNumber.get(
+        driver.driver_number
+      );
+      if (!latestLocation) return [];
 
       const teamColor =
         normalizeHexColor(driver.team_colour) ??
         fallbackColors[index % fallbackColors.length];
 
-      return {
-        driver,
-        color: teamColor,
-        points,
-      };
-    });
-  }, [locationByDriverData, drivers]);
-
-  const coordinateBounds = useMemo<CoordinateBounds | null>(() => {
-    const points = locationData.flatMap((driverSeries) => driverSeries.points);
-    if (points.length === 0) return null;
-
-    return points.reduce<CoordinateBounds>(
-      (bounds, point) => ({
-        minX: Math.min(bounds.minX, point.x),
-        maxX: Math.max(bounds.maxX, point.x),
-        minY: Math.min(bounds.minY, point.y),
-        maxY: Math.max(bounds.maxY, point.y),
-      }),
-      {
-        minX: points[0].x,
-        maxX: points[0].x,
-        minY: points[0].y,
-        maxY: points[0].y,
-      }
-    );
-  }, [locationData]);
-
-  const driverPositions = useMemo(() => {
-    if (!coordinateBounds) return [];
-
-    return locationData.flatMap((driverSeries) => {
-      const lastPoint = driverSeries.points[driverSeries.points.length - 1];
-      if (!lastPoint) return [];
-
       return [
         {
-          driver: driverSeries.driver,
-          color: driverSeries.color,
+          driver,
+          color: teamColor,
           position: getMarkerPosition(
-            lastPoint,
-            coordinateBounds,
+            latestLocation,
+            currentCoordinateBounds,
             width,
             height
           ),
         },
       ];
     });
-  }, [coordinateBounds, height, locationData, width]);
+  }, [
+    currentCoordinateBounds,
+    drivers,
+    height,
+    latestLocationByDriverNumber,
+    width,
+  ]);
 
-  if (!meetings) return [];
-  if (isLoading) return <Spinner />;
-  if (isError) return <div>Alcuni dati non sono disponibili al momento.</div>;
   return (
     <svg
       width="100%"

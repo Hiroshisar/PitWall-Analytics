@@ -166,9 +166,10 @@ export const StyledSidebar = styled.div`
 
 export const StyledLivePage = styled.div`
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
   row-gap: 5px;
   width: 100%;
+  height: 100%;
   min-height: 100%;
   box-sizing: border-box;
 `;
@@ -177,28 +178,55 @@ export const LivePageRow = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
+  align-items: stretch;
   justify-content: space-evenly;
   padding: 2px;
   gap: 10px;
+  width: 100%;
+  min-height: 0;
+  box-sizing: border-box;
 `;
 
 export const LivePageCenter = styled.div`
   display: grid;
-  grid-template-columns: 1fr 4fr;
+  grid-template-columns: 2fr 4fr;
   column-gap: 5px;
   padding: 1rem;
   width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
 `;
 
 export const LivePageColumn = styled.div`
   display: flex;
   flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: space-evenly;
   padding: 2px;
   gap: 10px;
   width: 100%;
   box-sizing: border-box;
+`;
+
+export const LivePageGridColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-self: stretch;
+  padding: 2px;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+
+  & > * {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+  }
 `;
 
 export const DriversListContainer = styled.div`
@@ -237,9 +265,21 @@ export const ColoredCircle = styled.div<{ $color: string }>`
   border: 1px solid white;
   border-radius: 50%;
   background-color: #${(props) => props.$color};
-  height: 1.2rem;
-  width: 1.2rem;
+  height: 2rem;
+  width: 2rem;
   margin-right: 1rem;
+  color: var(--color-grey-300);
+`;
+
+export const TyresCircle = styled.div<{ $color: string }>`
+  border: 1px solid white;
+  border-radius: 50%;
+  background-color: #${(props) => props.$color};
+  height: 2rem;
+  width: 2rem;
+  margin-right: 1rem;
+  text-align: center;
+  color: var(--color-grey-300);
 `;
 
 export const StyledDriverMain = styled.div<{ $selected: boolean }>`

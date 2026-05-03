@@ -1,64 +1,130 @@
 import styled from 'styled-components';
 import DriverTag from './DriverTag';
-import DriverSector from './DriverSector';
-import DriverTime from './DriverTime';
-import Drs from './Drs';
-import type { driverType } from '../utils/types';
+import DriverCurrentLap from './DriverCurrentLap';
+import DriverLastLap from './DriverLastLap';
+import type {
+  driverType,
+  intervalType,
+  lapType,
+  pitType,
+  stintType,
+} from '../utils/types';
+import DriverBestLap from './DriverBestLap.tsx';
+import Interval from './Interval.tsx';
+import Pit from './Pit.tsx';
+import Tyres from './Tyres.tsx';
 
-const StyledPosition = styled.div`
-  max-height: 80px;
+const StyledNotRacePosition = styled.div`
+  height: 40px;
   width: 100%;
+  box-sizing: border-box;
 
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr 2fr;
 
   justify-content: center;
   align-items: center;
 
   border: 1px solid var(--color-grey-600);
-  border-radius: var(--border-radius-3xl);
+  border-radius: var(--border-radius-lg);
 
-  padding-left: 5px;
-  padding-top: 2.5px;
+  padding: 2px;
+`;
+
+const StyledRacePosition = styled.div`
+  height: 40px;
+  width: 100%;
+  box-sizing: border-box;
+
+  display: grid;
+  grid-template-columns: 2fr 2fr 3fr 3fr 1fr 1fr;
+
+  justify-content: center;
+  align-items: center;
+
+  border: 1px solid var(--color-grey-600);
+  border-radius: var(--border-radius-lg);
+
+  padding: 2px;
+`;
+
+const StyledBestAndLastLap = styled.div`
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  align-items: center;
+
+  padding-left: 2px;
 `;
 
 function Position({
-  sessionKey,
+  isRace,
   driver,
+  laps,
+  pits,
+  stints,
+  intervals,
 }: {
-  sessionKey: number;
+  isRace: boolean;
   driver: driverType;
+  laps: lapType[];
+  pits: pitType[];
+  stints: stintType[];
+  intervals: intervalType[];
 }) {
+  // TODO rimuovere questo check
+  isRace = true;
   return (
-    <StyledPosition>
-      <div>
-        <div
-          style={{
-            border: '1px solid var(--color-grey-400)',
-            borderRadius: 'var(--border-radius-3xl)',
-          }}
-        >
-          <DriverTag driverTag={driver.name_acronym} />
-        </div>
-        <div
-          style={{
-            height: 'auto',
-            alignItems: 'center',
-            textAlign: 'center',
-          }}
-        >
-          <Drs sessionKey={sessionKey} driver={driver} />
-        </div>
-      </div>
-      <div style={{ border: '1px solid white' }}>
-        <div style={{ border: '1px solid white' }}>
-          <DriverTime />
-        </div>
-        <div style={{ border: '1px solid white' }}>
-          <DriverSector />
-        </div>
-      </div>
-    </StyledPosition>
+    <>
+      {isRace ? (
+        <StyledRacePosition>
+          <DriverTag
+            driverTag={driver.name_acronym}
+            position={driver.position ?? 0}
+            color={driver.team_colour}
+          />
+          <div>
+            <h5>inter</h5>
+            <Interval intervals={intervals} />
+          </div>
+          <div>
+            <h5>Last</h5>
+            <DriverLastLap laps={laps} />
+          </div>
+          <div>
+            <h5>Best</h5>
+            <DriverBestLap laps={laps} />
+          </div>
+          <div>
+            <h5>pit</h5>
+            <Pit pits={pits} />
+          </div>
+          <div>
+            <Tyres stints={stints} />
+          </div>
+        </StyledRacePosition>
+      ) : (
+        <StyledNotRacePosition>
+          <DriverTag
+            driverTag={driver.name_acronym}
+            position={driver.position ?? 0}
+            color={driver.team_colour}
+          />
+          <StyledBestAndLastLap>
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+              <h5>Last:</h5>
+              <DriverLastLap laps={laps} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+              <h5>Best:</h5>
+              <DriverBestLap laps={laps} />
+            </div>
+          </StyledBestAndLastLap>
+          <DriverCurrentLap laps={laps} />
+        </StyledNotRacePosition>
+      )}
+    </>
   );
 }
 
