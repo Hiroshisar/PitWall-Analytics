@@ -15,6 +15,7 @@ import { useFetchLaps } from '../hooks/useFetchLaps.ts';
 import { useFetchPit } from '../hooks/useFetchPit.ts';
 import { useFetchStints } from '../hooks/useFetchStints.ts';
 import { useFetchIntervals } from '../hooks/useFetchIntervals.ts';
+import { StyledRacePositionTags } from '../style/styles.ts';
 
 const StyledSessionGridContainer = styled.div`
   display: grid;
@@ -116,6 +117,14 @@ function SessionGrid({ session }: { session: sessionType }) {
 
   return (
     <StyledSessionGridContainer>
+      <StyledRacePositionTags>
+        <h5 style={{ paddingLeft: '1rem' }}>Driver</h5>
+        <h5>Inter</h5>
+        <h5>Last</h5>
+        <h5>Best</h5>
+        <h5>Pits</h5>
+        <h5>Tyre</h5>
+      </StyledRacePositionTags>
       {updatedDriversList.map((driver) => (
         <Position
           key={driver.driver_number}

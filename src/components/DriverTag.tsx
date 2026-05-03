@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const StyledDriverTag = styled.h5<{ $color: string }>`
-  height: auto;
+  height: 100%;
   width: 80px;
 
   padding: 2px;
@@ -12,6 +12,7 @@ const StyledDriverTag = styled.h5<{ $color: string }>`
     props.$color ? `#${props.$color}` : 'transparent'};
 
   text-align: center;
+  align-content: center;
   vertical-align: center;
 `;
 

@@ -136,7 +136,10 @@ function Live() {
               </LivePageGridColumn>
               <LivePageColumn>
                 <LivePageRow>
-                  <Map sessionKey={selectedSessionKey ?? 0} />
+                  <Map
+                    key={selectedSessionKey ?? 0}
+                    sessionKey={selectedSessionKey ?? 0}
+                  />
                 </LivePageRow>
                 <LivePageRow>
                   <RaceControl sessionKey={selectedSessionKey ?? 0} />

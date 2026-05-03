@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import type { locationType, meetingType } from '../utils/types';
 import { normalizeHexColor } from '../utils/helpers';
 import { queryClient } from '../hooks/queryClient';
-import { useQuery } from '@tanstack/react-query';
 import { useFetchDrivers } from '../hooks/useFetchDriver';
 
 const fallbackColors = [
@@ -23,6 +22,8 @@ const mapHeight = 720;
 const markerRadius = 5;
 const markerStrokeWidth = 2;
 const minCoordinateRange = 1_000;
+const mapUpdateRateHz = 3.7;
+const mapUpdateIntervalMs = Math.round(1000 / mapUpdateRateHz);
 
 type ImageSize = {
   width: number;
@@ -113,6 +114,7 @@ function expandCoordinateBounds(bounds: CoordinateBounds): CoordinateBounds {
 
 function Map({ sessionKey }: { sessionKey: number }) {
   const { data: drivers } = useFetchDrivers(sessionKey);
+  const [locationSamples, setLocationSamples] = useState<locationType[]>([]);
 
   const meetings =
     queryClient.getQueryData<meetingType[]>([
@@ -136,16 +138,25 @@ function Map({ sessionKey }: { sessionKey: number }) {
     [drivers]
   );
 
-  const { data: locationSamples = [] } = useQuery<locationType[]>({
-    queryKey: ['locations', sessionKey, driversNumbers],
-    queryFn: async () => [],
-    enabled: false,
-    initialData: [],
-    staleTime: Infinity,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-  });
+  const locationQueryKey = useMemo(
+    () => ['locations', sessionKey, driversNumbers] as const,
+    [driversNumbers, sessionKey]
+  );
+
+  useEffect(() => {
+    queryClient.setQueryData<locationType[]>(
+      locationQueryKey,
+      (current) => current ?? []
+    );
+
+    const intervalId = window.setInterval(() => {
+      setLocationSamples(
+        queryClient.getQueryData<locationType[]>(locationQueryKey) ?? []
+      );
+    }, mapUpdateIntervalMs);
+
+    return () => window.clearInterval(intervalId);
+  }, [locationQueryKey]);
 
   const latestLocationByDriverNumber = useMemo(() => {
     const latestLocations = new globalThis.Map<number, locationType>();

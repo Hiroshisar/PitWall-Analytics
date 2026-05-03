@@ -5,17 +5,12 @@ function Interval({ intervals }: { intervals: intervalType[] }) {
 
   const lastInterval = intervals[intervals.length - 1];
 
+  const isLeader = lastInterval.interval <= 0;
+
   if (!lastInterval) return;
   return (
     <div>
-      <div>
-        <h5>
-          ldr: {lastInterval.gap_to_leader ? lastInterval.gap_to_leader : '-'}
-        </h5>
-      </div>
-      <div>
-        <h5>nxt: {lastInterval.interval}</h5>
-      </div>
+      <h5>{isLeader ? '-' : `+ ${lastInterval.interval}`}</h5>
     </div>
   );
 }

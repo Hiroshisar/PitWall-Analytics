@@ -208,6 +208,40 @@ export const LivePageColumn = styled.div`
   box-sizing: border-box;
 `;
 
+export const StyledRacePosition = styled.div`
+  height: 40px;
+  width: 100%;
+  box-sizing: border-box;
+
+  display: grid;
+  grid-template-columns: 2fr 2fr 3fr 3fr 1fr 1fr;
+
+  justify-content: center;
+  align-items: center;
+
+  border: 1px solid var(--color-grey-600);
+  border-radius: var(--border-radius-lg);
+
+  padding: 1px;
+`;
+
+export const StyledRacePositionTags = styled.div`
+  height: 40px;
+  width: 100%;
+  box-sizing: border-box;
+
+  display: grid;
+  grid-template-columns: 2fr 2fr 3fr 3fr 1fr 1fr;
+
+  justify-content: center;
+  align-items: center;
+
+  border: 1px solid var(--color-grey-600);
+  border-radius: var(--border-radius-lg);
+
+  padding: 1px;
+`;
+
 export const LivePageGridColumn = styled.div`
   display: flex;
   flex-direction: column;

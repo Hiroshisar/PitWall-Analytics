@@ -32,7 +32,7 @@ export function checkIfIsLiveSession(
 ): boolean {
   const liveSessionGracePeriodMs = 20 * 60 * 1000;
   const now = new Date().getTime();
-  const start = new Date(dateStart).getTime();
+  const start = new Date(dateStart).getTime() + liveSessionGracePeriodMs;
   const end = new Date(dateEnd).getTime() + liveSessionGracePeriodMs;
 
   return now >= start && now <= end;

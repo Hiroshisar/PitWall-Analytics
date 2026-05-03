@@ -30,9 +30,17 @@ function Tyres({ stints }: { stints: stintType[] }) {
   }
 
   return (
-    <TyresCircle $color={color ?? 'transparent'}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: '2px',
+      }}
+    >
       <h5>{lastStint.tyre_age_at_start}</h5>
-    </TyresCircle>
+      <TyresCircle $color={color ?? 'transparent'} />
+    </div>
   );
 }
 

@@ -13,6 +13,7 @@ import DriverBestLap from './DriverBestLap.tsx';
 import Interval from './Interval.tsx';
 import Pit from './Pit.tsx';
 import Tyres from './Tyres.tsx';
+import { StyledRacePosition } from '../style/styles.ts';
 
 const StyledNotRacePosition = styled.div`
   height: 40px;
@@ -21,23 +22,6 @@ const StyledNotRacePosition = styled.div`
 
   display: grid;
   grid-template-columns: auto 1fr 2fr;
-
-  justify-content: center;
-  align-items: center;
-
-  border: 1px solid var(--color-grey-600);
-  border-radius: var(--border-radius-lg);
-
-  padding: 2px;
-`;
-
-const StyledRacePosition = styled.div`
-  height: 40px;
-  width: 100%;
-  box-sizing: border-box;
-
-  display: grid;
-  grid-template-columns: 2fr 2fr 3fr 3fr 1fr 1fr;
 
   justify-content: center;
   align-items: center;
@@ -74,7 +58,7 @@ function Position({
   intervals: intervalType[];
 }) {
   // TODO rimuovere questo check
-  isRace = true;
+  //isRace = true;
   return (
     <>
       {isRace ? (
@@ -84,25 +68,16 @@ function Position({
             position={driver.position ?? 0}
             color={driver.team_colour}
           />
-          <div>
-            <h5>inter</h5>
-            <Interval intervals={intervals} />
-          </div>
-          <div>
-            <h5>Last</h5>
-            <DriverLastLap laps={laps} />
-          </div>
-          <div>
-            <h5>Best</h5>
-            <DriverBestLap laps={laps} />
-          </div>
-          <div>
-            <h5>pit</h5>
-            <Pit pits={pits} />
-          </div>
-          <div>
-            <Tyres stints={stints} />
-          </div>
+
+          <Interval intervals={intervals} />
+
+          <DriverLastLap laps={laps} />
+
+          <DriverBestLap laps={laps} />
+
+          <Pit pits={pits} />
+
+          <Tyres stints={stints} />
         </StyledRacePosition>
       ) : (
         <StyledNotRacePosition>
