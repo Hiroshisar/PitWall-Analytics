@@ -34,8 +34,7 @@ function DriversList({
   type = 'main',
   onOpen,
 }: DriversListProps) {
-  const [tempDrivers, setTempDrivers] =
-    useState<driverType[]>(selectedDrivers);
+  const [tempDrivers, setTempDrivers] = useState<driverType[]>(selectedDrivers);
   const canSelectDrivers = Boolean(onSelect);
 
   useEffect(() => {
@@ -79,6 +78,23 @@ function DriversList({
       setTempDrivers(filteredList);
       onSelect(filteredList);
     }
+  };
+
+  const handleColorChange = (driverNumber: number, color: string) => {
+    const updatedDrivers = drivers.map((driver) =>
+      driver.driver_number === driverNumber
+        ? { ...driver, team_colour: color }
+        : driver
+    );
+
+    setTempDrivers((currentDrivers) =>
+      currentDrivers.map((driver) =>
+        driver.driver_number === driverNumber
+          ? { ...driver, team_colour: color }
+          : driver
+      )
+    );
+    onSelect(updatedDrivers);
   };
 
   const sortedDrivers = useMemo(() => {
@@ -129,6 +145,7 @@ function DriversList({
                             )}
                             type={type}
                             onRemove={handleRemoveDriver}
+                            onColorChange={handleColorChange}
                           />
                         </DriverListItem>
                       </>

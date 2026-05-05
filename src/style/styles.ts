@@ -301,11 +301,24 @@ export const StyledDriversGrid = styled.div<{ $variant: DriversListVariant }>`
 export const ColoredCircle = styled.div<{ $color: string }>`
   border: 1px solid white;
   border-radius: 50%;
-  background-color: #${(props) => props.$color};
+  background-color: ${(props) =>
+    props.$color.startsWith('#') ? props.$color : `#${props.$color}`};
   height: 2rem;
   width: 2rem;
   margin-right: 1rem;
   color: var(--color-grey-300);
+  cursor: pointer;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  input {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
 `;
 
 export const TyresCircle = styled.div<{ $color: string }>`
@@ -320,7 +333,7 @@ export const TyresCircle = styled.div<{ $color: string }>`
 `;
 
 export const StyledDriverMain = styled.div<{ $selected: boolean }>`
-  ${driverCardBase}
+  ${driverCardBase};
 
   min-width: 10rem;
   width: 35rem;
@@ -342,7 +355,7 @@ export const StyledDriverMain = styled.div<{ $selected: boolean }>`
 `;
 
 export const StyledDriverSecondary = styled.div`
-  ${driverCardBase}
+  ${driverCardBase};
 
   min-width: 14.5rem;
   position: relative;
@@ -400,7 +413,7 @@ export const StyledDriverSecondary = styled.div`
 `;
 
 export const StyledCloseButton = styled.button`
-  ${driverCardBase}
+  ${driverCardBase};
 
   min-width: 10rem;
   height: 4rem;
@@ -421,7 +434,7 @@ export const StyledCloseButton = styled.button`
 `;
 
 export const AddDriverButton = styled.div`
-  ${driverCardBase}
+  ${driverCardBase};
 
   min-width: 14.5rem;
   position: relative;

@@ -161,13 +161,19 @@ function CustomTelemetryTooltip({
   return (
     <div
       style={{
-        background: '#ffffff',
+        background: 'var(--color-grey-200)',
         border: '1px solid #d1d5db',
         borderRadius: '8px',
         padding: '8px 10px',
       }}
     >
-      <div style={{ marginBottom: '6px', fontWeight: 600 }}>
+      <div
+        style={{
+          marginBottom: '6px',
+          fontWeight: 600,
+          color: 'var(--color-grey-500)',
+        }}
+      >
         Lap time: {formatLapTime(lapTimeSec)}
       </div>
       {telemetryData.map((driverSeries) => {
