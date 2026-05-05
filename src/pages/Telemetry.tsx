@@ -155,7 +155,7 @@ function Telemetry() {
   if (!selectedSessions) return;
 
   if (isLoadingDrivers || isLoadingLaps) return <Spinner />;
-  // TODO Quando si selezionano i piloti, deve apparire il confronto tra i giri più veloci, non un giro specifico o vuoto
+
   return (
     <StyledTelemetryPage>
       {(isLoadingCars || isLoadingDrivers) && <Spinner />}

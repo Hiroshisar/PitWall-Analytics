@@ -9,9 +9,10 @@ export function useFetchAllSessions(meeting_key: number) {
   });
 }
 
-export function useFetchNextSession() {
+export function useFetchNextSession(enabled = true) {
   return useQuery({
     queryKey: ['next_session'],
     queryFn: () => getNextSession(),
+    enabled,
   });
 }

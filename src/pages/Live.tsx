@@ -10,6 +10,7 @@ import {
 import type { RootState } from '../store/store';
 import type { sessionType } from '../utils/types';
 import {
+  LiveCountdownPanel,
   LivePageRow,
   StyledLivePage,
   LivePageCenter,
@@ -25,6 +26,7 @@ import SessionGrid from '../components/SessionGrid.tsx';
 import RaceControl from '../components/RaceControl.tsx';
 import Map from '../components/Map.tsx';
 import { checkIfIsLiveSession } from '../utils/helpers.ts';
+import { useFetchRaceControl } from '../hooks/useFetchRaceControl.ts';
 
 const LIVE_PAGE_TOPICS: readonly OpenF1LiveTopic[] = [
   'v1/intervals',
@@ -54,11 +56,20 @@ function Live() {
     (s) => s.session_key === selectedSessionKey
   );
 
+  const isLive = selectedSession
+    ? checkIfIsLiveSession(selectedSession.date_start, selectedSession.date_end)
+    : false;
+  const liveMeetingKey = selectedSession?.meeting_key ?? null;
+
   const { data: nextSession, isLoading: isLoadingNextSession } =
-    useFetchNextSession();
+    useFetchNextSession(!isLive);
+
+  const { data: raceControl = [] } = useFetchRaceControl(
+    isLive ? (selectedSessionKey ?? 0) : 0
+  );
 
   useEffect(() => {
-    if (!selectedSessionKey) return;
+    if (!isLive || !liveMeetingKey || !selectedSessionKey) return;
 
     let isCancelled = false;
     let liveConnection: OpenF1LiveConnection | null = null;
@@ -84,7 +95,7 @@ function Live() {
 
     connectOpenF1LiveWebSocket({
       topics: LIVE_PAGE_TOPICS,
-      meetingKey: selectedMeetingKey,
+      meetingKey: liveMeetingKey,
       sessionKey: selectedSessionKey,
       onMessage: (message) => {
         pendingMessages.push(message);
@@ -112,16 +123,9 @@ function Live() {
       if (flushTimer) window.clearTimeout(flushTimer);
       liveConnection?.close();
     };
-  }, [selectedMeetingKey, selectedSessionKey]);
+  }, [isLive, liveMeetingKey, selectedSessionKey]);
 
   if (!selectedSession) return;
-
-  const isLive = checkIfIsLiveSession(
-    selectedSession?.date_start,
-    selectedSession?.date_end
-  );
-  // TODO rimuovere questo test
-  //const isLive = true;
 
   if (isLoadingNextSession) return <Spinner />;
 
@@ -142,10 +146,11 @@ function Live() {
                   <Map
                     key={selectedSessionKey ?? 0}
                     sessionKey={selectedSessionKey ?? 0}
+                    meetingKey={selectedSession.meeting_key}
                   />
                 </LivePageRow>
                 <LivePageRow>
-                  <RaceControl sessionKey={selectedSessionKey ?? 0} />
+                  <RaceControl raceControl={raceControl} />
                 </LivePageRow>
               </LivePageColumn>
             </LivePageCenter>
@@ -157,18 +162,10 @@ function Live() {
             <Session session={nextSession ? nextSession : undefined} />
           </LivePageRow>
           <LivePageRow>
-            <div
-              style={{
-                textAlign: 'center',
-                marginTop: '15rem',
-              }}
-            >
+            <LiveCountdownPanel>
               <h1>Next session in</h1>
-              <Timer
-                dateStart={new Date().toString()}
-                dateEnd={nextSession?.date_start ?? ''}
-              />
-            </div>
+              <Timer dateEnd={nextSession?.date_start ?? ''} />
+            </LiveCountdownPanel>
           </LivePageRow>
         </StyledLivePage>
       )}

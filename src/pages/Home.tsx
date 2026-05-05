@@ -7,16 +7,8 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setSelectedMeeting } from '../store/meetingSlice';
 import { setSelectedSessionKey } from '../store/sessionSlice';
 import { Outlet, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
 import Session from '../components/Session.tsx';
-
-const StyledHomeTitleContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+import { HomeTitleContainer } from '../style/styles.ts';
 
 function Home() {
   const today = new Date();
@@ -89,9 +81,9 @@ function Home() {
         <Session />
       </div>
 
-      <StyledHomeTitleContainer>
+      <HomeTitleContainer>
         <h1>Seleziona uno strumento</h1>
-      </StyledHomeTitleContainer>
+      </HomeTitleContainer>
     </div>
   );
 }

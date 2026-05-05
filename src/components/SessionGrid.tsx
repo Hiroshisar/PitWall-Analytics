@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import { useFetchPosition } from '../hooks/useFetchPosition.ts';
 import Position from './Position.tsx';
 import type {
@@ -15,22 +14,11 @@ import { useFetchLaps } from '../hooks/useFetchLaps.ts';
 import { useFetchPit } from '../hooks/useFetchPit.ts';
 import { useFetchStints } from '../hooks/useFetchStints.ts';
 import { useFetchIntervals } from '../hooks/useFetchIntervals.ts';
-import { StyledRacePositionTags } from '../style/styles.ts';
-
-const StyledSessionGridContainer = styled.div`
-  display: grid;
-  grid-auto-rows: max-content;
-  align-content: start;
-
-  gap: 3px;
-
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  box-sizing: border-box;
-
-  overflow-y: auto;
-`;
+import {
+  RacePositionDriverHeader,
+  SessionGridContainer,
+  StyledRacePositionTags,
+} from '../style/styles.ts';
 
 function SessionGrid({ session }: { session: sessionType }) {
   const { data: sessionGrid } = useFetchPosition(session.session_key);
@@ -116,9 +104,9 @@ function SessionGrid({ session }: { session: sessionType }) {
     session.session_type === 'Race' || session.session_type === 'Sprint';
 
   return (
-    <StyledSessionGridContainer>
+    <SessionGridContainer>
       <StyledRacePositionTags>
-        <h5 style={{ paddingLeft: '1rem' }}>Driver</h5>
+        <RacePositionDriverHeader>Driver</RacePositionDriverHeader>
         <h5>Inter</h5>
         <h5>Last</h5>
         <h5>Best</h5>
@@ -136,7 +124,7 @@ function SessionGrid({ session }: { session: sessionType }) {
           intervals={intervalsByDriverNumber.get(driver.driver_number) ?? []}
         />
       ))}
-    </StyledSessionGridContainer>
+    </SessionGridContainer>
   );
 }
 

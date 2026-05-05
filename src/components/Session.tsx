@@ -2,18 +2,19 @@ import { useSelector } from 'react-redux';
 import { queryClient } from '../hooks/queryClient';
 import type { RootState } from '../store/store';
 import {
+  SessionHeader,
   SessionData,
   SessionNationAndDate,
   StyledSession,
 } from '../style/styles';
-import { formatDate } from '../utils/helpers';
+import { checkIfIsLiveSession, formatDate } from '../utils/helpers';
 import type { meetingType, sessionType } from '../utils/types';
 import Flag from './Flag';
 import Timer from './Timer';
 import Weather from '../pages/Weather';
 import { Select } from '../ui/Select.tsx';
 import { useFetchNextMeeting } from '../hooks/useFetchMeetings.ts';
-import { useLocation } from 'react-router-dom';
+import { useFetchRaceControl } from '../hooks/useFetchRaceControl.ts';
 
 function Session({
   selectedLap,
@@ -28,49 +29,68 @@ function Session({
   meeting?: meetingType;
   setSelectedLap?: (lap: number) => void;
 }) {
-  const { pathname } = useLocation();
   const selectedMeetingKey = useSelector(
     (store: RootState) => store.meeting.selectedMeetingKey
   );
   const selectedSessionKey = useSelector(
     (store: RootState) => store.session.selectedSessionKey
   );
-  if (!session)
-    session = queryClient
+
+  const selectedSession =
+    session ??
+    queryClient
       .getQueryData<sessionType[]>(['sessions', selectedMeetingKey])
       ?.find((session) => session.session_key === selectedSessionKey);
 
-  if (!meeting)
-    meeting = queryClient
-      .getQueryData<meetingType[]>(['meetings', new Date().getFullYear()])
-      ?.find((meeting) => meeting.meeting_key === selectedMeetingKey);
+  const meetings =
+    queryClient.getQueryData<meetingType[]>([
+      'meetings',
+      new Date().getFullYear(),
+    ]) ?? [];
+
+  const selectedMeeting =
+    meeting ??
+    meetings.find((meeting) => meeting.meeting_key === selectedMeetingKey);
 
   const { data: nextMeeting } = useFetchNextMeeting(
-    meeting ? meeting.date_end : ''
+    selectedMeeting?.date_end ?? ''
   );
 
-  if (!session) return null;
-  const islive = true; //checkIfIsLiveSession(session.date_start, session.date_end);
+  const sessionMeeting =
+    meeting ??
+    meetings.find(
+      (meeting) => meeting.meeting_key === selectedSession?.meeting_key
+    ) ??
+    (nextMeeting?.meeting_key === selectedSession?.meeting_key
+      ? nextMeeting
+      : undefined) ??
+    selectedMeeting;
+
+  const sessionKey = selectedSession?.session_key ?? 0;
+  const { data: raceControl = [] } = useFetchRaceControl(sessionKey);
+
+  if (!selectedSession) return null;
+
+  const isLive = checkIfIsLiveSession(
+    selectedSession.date_start,
+    selectedSession.date_end
+  );
 
   return (
-    <StyledSession $islive={islive}>
+    <StyledSession $islive={isLive}>
       <SessionNationAndDate>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <h1>{session.circuit_short_name}</h1>
+        <SessionHeader>
+          <h1>{selectedSession.circuit_short_name}</h1>
           <img
-            src={
-              pathname === '/telemetry'
-                ? meeting?.country_flag
-                : nextMeeting?.country_flag
-            }
+            src={sessionMeeting?.country_flag}
             alt="country flag"
             width={25}
           />
-        </div>
-        <h4>{formatDate(session.date_start)}</h4>
+        </SessionHeader>
+        <h4>{formatDate(selectedSession.date_start)}</h4>
       </SessionNationAndDate>
       <SessionData>
-        <h2>{session.session_name}</h2>
+        <h2>{selectedSession.session_name}</h2>
         {maxNumberOfLaps && selectedLap !== undefined ? (
           <h3>
             Giro{' '}
@@ -82,19 +102,16 @@ function Session({
           </h3>
         ) : null}{' '}
       </SessionData>
-      {islive ? (
+      {isLive ? (
         <>
           <div>
-            <Timer
-              dateStart={new Date().toString()}
-              dateEnd={session.date_end}
-            />
+            <Timer dateEnd={selectedSession.date_end} />
           </div>
           <div>
             <Weather />
           </div>
           <div>
-            <Flag />
+            <Flag race_control={raceControl[raceControl.length - 1] ?? {}} />
           </div>
         </>
       ) : null}

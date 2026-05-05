@@ -16,6 +16,11 @@ import type {
   TelemetryMetric,
 } from '../utils/types';
 import { formatLapTime, normalizeHexColor } from '../utils/helpers';
+import {
+  ChartTooltip,
+  ChartTooltipTitle,
+  ChartTooltipValue,
+} from '../style/styles.ts';
 
 const fallbackColors = [
   '#4f46e5',
@@ -159,23 +164,10 @@ function CustomTelemetryTooltip({
   if (!Number.isFinite(lapTimeSec)) return null;
 
   return (
-    <div
-      style={{
-        background: 'var(--color-grey-200)',
-        border: '1px solid #d1d5db',
-        borderRadius: '8px',
-        padding: '8px 10px',
-      }}
-    >
-      <div
-        style={{
-          marginBottom: '6px',
-          fontWeight: 600,
-          color: 'var(--color-grey-500)',
-        }}
-      >
+    <ChartTooltip>
+      <ChartTooltipTitle>
         Lap time: {formatLapTime(lapTimeSec)}
-      </div>
+      </ChartTooltipTitle>
       {telemetryData.map((driverSeries) => {
         const value = getTelemetryValueAtTime(
           driverSeries.points,
@@ -184,16 +176,16 @@ function CustomTelemetryTooltip({
         );
 
         return (
-          <div
+          <ChartTooltipValue
             key={driverSeries.driver.driver_number}
-            style={{ color: driverSeries.color, lineHeight: 1.4 }}
+            $color={driverSeries.color}
           >
             {driverSeries.driver.name_acronym}{' '}
             {value === null ? 'N/D' : metricConfig.formatValue(value)}
-          </div>
+          </ChartTooltipValue>
         );
       })}
-    </div>
+    </ChartTooltip>
   );
 }
 

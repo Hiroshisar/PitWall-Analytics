@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
+import { LogoImage } from '../style/styles.ts';
 
 export function Logo({ redirect }: { redirect: string }) {
   return (
     <Link to={redirect}>
-      <img src="/logo.png" alt="Logo" style={{ width: '100%' }} />
+      <LogoImage src="/logo.png" alt="Logo" />
     </Link>
   );
 }

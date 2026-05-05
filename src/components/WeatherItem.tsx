@@ -1,35 +1,33 @@
-import type { weatherType } from '../utils/types.ts';
-import { RiArrowRightLongFill, RiSunLine } from 'react-icons/ri';
 import { BsCloudRainHeavy } from 'react-icons/bs';
+import { RiArrowRightLongFill, RiSunLine } from 'react-icons/ri';
+import {
+  WeatherIcon,
+  WeatherItemContainer,
+  WeatherWindDirection,
+  WeatherWindRow,
+} from '../style/styles.ts';
+import type { weatherType } from '../utils/types.ts';
 
 function WeatherItem({ data }: { data: weatherType }) {
   const directionDegrees = data.wind_direction;
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
-      {data.rainfall === 0 ? (
-        <RiSunLine style={{ height: '40px', width: '40px' }} />
-      ) : (
-        <BsCloudRainHeavy style={{ height: '40px', width: '40px' }} />
-      )}
+    <WeatherItemContainer>
+      <WeatherIcon>
+        {data.rainfall === 0 ? <RiSunLine /> : <BsCloudRainHeavy />}
+      </WeatherIcon>
       <div>
         <h4>{`Air ${data.air_temperature}°`}</h4>
         <h4>{`Track ${data.track_temperature}°`}</h4>
-        <h4 style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <WeatherWindRow>
           {`Wind ${data.wind_speed} m/s`}
-          <span>
-            <RiArrowRightLongFill
-              style={{
-                transform: `rotate(${directionDegrees}deg)`,
-                marginLeft: '1rem',
-                marginRight: '1rem',
-              }}
-            />
+          <WeatherWindDirection $degrees={directionDegrees}>
+            <RiArrowRightLongFill />
             {`${setDirectionString(directionDegrees)}`}
-          </span>
-        </h4>
+          </WeatherWindDirection>
+        </WeatherWindRow>
       </div>
-    </div>
+    </WeatherItemContainer>
   );
 }
 

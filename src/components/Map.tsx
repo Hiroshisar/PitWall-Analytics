@@ -3,6 +3,7 @@ import type { locationType, meetingType } from '../utils/types';
 import { normalizeHexColor } from '../utils/helpers';
 import { queryClient } from '../hooks/queryClient';
 import { useFetchDrivers } from '../hooks/useFetchDriver';
+import { SvgMap } from '../style/styles.ts';
 
 const fallbackColors = [
   '#4f46e5',
@@ -112,7 +113,13 @@ function expandCoordinateBounds(bounds: CoordinateBounds): CoordinateBounds {
   };
 }
 
-function Map({ sessionKey }: { sessionKey: number }) {
+function Map({
+  sessionKey,
+  meetingKey,
+}: {
+  sessionKey: number;
+  meetingKey: number;
+}) {
   const { data: drivers } = useFetchDrivers(sessionKey);
   const [locationSamples, setLocationSamples] = useState<locationType[]>([]);
 
@@ -123,7 +130,8 @@ function Map({ sessionKey }: { sessionKey: number }) {
     ]) ?? [];
 
   const circuitImage: string =
-    meetings[meetings.length - 1]?.circuit_image ?? '';
+    meetings.find((meeting) => meeting.meeting_key === meetingKey)
+      ?.circuit_image ?? '';
 
   const circuitImageSize = useImageSize(circuitImage);
   const width = getRenderedMapWidth(circuitImageSize);
@@ -239,12 +247,11 @@ function Map({ sessionKey }: { sessionKey: number }) {
   ]);
 
   return (
-    <svg
+    <SvgMap
       width="100%"
       height={mapHeight}
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="xMidYMid meet"
-      style={{ display: 'block', overflow: 'visible' }}
     >
       {circuitImage && (
         <image
@@ -282,7 +289,7 @@ function Map({ sessionKey }: { sessionKey: number }) {
           </text>
         </g>
       ))}
-    </svg>
+    </SvgMap>
   );
 }
 

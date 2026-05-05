@@ -1,11 +1,7 @@
 import { useMemo } from 'react';
 import { formatLapTime } from '../utils/helpers.ts';
 import type { lapType } from '../utils/types.ts';
-import styled from 'styled-components';
-
-const StyledLastLap = styled.h5`
-  color: var(--color-grey-200);
-`;
+import { StyledLastLap } from '../style/styles.ts';
 
 function DriverLastLap({ laps }: { laps: lapType[] }) {
   const validLaps = useMemo<lapType[]>(() => {

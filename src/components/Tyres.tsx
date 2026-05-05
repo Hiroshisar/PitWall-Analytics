@@ -1,47 +1,35 @@
+import { TyresCircle, TyresSummary } from '../style/styles.ts';
 import type { stintType } from '../utils/types.ts';
-import { TyresCircle } from '../style/styles.ts';
 
 function Tyres({ stints }: { stints: stintType[] }) {
-  if (!stints || stints.length === 0) return;
+  if (!stints || stints.length === 0) return null;
 
   const lastStint = stints[stints.length - 1];
-
-  let color = undefined;
-
-  switch (lastStint.compound) {
-    case 'SOFT':
-      color = 'd91616';
-      break;
-    case 'MEDIUM':
-      color = 'f6d009';
-      break;
-    case 'HARD':
-      color = 'fff';
-      break;
-    case 'INTERMEDIATE':
-      color = '18a84d';
-      break;
-    case 'WET':
-      color = '314ed2';
-      break;
-    default:
-      color = undefined;
-      break;
-  }
+  const color = getCompoundColor(lastStint.compound);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        gap: '2px',
-      }}
-    >
+    <TyresSummary>
       <h5>{lastStint.tyre_age_at_start}</h5>
       <TyresCircle $color={color ?? 'transparent'} />
-    </div>
+    </TyresSummary>
   );
 }
 
 export default Tyres;
+
+function getCompoundColor(compound: string) {
+  switch (compound) {
+    case 'SOFT':
+      return 'd91616';
+    case 'MEDIUM':
+      return 'f6d009';
+    case 'HARD':
+      return 'fff';
+    case 'INTERMEDIATE':
+      return '18a84d';
+    case 'WET':
+      return '314ed2';
+    default:
+      return undefined;
+  }
+}

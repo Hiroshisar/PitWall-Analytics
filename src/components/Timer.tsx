@@ -1,30 +1,31 @@
 import { useState, useEffect } from 'react';
 import { formatTime } from '../utils/helpers';
 
-function Timer({ dateStart, dateEnd }: { dateStart: string; dateEnd: string }) {
-  const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [isRunning, setIsRunning] = useState<boolean>(true);
+function Timer({ dateEnd }: { dateEnd: string }) {
+  const [timeLeft, setTimeLeft] = useState<number>(() =>
+    getRemainingSeconds(dateEnd)
+  );
+  const isRunning = timeLeft > 0;
 
   useEffect(() => {
-    const startDate = new Date(dateStart);
-    const endDate = new Date(dateEnd);
-    const duration = (endDate.getTime() - startDate.getTime()) / 1000;
-    // no cascading renders because dateStart and dateEnd never change
-    setTimeLeft(duration); // eslint-disable-line
+    const syncTimer = window.setTimeout(() => {
+      setTimeLeft(getRemainingSeconds(dateEnd));
+    }, 0);
 
     const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          setIsRunning(false);
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
+      const remainingSeconds = getRemainingSeconds(dateEnd);
+      setTimeLeft(remainingSeconds);
+
+      if (remainingSeconds <= 0) {
+        clearInterval(timer);
+      }
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [dateStart, dateEnd]);
+    return () => {
+      window.clearTimeout(syncTimer);
+      clearInterval(timer);
+    };
+  }, [dateEnd]);
 
   return (
     <div>
@@ -35,3 +36,11 @@ function Timer({ dateStart, dateEnd }: { dateStart: string; dateEnd: string }) {
 }
 
 export default Timer;
+
+function getRemainingSeconds(dateEnd: string) {
+  const endTime = new Date(dateEnd).getTime();
+
+  if (!Number.isFinite(endTime)) return 0;
+
+  return Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+}
