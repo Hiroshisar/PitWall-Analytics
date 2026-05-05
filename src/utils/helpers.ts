@@ -30,17 +30,21 @@ export function checkIfIsLiveSession(
   dateStart: string,
   dateEnd: string
 ): boolean {
-  const liveSessionGracePeriodMs = 20 * 60 * 1000;
+  const startLiveSessionGracePeriodMs = 5 * 60 * 1000;
+  const endLiveSessionGracePeriodMs = 20 * 60 * 1000;
   const now = new Date().getTime();
-  const start = new Date(dateStart).getTime() + liveSessionGracePeriodMs;
-  const end = new Date(dateEnd).getTime() + liveSessionGracePeriodMs;
+  const start = new Date(dateStart).getTime() + startLiveSessionGracePeriodMs;
+  const end = new Date(dateEnd).getTime() + endLiveSessionGracePeriodMs;
 
   return now >= start && now <= end;
 }
 
 export function formatTime(seconds: number): string {
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-  return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  const totalSeconds = Math.max(0, Math.floor(seconds));
+  const days = Math.floor(totalSeconds / 86400);
+  const hrs = Math.floor((totalSeconds % 86400) / 3600);
+  const mins = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+
+  return `${days > 1 ? `${days.toString()} days and ` : ''} ${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} hours`;
 }

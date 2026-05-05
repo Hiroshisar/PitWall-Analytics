@@ -41,3 +41,21 @@ export async function getMeetingByKey(key: number): Promise<meetingType> {
     return {} as meetingType;
   }
 }
+
+export async function getNextMeeting(date: string): Promise<meetingType> {
+  try {
+    const year = new Date().getFullYear();
+    const res = await api.get(
+      `${endpoints.meetings}?year=${year}&date_start>${date}`
+    );
+    return res.data[0];
+  } catch (err: unknown) {
+    notifyServiceError(
+      err,
+      `Unable to load data for the next meeting`,
+      'meeting-data-error'
+    );
+
+    return {} as meetingType;
+  }
+}

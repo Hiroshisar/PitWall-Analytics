@@ -11,9 +11,10 @@ const driverCardBase = css`
 
 export const StyledModal = styled.div`
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 5rem 10rem;
+  box-sizing: border-box;
+  overflow: auto;
+  overscroll-behavior: contain;
   background-color: var(--color-grey-500);
   border-radius: var(--border-radius-3xl);
   box-shadow: var(--shadow-lg);
@@ -57,6 +58,8 @@ export const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100vh;
+  overflow: hidden;
+  overscroll-behavior: contain;
   background-color: var(--backdrop-color);
   backdrop-filter: blur(4px);
   z-index: 9999;
@@ -331,6 +334,11 @@ export const StyledDriverMain = styled.div<{ $selected: boolean }>`
 
   grid-template-columns: 2fr 3fr 1fr;
   column-gap: 1rem;
+  transition: transform 150ms ease-in-out;
+
+  &:hover {
+    transform: scale(1.02);
+  }
 `;
 
 export const StyledDriverSecondary = styled.div`
@@ -388,6 +396,27 @@ export const StyledDriverSecondary = styled.div`
     width: 1.8rem;
     height: 1.8rem;
     flex-shrink: 0;
+  }
+`;
+
+export const StyledCloseButton = styled.button`
+  ${driverCardBase}
+
+  min-width: 10rem;
+  height: 4rem;
+  display: inline-flex;
+  width: fit-content;
+  justify-content: center;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  font-size: 2rem;
+  background-color: var(--color-red-700);
+  color: var(--color-grey-200);
+  border-radius: var(--border-radius-3xl);
+
+  &:hover {
+    background-color: var(--color-grey-200);
+    color: var(--color-red-700);
   }
 `;
 
@@ -471,7 +500,7 @@ export const StyledTelemetry = styled.div`
 `;
 
 export const StyledSelect = styled.select`
-  width: 8rem;
+  width: fit-content;
   background-color: var(--color-grey-800);
   color: var(--color-grey-300);
   border: 1px solid var(--color-grey-600);

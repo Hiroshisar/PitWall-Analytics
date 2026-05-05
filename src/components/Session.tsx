@@ -6,12 +6,14 @@ import {
   SessionNationAndDate,
   StyledSession,
 } from '../style/styles';
-import { checkIfIsLiveSession, formatDate } from '../utils/helpers';
+import { formatDate } from '../utils/helpers';
 import type { meetingType, sessionType } from '../utils/types';
 import Flag from './Flag';
 import Timer from './Timer';
 import Weather from '../pages/Weather';
 import { Select } from '../ui/Select.tsx';
+import { useFetchNextMeeting } from '../hooks/useFetchMeetings.ts';
+import { useLocation } from 'react-router-dom';
 
 function Session({
   selectedLap,
@@ -26,6 +28,7 @@ function Session({
   meeting?: meetingType;
   setSelectedLap?: (lap: number) => void;
 }) {
+  const { pathname } = useLocation();
   const selectedMeetingKey = useSelector(
     (store: RootState) => store.meeting.selectedMeetingKey
   );
@@ -42,8 +45,12 @@ function Session({
       .getQueryData<meetingType[]>(['meetings', new Date().getFullYear()])
       ?.find((meeting) => meeting.meeting_key === selectedMeetingKey);
 
+  const { data: nextMeeting } = useFetchNextMeeting(
+    meeting ? meeting.date_end : ''
+  );
+
   if (!session) return null;
-  const islive = checkIfIsLiveSession(session.date_start, session.date_end);
+  const islive = true; //checkIfIsLiveSession(session.date_start, session.date_end);
 
   return (
     <StyledSession $islive={islive}>
@@ -51,7 +58,11 @@ function Session({
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <h1>{session.circuit_short_name}</h1>
           <img
-            src={meeting ? meeting.country_flag : ''}
+            src={
+              pathname === '/telemetry'
+                ? meeting?.country_flag
+                : nextMeeting?.country_flag
+            }
             alt="country flag"
             width={25}
           />
@@ -60,7 +71,7 @@ function Session({
       </SessionNationAndDate>
       <SessionData>
         <h2>{session.session_name}</h2>
-        {maxNumberOfLaps && selectedLap ? (
+        {maxNumberOfLaps && selectedLap !== undefined ? (
           <h3>
             Giro{' '}
             <Select

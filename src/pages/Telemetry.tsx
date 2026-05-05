@@ -21,6 +21,7 @@ import type {
   sessionType,
   TelemetryMetric,
 } from '../utils/types';
+import Modal from '../ui/Modal.tsx';
 
 const telemetryMetrics: TelemetryMetric[] = [
   'speed',
@@ -32,9 +33,8 @@ const telemetryMetrics: TelemetryMetric[] = [
 
 function Telemetry() {
   const [selectedDrivers, setSelectedDrivers] = useState<driverType[]>([]);
-  const [isSelectionConfirmed, setIsSelectionConfirmed] =
-    useState<boolean>(false);
-  const [selectedLap, setSelectedLap] = useState<number>(1);
+  const [selectedLap, setSelectedLap] = useState<number>(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const sessionData = useSelector((store: RootState) => store.session);
   const meetingData = useSelector((store: RootState) => store.meeting);
@@ -79,30 +79,43 @@ function Telemetry() {
   });
 
   const selectedLapCarsData = useMemo<carType[]>(() => {
-    if (!selectedLap) return [];
+    if (selectedDrivers.length === 0) return [];
 
-    return lapsData
-      .filter((lap) => lap.lap_number === selectedLap)
-      .flatMap((lap) => {
-        const start = new Date(lap.date_start);
-        const end = new Date(lap.date_start);
-        end.setSeconds(end.getSeconds() + lap.lap_duration);
+    const selectedLaps = selectedLap
+      ? lapsData.filter((lap) => lap.lap_number === selectedLap)
+      : selectedDrivers
+          .map((driver) =>
+            lapsData
+              .filter(
+                (lap) =>
+                  lap.driver_number === driver.driver_number &&
+                  Number.isFinite(lap.lap_duration) &&
+                  lap.lap_duration > 0
+              )
+              .sort((a, b) => a.lap_duration - b.lap_duration)[0]
+          )
+          .filter((lap) => Boolean(lap));
 
-        return carsData.filter((carSample) => {
-          const carInstant = new Date(carSample.date).getTime();
+    return selectedLaps.flatMap((lap) => {
+      const start = new Date(lap.date_start);
+      const end = new Date(lap.date_start);
+      end.setSeconds(end.getSeconds() + lap.lap_duration);
 
-          return (
-            carSample.driver_number === lap.driver_number &&
-            carInstant >= start.getTime() &&
-            carInstant <= end.getTime()
-          );
-        });
+      return carsData.filter((carSample) => {
+        const carInstant = new Date(carSample.date).getTime();
+
+        return (
+          carSample.driver_number === lap.driver_number &&
+          carInstant >= start.getTime() &&
+          carInstant <= end.getTime()
+        );
       });
-  }, [carsData, lapsData, selectedLap]);
+    });
+  }, [carsData, lapsData, selectedDrivers, selectedLap]);
 
   const handleDriversSelection = (drivers: driverType[]) => {
     setSelectedDrivers(drivers);
-    setIsSelectionConfirmed(true);
+    setIsModalOpen(false);
   };
 
   const maxNumberOfLaps = useMemo<number>(() => {
@@ -125,12 +138,24 @@ function Telemetry() {
     return Math.min(...lapsByDriver);
   }, [lapsData, selectedDrivers]);
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  if (isModalOpen)
+    return (
+      <Modal
+        drivers={drivers ?? []}
+        selectedDrivers={selectedDrivers}
+        onSelect={handleDriversSelection}
+        onClose={handleCloseModal}
+      />
+    );
+
   if (!selectedSessions) return;
 
   if (isLoadingDrivers || isLoadingLaps) return <Spinner />;
-  // TODO rimuovere la lista dei piloti tipo main come prima visualizzazione, premendo il bottone di aggiunta nella
-  //  lista secondary deve apparire una modale con la lista main che popoli drivers. Quando si selezionano i piloti, deve apparire
-  //  il confronto tra i giri più veloci, non un giro specifico o vuoto
+  // TODO Quando si selezionano i piloti, deve apparire il confronto tra i giri più veloci, non un giro specifico o vuoto
   return (
     <StyledTelemetryPage>
       {(isLoadingCars || isLoadingDrivers) && <Spinner />}
@@ -143,34 +168,25 @@ function Telemetry() {
         maxNumberOfLaps={maxNumberOfLaps}
       />
 
-      {!isSelectionConfirmed ? (
-        <DriversList
-          drivers={drivers ? drivers : []}
-          onSelect={handleDriversSelection}
-          type="main"
-        />
-      ) : (
-        <>
-          <DriversList
-            drivers={selectedDrivers}
-            onSelect={handleDriversSelection}
-            type="secondary"
-          />
+      <DriversList
+        drivers={selectedDrivers}
+        onSelect={handleDriversSelection}
+        type="secondary"
+        onOpen={setIsModalOpen}
+      />
 
-          <TelemetryContainer>
-            {telemetryMetrics.map((metric) => (
-              <StyledTelemetry key={metric}>
-                <h2>{metric.toUpperCase()}</h2>
-                <TelemetryLineChart
-                  carsData={selectedLapCarsData ?? []}
-                  metric={metric}
-                  selectedDrivers={selectedDrivers ?? []}
-                />
-              </StyledTelemetry>
-            ))}
-          </TelemetryContainer>
-        </>
-      )}
+      <TelemetryContainer>
+        {telemetryMetrics.map((metric) => (
+          <StyledTelemetry key={metric}>
+            <h2>{metric.toUpperCase()}</h2>
+            <TelemetryLineChart
+              carsData={selectedLapCarsData ?? []}
+              metric={metric}
+              selectedDrivers={selectedDrivers ?? []}
+            />
+          </StyledTelemetry>
+        ))}
+      </TelemetryContainer>
     </StyledTelemetryPage>
   );
 }

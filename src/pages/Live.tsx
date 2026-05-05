@@ -24,7 +24,7 @@ import Spinner from '../ui/Spinner.tsx';
 import SessionGrid from '../components/SessionGrid.tsx';
 import RaceControl from '../components/RaceControl.tsx';
 import Map from '../components/Map.tsx';
-//import { checkIfIsLiveSession } from '../utils/helpers.ts';
+import { checkIfIsLiveSession } from '../utils/helpers.ts';
 
 const LIVE_PAGE_TOPICS: readonly OpenF1LiveTopic[] = [
   'v1/intervals',
@@ -116,9 +116,12 @@ function Live() {
 
   if (!selectedSession) return;
 
-  //const isLive = checkIfIsLiveSession(    selectedSession?.date_start,    selectedSession?.date_end  );
+  const isLive = checkIfIsLiveSession(
+    selectedSession?.date_start,
+    selectedSession?.date_end
+  );
   // TODO rimuovere questo test
-  const isLive = true;
+  //const isLive = true;
 
   if (isLoadingNextSession) return <Spinner />;
 
@@ -153,13 +156,20 @@ function Live() {
           <LivePageRow>
             <Session session={nextSession ? nextSession : undefined} />
           </LivePageRow>
-          <LivePageCenter>
-            <h1>Next session in</h1>
-            <Timer
-              dateStart={new Date().toString()}
-              dateEnd={nextSession?.date_start ?? ''}
-            />
-          </LivePageCenter>
+          <LivePageRow>
+            <div
+              style={{
+                textAlign: 'center',
+                marginTop: '15rem',
+              }}
+            >
+              <h1>Next session in</h1>
+              <Timer
+                dateStart={new Date().toString()}
+                dateEnd={nextSession?.date_start ?? ''}
+              />
+            </div>
+          </LivePageRow>
         </StyledLivePage>
       )}
     </>

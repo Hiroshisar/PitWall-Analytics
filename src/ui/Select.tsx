@@ -11,11 +11,11 @@ export function Select({
 }) {
   return (
     <StyledSelect
-      value={selectedLap ?? '0'}
+      value={selectedLap}
       onChange={(e) => onSelect(Number(e.target.value))}
     >
-      <StyledOption value="0" disabled>
-        ---
+      <StyledOption value={0}>
+        Fastest
       </StyledOption>
       {Array.from(
         {

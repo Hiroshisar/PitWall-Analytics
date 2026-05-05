@@ -18,7 +18,7 @@ function Driver({
 }: {
   type?: DriversListVariant;
   driver: driverType;
-  isItemSelected: (number: number) => boolean;
+  isItemSelected: boolean;
   onRemove?: (driverNumber: number) => void;
 }) {
   if (type === 'secondary') {
@@ -37,7 +37,7 @@ function Driver({
   }
 
   return (
-    <StyledDriverMain $selected={isItemSelected(driver.driver_number)}>
+    <StyledDriverMain $selected={isItemSelected}>
       <DriverPortrait>
         <img
           src={`./${driver.driver_number}.png`}

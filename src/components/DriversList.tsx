@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   DriverListItem,
   DriversListContainer,
@@ -19,21 +19,32 @@ import { FaPlus } from 'react-icons/fa';
 
 type DriversListProps = {
   drivers: driverType[];
+  selectedDrivers?: driverType[];
   type?: DriversListVariant;
   onSelect: (drivers: driverType[]) => void;
+  onOpen?: (value: boolean) => void;
 };
 
-function DriversList({ drivers, onSelect, type = 'main' }: DriversListProps) {
-  const [tempDrivers, setTempDrivers] = useState<driverType[]>([]);
+const noSelectedDrivers: driverType[] = [];
+
+function DriversList({
+  drivers,
+  selectedDrivers = noSelectedDrivers,
+  onSelect,
+  type = 'main',
+  onOpen,
+}: DriversListProps) {
+  const [tempDrivers, setTempDrivers] =
+    useState<driverType[]>(selectedDrivers);
   const canSelectDrivers = Boolean(onSelect);
+
+  useEffect(() => {
+    setTempDrivers(selectedDrivers);
+  }, [selectedDrivers]);
 
   const handleConfirmSelection = () => {
     if (onSelect) onSelect(tempDrivers);
-    setTempDrivers([]);
   };
-
-  const isItemSelected = (driverNumber: number) =>
-    !!tempDrivers.find((d) => d.driver_number === driverNumber);
 
   const handleClick = (driverNumber: number) => {
     if (!canSelectDrivers) return;
@@ -57,11 +68,17 @@ function DriversList({ drivers, onSelect, type = 'main' }: DriversListProps) {
     });
   };
 
+  const isItemSelected = (driverNumber: number) =>
+    !!tempDrivers.find((d) => d.driver_number === driverNumber);
+
   const handleRemoveDriver = (driverNumber: number) => {
     const filteredList = drivers.filter(
       (driver) => driver.driver_number !== driverNumber
     );
-    if (onSelect) onSelect(filteredList);
+    if (onSelect) {
+      setTempDrivers(filteredList);
+      onSelect(filteredList);
+    }
   };
 
   const sortedDrivers = useMemo(() => {
@@ -93,24 +110,30 @@ function DriversList({ drivers, onSelect, type = 'main' }: DriversListProps) {
                   </StyledTeamNameContainer>
                 )}
                 <StyledDriversRowContainer $variant={type}>
-                  {teamDrivers.map((driver) => (
-                    <DriverListItem
-                      key={`${driver.broadcast_name}-${driver.driver_number}`}
-                      $isInteractive={canSelectDrivers}
-                      onClick={
-                        canSelectDrivers
-                          ? () => handleClick(driver.driver_number)
-                          : undefined
-                      }
-                    >
-                      <Driver
-                        driver={driver}
-                        isItemSelected={isItemSelected}
-                        type={type}
-                        onRemove={handleRemoveDriver}
-                      />
-                    </DriverListItem>
-                  ))}
+                  {teamDrivers.map((driver) => {
+                    return (
+                      <>
+                        <DriverListItem
+                          key={`${driver.broadcast_name}-${driver.driver_number}`}
+                          $isInteractive={canSelectDrivers}
+                          onClick={
+                            canSelectDrivers
+                              ? () => handleClick(driver.driver_number)
+                              : undefined
+                          }
+                        >
+                          <Driver
+                            driver={driver}
+                            isItemSelected={isItemSelected(
+                              driver.driver_number
+                            )}
+                            type={type}
+                            onRemove={handleRemoveDriver}
+                          />
+                        </DriverListItem>
+                      </>
+                    );
+                  })}
                 </StyledDriversRowContainer>
               </StyledDriversGridRows>
             ))}
@@ -118,7 +141,7 @@ function DriversList({ drivers, onSelect, type = 'main' }: DriversListProps) {
               <DriverListItem
                 $isInteractive={true}
                 onClick={() => {
-                  console.log('click');
+                  if (onOpen) onOpen(true);
                 }}
               >
                 <AddDriverButton>
