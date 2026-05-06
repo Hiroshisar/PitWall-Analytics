@@ -10,9 +10,9 @@ import {
   YAxis,
 } from 'recharts';
 import type {
-  carType,
   DriverSeries,
   driverType,
+  SelectedLapCarSample,
   TelemetryMetric,
 } from '../utils/types';
 import { formatLapTime, normalizeHexColor } from '../utils/helpers';
@@ -102,7 +102,7 @@ const telemetryMetricConfigs: Record<TelemetryMetric, TelemetryMetricConfig> = {
 };
 
 export type ChartProps = {
-  carsData: carType[];
+  carsData: SelectedLapCarSample[];
   selectedDrivers: driverType[];
   metric?: TelemetryMetric;
 };
@@ -181,7 +181,8 @@ function CustomTelemetryTooltip({
             $color={driverSeries.color}
           >
             {driverSeries.driver.name_acronym}{' '}
-            {value === null ? 'N/D' : metricConfig.formatValue(value)}
+            {value === null ? 'N/D' : metricConfig.formatValue(value)}{' '}
+            {driverSeries.lapNumber ? `lap ${driverSeries.lapNumber}` : ''}
           </ChartTooltipValue>
         );
       })}
@@ -197,7 +198,7 @@ function TelemetryLineChart({
   const metricConfig = telemetryMetricConfigs[metric];
 
   const telemetryData = useMemo<DriverSeries[]>(() => {
-    const groupedCars: Record<number, carType[]> = {};
+    const groupedCars: Record<number, SelectedLapCarSample[]> = {};
 
     for (const carSample of carsData) {
       if (!groupedCars[carSample.driver_number]) {
@@ -234,6 +235,7 @@ function TelemetryLineChart({
         driver,
         color: teamColor,
         points,
+        lapNumber: driverCarData[0]?.selectedLapNumber,
       };
     });
   }, [carsData, metricConfig, selectedDrivers]);

@@ -16,9 +16,9 @@ import {
 } from '../style/styles';
 import Spinner from '../ui/Spinner';
 import type {
-  carType,
   driverType,
   sessionType,
+  SelectedLapCarSample,
   TelemetryMetric,
 } from '../utils/types';
 import Modal from '../ui/Modal.tsx';
@@ -78,21 +78,22 @@ function Telemetry() {
     enabled: sessionKey > 0 && driverNumbers.length > 0,
   });
 
-  const selectedLapCarsData = useMemo<carType[]>(() => {
+  const selectedLapCarsData = useMemo<SelectedLapCarSample[]>(() => {
     if (selectedDrivers.length === 0) return [];
 
     const selectedLaps = selectedLap
       ? lapsData.filter((lap) => lap.lap_number === selectedLap)
       : selectedDrivers
-          .map((driver) =>
-            lapsData
-              .filter(
-                (lap) =>
-                  lap.driver_number === driver.driver_number &&
-                  Number.isFinite(lap.lap_duration) &&
-                  lap.lap_duration > 0
-              )
-              .sort((a, b) => a.lap_duration - b.lap_duration)[0]
+          .map(
+            (driver) =>
+              lapsData
+                .filter(
+                  (lap) =>
+                    lap.driver_number === driver.driver_number &&
+                    Number.isFinite(lap.lap_duration) &&
+                    lap.lap_duration > 0
+                )
+                .sort((a, b) => a.lap_duration - b.lap_duration)[0]
           )
           .filter((lap) => Boolean(lap));
 
@@ -101,15 +102,20 @@ function Telemetry() {
       const end = new Date(lap.date_start);
       end.setSeconds(end.getSeconds() + lap.lap_duration);
 
-      return carsData.filter((carSample) => {
-        const carInstant = new Date(carSample.date).getTime();
+      return carsData
+        .filter((carSample) => {
+          const carInstant = new Date(carSample.date).getTime();
 
-        return (
-          carSample.driver_number === lap.driver_number &&
-          carInstant >= start.getTime() &&
-          carInstant <= end.getTime()
-        );
-      });
+          return (
+            carSample.driver_number === lap.driver_number &&
+            carInstant >= start.getTime() &&
+            carInstant <= end.getTime()
+          );
+        })
+        .map((carSample) => ({
+          ...carSample,
+          selectedLapNumber: selectedLap ? undefined : lap.lap_number,
+        }));
     });
   }, [carsData, lapsData, selectedDrivers, selectedLap]);
 

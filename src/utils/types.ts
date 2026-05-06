@@ -241,6 +241,7 @@ export type DriverSeries = {
   driver: driverType;
   color: string;
   points: DriverSeriesPoint[];
+  lapNumber?: number;
 };
 
 export type LocationSeriesPoint = {
@@ -267,6 +268,10 @@ export type CircuitDataType = {
   countryKey: number;
   countryName: string;
   location: string;
+};
+
+export type SelectedLapCarSample = carType & {
+  selectedLapNumber?: number;
 };
 
 /**
