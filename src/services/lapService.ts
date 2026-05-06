@@ -1,11 +1,20 @@
 import { endpoints } from '../api/endpoints';
 import { api } from '../api/telemetryApi';
-import type { lapType } from '../utils/types';
+import {
+  isValidOpenF1Key,
+  latestOpenF1Key,
+  stringifyOpenF1Key,
+} from '../utils/helpers';
+import type { lapType, OpenF1Key } from '../utils/types';
 import { getHttpStatus, notifyServiceError } from './serviceError';
 
-export async function getLaps(session_key: number): Promise<lapType[]> {
+export async function getLaps(
+  session_key: OpenF1Key = latestOpenF1Key
+): Promise<lapType[]> {
   try {
-    const res = await api.get(`${endpoints.laps}?session_key=${session_key}`);
+    const res = await api.get(
+      `${endpoints.laps}?session_key=${stringifyOpenF1Key(session_key)}`
+    );
     return res.data;
   } catch (err: unknown) {
     notifyServiceError(err, 'Unable to load laps data', 'laps-data-error');
@@ -15,16 +24,20 @@ export async function getLaps(session_key: number): Promise<lapType[]> {
 }
 
 export async function getLapsByDrivers(
-  session_key: number,
+  session_key: OpenF1Key,
   driver_numbers: number[]
 ): Promise<lapType[]> {
   const uniqueDriverNumbers = [...new Set(driver_numbers)].filter(
     (driverNumber) => driverNumber > 0
   );
 
-  if (session_key <= 0 || uniqueDriverNumbers.length === 0) return [];
+  if (!isValidOpenF1Key(session_key) || uniqueDriverNumbers.length === 0) {
+    return [];
+  }
 
-  const params = new URLSearchParams({ session_key: String(session_key) });
+  const params = new URLSearchParams({
+    session_key: stringifyOpenF1Key(session_key),
+  });
   uniqueDriverNumbers.forEach((driverNumber) => {
     params.append('driver_number', String(driverNumber));
   });

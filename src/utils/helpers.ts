@@ -1,3 +1,15 @@
+import type { OpenF1Key } from './types';
+
+export const latestOpenF1Key = 'latest' as const;
+
+export function isValidOpenF1Key(key: OpenF1Key | null | undefined) {
+  return key === latestOpenF1Key || (typeof key === 'number' && key > 0);
+}
+
+export function stringifyOpenF1Key(key: OpenF1Key) {
+  return String(key);
+}
+
 export function formatDate(dateStr: string) {
   return new Intl.DateTimeFormat('it', {
     day: 'numeric',

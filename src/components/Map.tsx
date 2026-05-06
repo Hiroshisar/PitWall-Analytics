@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { locationType, meetingType } from '../utils/types';
+import type { locationType, meetingType, OpenF1Key } from '../utils/types';
 import { normalizeHexColor } from '../utils/helpers';
 import { queryClient } from '../hooks/queryClient';
 import { useFetchDrivers } from '../hooks/useFetchDriver';
@@ -117,7 +117,7 @@ function Map({
   sessionKey,
   meetingKey,
 }: {
-  sessionKey: number;
+  sessionKey: OpenF1Key;
   meetingKey: number;
 }) {
   const { data: drivers } = useFetchDrivers(sessionKey);
@@ -170,9 +170,7 @@ function Map({
     const latestLocations = new globalThis.Map<number, locationType>();
 
     for (const locationSample of locationSamples) {
-      const currentLocation = latestLocations.get(
-        locationSample.driver_number
-      );
+      const currentLocation = latestLocations.get(locationSample.driver_number);
 
       if (
         !currentLocation ||

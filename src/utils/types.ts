@@ -218,17 +218,7 @@ export type weatherType = {
   wind_speed: number;
 };
 
-export type meetingStateType = {
-  selectedMeetingKey: number | null;
-};
-
-export type sessionStateType = {
-  selectedSessionKey: number | null;
-};
-
-export type driverStateType = {
-  drivers: driverType[];
-};
+export type OpenF1Key = number | 'latest';
 
 export type TelemetryMetric = 'speed' | 'brake' | 'gear' | 'rpm' | 'throttle';
 

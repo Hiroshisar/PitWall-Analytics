@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import {
   cacheOpenF1LiveMessages,
   connectOpenF1LiveWebSocket,
@@ -7,10 +6,7 @@ import {
   type OpenF1LiveMessage,
   type OpenF1LiveTopic,
 } from '../api/websocket';
-import type { RootState } from '../store/store';
-import type { sessionType } from '../utils/types';
 import {
-  LiveCountdownPanel,
   LivePageRow,
   StyledLivePage,
   LivePageCenter,
@@ -19,14 +15,17 @@ import {
 } from '../style/styles';
 import { queryClient } from '../hooks/queryClient';
 import Session from '../components/Session.tsx';
-import Timer from '../components/Timer.tsx';
-import { useFetchNextSession } from '../hooks/useFetchSession.ts';
+import {
+  useFetchLatestSession,
+  useFetchNextSession,
+} from '../hooks/useFetchSession.ts';
 import Spinner from '../ui/Spinner.tsx';
 import SessionGrid from '../components/SessionGrid.tsx';
 import RaceControl from '../components/RaceControl.tsx';
 import Map from '../components/Map.tsx';
-import { checkIfIsLiveSession } from '../utils/helpers.ts';
+import { checkIfIsLiveSession, latestOpenF1Key } from '../utils/helpers.ts';
 import { useFetchRaceControl } from '../hooks/useFetchRaceControl.ts';
+import Timer from '../components/Timer.tsx';
 
 const LIVE_PAGE_TOPICS: readonly OpenF1LiveTopic[] = [
   'v1/intervals',
@@ -41,36 +40,21 @@ const LIVE_PAGE_TOPICS: readonly OpenF1LiveTopic[] = [
 const LIVE_CACHE_FLUSH_INTERVAL_MS = 100;
 
 function Live() {
-  const meetingData = useSelector((store: RootState) => store.meeting);
-  const sessionData = useSelector((store: RootState) => store.session);
+  const { data: latestSession, isLoading: isLoadingLatestSession } =
+    useFetchLatestSession();
 
-  const { selectedMeetingKey } = meetingData;
-  const { selectedSessionKey } = sessionData;
-
-  const sessions = queryClient.getQueryData<sessionType[]>([
-    'sessions',
-    selectedMeetingKey,
-  ]);
-
-  const selectedSession = sessions?.find(
-    (s) => s.session_key === selectedSessionKey
-  );
-
-  const isLive = true; /* selectedSession
-    ? checkIfIsLiveSession(selectedSession.date_start, selectedSession.date_end)
+  const isLive = latestSession
+    ? checkIfIsLiveSession(latestSession.date_start, latestSession.date_end)
     : false;
-    */
-  const liveMeetingKey = selectedSession?.meeting_key ?? null;
-
-  const { data: nextSession, isLoading: isLoadingNextSession } =
-    useFetchNextSession(!isLive);
 
   const { data: raceControl = [] } = useFetchRaceControl(
-    isLive ? (selectedSessionKey ?? 0) : 0
+    isLive ? latestOpenF1Key : 0
   );
 
+  const { data: nextSession } = useFetchNextSession();
+
   useEffect(() => {
-    if (!isLive || !liveMeetingKey || !selectedSessionKey) return;
+    if (!isLive || !latestSession) return;
 
     let isCancelled = false;
     let liveConnection: OpenF1LiveConnection | null = null;
@@ -96,8 +80,8 @@ function Live() {
 
     connectOpenF1LiveWebSocket({
       topics: LIVE_PAGE_TOPICS,
-      meetingKey: liveMeetingKey,
-      sessionKey: selectedSessionKey,
+      meetingKey: latestSession.meeting_key,
+      sessionKey: latestSession.session_key,
       onMessage: (message) => {
         pendingMessages.push(message);
         scheduleFlush();
@@ -124,53 +108,53 @@ function Live() {
       if (flushTimer) window.clearTimeout(flushTimer);
       liveConnection?.close();
     };
-  }, [isLive, liveMeetingKey, selectedSessionKey]);
+  }, [isLive, latestSession]);
 
-  if (!selectedSession) return;
+  if (isLoadingLatestSession) return <Spinner />;
+  if (!latestSession) return null;
 
-  if (isLoadingNextSession) return <Spinner />;
   // TODO aggiungere visualizzazione di elementi vuoti nella griglia con solo i DriverTag popolati
   return (
-    <>
+    <StyledLivePage>
+      <LivePageRow>
+        <Session />
+      </LivePageRow>
       {isLive ? (
-        <StyledLivePage>
-          <LivePageRow>
-            <Session />
-          </LivePageRow>
-          <LivePageRow>
-            <LivePageCenter>
-              <LivePageGridColumn>
-                <SessionGrid session={selectedSession} />
-              </LivePageGridColumn>
-              <LivePageColumn>
-                <LivePageRow>
-                  <Map
-                    key={selectedSessionKey ?? 0}
-                    sessionKey={selectedSessionKey ?? 0}
-                    meetingKey={selectedSession.meeting_key}
-                  />
-                </LivePageRow>
-                <LivePageRow>
-                  <RaceControl raceControl={raceControl} />
-                </LivePageRow>
-              </LivePageColumn>
-            </LivePageCenter>
-          </LivePageRow>
-        </StyledLivePage>
+        <LivePageRow>
+          <LivePageCenter>
+            <LivePageGridColumn>
+              <SessionGrid
+                session={latestSession}
+                sessionKey={latestOpenF1Key}
+              />
+            </LivePageGridColumn>
+            <LivePageColumn>
+              <LivePageRow>
+                <Map
+                  sessionKey={latestOpenF1Key}
+                  meetingKey={latestSession.meeting_key}
+                />
+              </LivePageRow>
+              <LivePageRow>
+                <RaceControl raceControl={raceControl} />
+              </LivePageRow>
+            </LivePageColumn>
+          </LivePageCenter>
+        </LivePageRow>
       ) : (
-        <StyledLivePage>
-          <LivePageRow>
-            <Session session={nextSession ? nextSession : undefined} />
-          </LivePageRow>
-          <LivePageRow>
-            <LiveCountdownPanel>
-              <h1>Next session in</h1>
-              <Timer dateEnd={nextSession?.date_start ?? ''} />
-            </LiveCountdownPanel>
-          </LivePageRow>
-        </StyledLivePage>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <h1>Next event in</h1>
+          <Timer dateEnd={nextSession?.date_start ?? ''} />
+        </div>
       )}
-    </>
+    </StyledLivePage>
   );
 }
 

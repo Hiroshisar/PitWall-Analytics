@@ -1,14 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import DriversList from '../components/DriversList';
 import Session from '../components/Session';
 import TelemetryLineChart from '../components/TelemetryLineChart';
-import { queryClient } from '../hooks/queryClient';
 import { useFetchDrivers } from '../hooks/useFetchDriver';
+import { useFetchMeetings } from '../hooks/useFetchMeetings';
+import { useFetchAllSessions } from '../hooks/useFetchSession';
 import { getCarsByDrivers } from '../services/carService';
 import { getLapsByDrivers } from '../services/lapService';
-import type { RootState } from '../store/store';
 import {
   StyledTelemetryPage,
   StyledTelemetry,
@@ -17,11 +16,13 @@ import {
 import Spinner from '../ui/Spinner';
 import type {
   driverType,
+  meetingType,
   sessionType,
   SelectedLapCarSample,
   TelemetryMetric,
 } from '../utils/types';
 import Modal from '../ui/Modal.tsx';
+import { isValidOpenF1Key } from '../utils/helpers.ts';
 
 const telemetryMetrics: TelemetryMetric[] = [
   'speed',
@@ -34,24 +35,55 @@ const telemetryMetrics: TelemetryMetric[] = [
 function Telemetry() {
   const [selectedDrivers, setSelectedDrivers] = useState<driverType[]>([]);
   const [selectedLap, setSelectedLap] = useState<number>(0);
+  const [selectedMeetingKey, setSelectedMeetingKey] =
+    useState<number | null>(null);
+  const [selectedSessionKey, setSelectedSessionKey] =
+    useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const sessionData = useSelector((store: RootState) => store.session);
-  const meetingData = useSelector((store: RootState) => store.meeting);
+  const { data: meetings = [], isLoading: isLoadingMeetings } =
+    useFetchMeetings(new Date().getFullYear());
+  const defaultMeetingKey = useMemo(() => {
+    if (meetings.length === 0) return null;
 
-  const { selectedSessionKey } = sessionData;
-  const { selectedMeetingKey } = meetingData;
+    return [...meetings].sort(
+      (a, b) =>
+        new Date(b.date_start).getTime() - new Date(a.date_start).getTime()
+    )[0].meeting_key;
+  }, [meetings]);
 
-  const selectedSessions = queryClient.getQueryData<sessionType[]>([
-    'sessions',
-    selectedMeetingKey,
-  ]);
+  const effectiveMeetingKey = selectedMeetingKey ?? defaultMeetingKey ?? 0;
 
-  const { data: drivers, isLoading: isLoadingDrivers } = useFetchDrivers(
-    selectedSessionKey ?? 0
+  const { data: sessions = [], isLoading: isLoadingSessions } =
+    useFetchAllSessions(effectiveMeetingKey);
+
+  const defaultSessionKey = useMemo(() => {
+    if (sessions.length === 0) return null;
+
+    return [...sessions].sort(
+      (a, b) =>
+        new Date(b.date_start).getTime() - new Date(a.date_start).getTime()
+    )[0].session_key;
+  }, [sessions]);
+
+  const effectiveSessionKey = selectedSessionKey ?? defaultSessionKey ?? 0;
+
+  const { data: drivers, isLoading: isLoadingDrivers } =
+    useFetchDrivers(effectiveSessionKey);
+
+  const selectedMeeting = useMemo<meetingType | undefined>(
+    () =>
+      meetings.find((meeting) => meeting.meeting_key === effectiveMeetingKey),
+    [meetings, effectiveMeetingKey]
   );
 
-  const sessionKey = selectedSessionKey ?? 0;
+  const selectedSession = useMemo<sessionType | undefined>(
+    () =>
+      sessions.find((session) => session.session_key === effectiveSessionKey),
+    [effectiveSessionKey, sessions]
+  );
+
+  const sessionKey = effectiveSessionKey;
 
   const driverNumbers = useMemo(
     () => selectedDrivers.map((driver) => driver.driver_number).sort(),
@@ -65,7 +97,7 @@ function Telemetry() {
   } = useQuery({
     queryKey: ['cars', sessionKey, driverNumbers],
     queryFn: () => getCarsByDrivers(driverNumbers, sessionKey),
-    enabled: sessionKey > 0 && driverNumbers.length > 0,
+    enabled: isValidOpenF1Key(sessionKey) && driverNumbers.length > 0,
   });
 
   const {
@@ -75,7 +107,7 @@ function Telemetry() {
   } = useQuery({
     queryKey: ['laps', sessionKey, driverNumbers],
     queryFn: () => getLapsByDrivers(sessionKey, driverNumbers),
-    enabled: sessionKey > 0 && driverNumbers.length > 0,
+    enabled: isValidOpenF1Key(sessionKey) && driverNumbers.length > 0,
   });
 
   const selectedLapCarsData = useMemo<SelectedLapCarSample[]>(() => {
@@ -149,6 +181,19 @@ function Telemetry() {
     setIsModalOpen(false);
   };
 
+  const handleMeetingSelection = (meetingKey: number) => {
+    setSelectedMeetingKey(meetingKey);
+    setSelectedSessionKey(null);
+    setSelectedDrivers([]);
+    setSelectedLap(0);
+  };
+
+  const handleSessionSelection = (sessionKey: number) => {
+    setSelectedSessionKey(sessionKey);
+    setSelectedDrivers([]);
+    setSelectedLap(0);
+  };
+
   if (isModalOpen)
     return (
       <Modal
@@ -159,9 +204,15 @@ function Telemetry() {
       />
     );
 
-  if (!selectedSessions) return;
-
-  if (isLoadingDrivers || isLoadingLaps) return <Spinner />;
+  if (
+    isLoadingMeetings ||
+    isLoadingSessions ||
+    isLoadingDrivers ||
+    isLoadingLaps ||
+    !effectiveMeetingKey ||
+    !effectiveSessionKey
+  )
+    return <Spinner />;
 
   return (
     <StyledTelemetryPage>
@@ -170,9 +221,17 @@ function Telemetry() {
         <div>Alcuni dati non sono disponibili al momento.</div>
       )}
       <Session
+        meeting={selectedMeeting}
+        meetings={meetings}
+        session={selectedSession}
+        sessions={sessions}
+        selectedMeetingKey={effectiveMeetingKey}
+        selectedSessionKey={effectiveSessionKey}
         selectedLap={selectedLap ?? 0}
         setSelectedLap={setSelectedLap}
         maxNumberOfLaps={maxNumberOfLaps}
+        onMeetingSelect={handleMeetingSelection}
+        onSessionSelect={handleSessionSelection}
       />
 
       <DriversList

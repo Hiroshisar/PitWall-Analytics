@@ -1,7 +1,9 @@
 import { endpoints } from '../api/endpoints';
 import { api } from '../api/telemetryApi';
-import type { meetingType } from '../utils/types';
+import { latestOpenF1Key, stringifyOpenF1Key } from '../utils/helpers';
+import type { meetingType, OpenF1Key } from '../utils/types';
 import { notifyServiceError } from './serviceError';
+import { getNextSession } from './sessionService';
 
 export async function getMeetingByYear(year: number): Promise<meetingType[]> {
   try {
@@ -26,11 +28,15 @@ export async function getMeetingByYear(year: number): Promise<meetingType[]> {
   }
 }
 
-export async function getMeetingByKey(key: number): Promise<meetingType> {
+export async function getMeetingByKey(
+  key: OpenF1Key = latestOpenF1Key
+): Promise<meetingType> {
   try {
-    const res = await api.get(`${endpoints.meetings}?meeting_key=${key}`);
+    const res = await api.get(
+      `${endpoints.meetings}?meeting_key=${stringifyOpenF1Key(key)}`
+    );
 
-    return res.data;
+    return res.data[0] ?? ({} as meetingType);
   } catch (err: unknown) {
     notifyServiceError(
       err,
@@ -42,17 +48,20 @@ export async function getMeetingByKey(key: number): Promise<meetingType> {
   }
 }
 
-export async function getNextMeeting(date: string): Promise<meetingType> {
+export async function getLatestMeeting(): Promise<meetingType> {
+  return getMeetingByKey(latestOpenF1Key);
+}
+
+export async function getNextMeeting(): Promise<meetingType> {
   try {
-    const year = new Date().getFullYear();
-    const res = await api.get(
-      `${endpoints.meetings}?year=${year}&date_start>${date}`
-    );
-    return res.data[0];
+    const nextSession = await getNextSession();
+    if (!nextSession) return {} as meetingType;
+
+    return getMeetingByKey(nextSession.meeting_key);
   } catch (err: unknown) {
     notifyServiceError(
       err,
-      `Unable to load data for the next meeting`,
+      'Unable to load data for the next meeting',
       'meeting-data-error'
     );
 

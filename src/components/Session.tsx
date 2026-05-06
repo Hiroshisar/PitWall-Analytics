@@ -1,86 +1,103 @@
-import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { queryClient } from '../hooks/queryClient';
-import type { RootState } from '../store/store';
+import { useLocation } from 'react-router-dom';
 import {
   SessionHeader,
   SessionData,
   SessionNationAndDate,
   StyledSession,
 } from '../style/styles';
-import { checkIfIsLiveSession, formatDate } from '../utils/helpers';
+import {
+  checkIfIsLiveSession,
+  formatDate,
+  latestOpenF1Key,
+} from '../utils/helpers';
 import type { meetingType, sessionType } from '../utils/types';
 import Flag from './Flag';
 import Timer from './Timer';
 import Weather from '../pages/Weather';
 import { Select } from '../ui/Select.tsx';
-import { useFetchNextMeeting } from '../hooks/useFetchMeetings.ts';
+import {
+  useFetchLatestMeeting,
+  useFetchNextMeeting,
+} from '../hooks/useFetchMeetings.ts';
 import { useFetchRaceControl } from '../hooks/useFetchRaceControl.ts';
-import { useAppDispatch } from '../store/hooks.ts';
-import { setSelectedSessionKey } from '../store/sessionSlice.ts';
-import { setSelectedMeetingKey } from '../store/meetingSlice.ts';
-import { useLocation } from 'react-router-dom';
-import { useFetchNextSession } from '../hooks/useFetchSession.ts';
+import {
+  useFetchLatestSession,
+  useFetchNextSession,
+} from '../hooks/useFetchSession.ts';
 
 function Session({
   selectedLap,
   maxNumberOfLaps,
   session,
   meeting,
+  meetings = [],
+  sessions = [],
+  selectedMeetingKey,
+  selectedSessionKey,
   setSelectedLap = () => {},
+  onMeetingSelect,
+  onSessionSelect,
 }: {
   selectedLap?: number;
   maxNumberOfLaps?: number;
   session?: sessionType;
   meeting?: meetingType;
+  meetings?: meetingType[];
+  sessions?: sessionType[];
+  selectedMeetingKey?: number | null;
+  selectedSessionKey?: number | null;
   setSelectedLap?: (lap: number) => void;
+  onMeetingSelect?: (meetingKey: number) => void;
+  onSessionSelect?: (sessionKey: number) => void;
 }) {
-  const dispatch = useAppDispatch();
   const { pathname } = useLocation();
   const isTelemetryPage = pathname === '/telemetry';
-  const currentDateIso = useMemo(() => new Date().toISOString(), []);
-  const selectedMeetingKey = useSelector(
-    (store: RootState) => store.meeting.selectedMeetingKey
+  const { data: latestSession, isFetched: isLatestSessionFetched } =
+    useFetchLatestSession(!isTelemetryPage && !session);
+  const latestSessionIsLive = latestSession
+    ? checkIfIsLiveSession(latestSession.date_start, latestSession.date_end)
+    : false;
+  const shouldFetchNextSession =
+    !isTelemetryPage &&
+    !session &&
+    isLatestSessionFetched &&
+    !latestSessionIsLive;
+  const { data: nextSession } = useFetchNextSession(shouldFetchNextSession);
+  const { data: latestMeeting } = useFetchLatestMeeting(
+    !isTelemetryPage && !meeting && latestSessionIsLive
   );
-  const selectedSessionKey = useSelector(
-    (store: RootState) => store.session.selectedSessionKey
+  const { data: nextMeeting } = useFetchNextMeeting(
+    !isTelemetryPage &&
+      !meeting &&
+      isLatestSessionFetched &&
+      !latestSessionIsLive
   );
-
-  const selectedSession =
-    session ??
-    queryClient
-      .getQueryData<sessionType[]>(['sessions', selectedMeetingKey])
-      ?.find((session) => session.session_key === selectedSessionKey);
-
-  const meetings =
-    queryClient.getQueryData<meetingType[]>([
-      'meetings',
-      new Date().getFullYear(),
-    ]) ?? [];
-
-  const sessions =
-    queryClient.getQueryData<sessionType[]>(['sessions', selectedMeetingKey]) ??
-    [];
 
   const selectedMeeting =
     meeting ??
     meetings.find((meeting) => meeting.meeting_key === selectedMeetingKey);
 
-  const { data: nextMeeting } = useFetchNextMeeting(currentDateIso);
-  const selectedSessionIsLive = selectedSession
-    ? checkIfIsLiveSession(selectedSession.date_start, selectedSession.date_end)
-    : false;
-  const shouldFetchNextSession =
-    !isTelemetryPage && !session && !selectedSessionIsLive;
-  const { data: nextSession } = useFetchNextSession(shouldFetchNextSession);
-  const displaySession =
-    isTelemetryPage || selectedSessionIsLive
-      ? selectedSession
-      : (session ?? nextSession ?? selectedSession);
+  const selectedSession =
+    session ??
+    sessions.find((session) => session.session_key === selectedSessionKey);
+
+  const displaySession = isTelemetryPage
+    ? selectedSession
+    : (session ??
+      (latestSessionIsLive
+        ? latestSession
+        : isLatestSessionFetched
+          ? nextSession
+          : undefined) ??
+      selectedSession);
 
   const cachedSessionMeeting = meetings.find(
     (meeting) => meeting.meeting_key === displaySession?.meeting_key
   );
+  const latestSessionMeeting =
+    latestMeeting?.meeting_key === displaySession?.meeting_key
+      ? latestMeeting
+      : undefined;
   const nextSessionMeeting =
     nextMeeting?.meeting_key === displaySession?.meeting_key
       ? nextMeeting
@@ -93,23 +110,24 @@ function Session({
   const sessionMeeting =
     meeting ??
     cachedSessionMeeting ??
+    latestSessionMeeting ??
     nextSessionMeeting ??
     selectedSessionMeeting;
 
   const isLive = displaySession
     ? checkIfIsLiveSession(displaySession.date_start, displaySession.date_end)
     : false;
-  const sessionKey = isLive ? (displaySession?.session_key ?? 0) : 0;
+  const sessionKey = isLive ? latestOpenF1Key : 0;
   const { data: raceControl = [] } = useFetchRaceControl(sessionKey);
 
   if (!displaySession) return null;
 
   const handleMeetingSelection = (key: number) => {
-    dispatch(setSelectedMeetingKey(key));
+    onMeetingSelect?.(key);
   };
 
   const handleSessionSelection = (key: number) => {
-    dispatch(setSelectedSessionKey(key));
+    onSessionSelect?.(key);
   };
 
   return (

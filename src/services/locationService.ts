@@ -1,15 +1,16 @@
 import { endpoints } from '../api/endpoints';
 import { api } from '../api/telemetryApi';
-import type { locationType } from '../utils/types';
+import { isValidOpenF1Key, stringifyOpenF1Key } from '../utils/helpers';
+import type { locationType, OpenF1Key } from '../utils/types';
 import { getHttpStatus, notifyServiceError } from './serviceError';
 
 export async function getDriverLocation(
-  session_key: number,
+  session_key: OpenF1Key,
   driver_number: number
 ): Promise<locationType[]> {
   try {
     const res = await api.get(
-      `${endpoints.location}?session_key=${session_key}&driver_number=${driver_number}`
+      `${endpoints.location}?session_key=${stringifyOpenF1Key(session_key)}&driver_number=${driver_number}`
     );
 
     return res.data;
@@ -25,16 +26,20 @@ export async function getDriverLocation(
 }
 
 export async function getLocationsByDrivers(
-  session_key: number,
+  session_key: OpenF1Key,
   driver_numbers: number[]
 ): Promise<locationType[]> {
   const uniqueDriverNumbers = [...new Set(driver_numbers)].filter(
     (driverNumber) => driverNumber > 0
   );
 
-  if (session_key <= 0 || uniqueDriverNumbers.length === 0) return [];
+  if (!isValidOpenF1Key(session_key) || uniqueDriverNumbers.length === 0) {
+    return [];
+  }
 
-  const params = new URLSearchParams({ session_key: String(session_key) });
+  const params = new URLSearchParams({
+    session_key: stringifyOpenF1Key(session_key),
+  });
   uniqueDriverNumbers.forEach((DriverNumber) => {
     params.append('driver_number', String(DriverNumber));
   });

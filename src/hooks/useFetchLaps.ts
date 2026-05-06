@@ -1,16 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { getLaps, getLapsByDrivers } from '../services/lapService';
+import { isValidOpenF1Key, latestOpenF1Key } from '../utils/helpers';
+import type { OpenF1Key } from '../utils/types';
 
-export function useFetchLaps(session_key: number) {
+export function useFetchLaps(session_key: OpenF1Key = latestOpenF1Key) {
   return useQuery({
     queryKey: ['laps', session_key],
     queryFn: () => getLaps(session_key),
-    enabled: session_key > 0,
+    enabled: isValidOpenF1Key(session_key),
   });
 }
 
 export function useFetchLapsByDrivers(
-  sessionKey: number,
+  sessionKey: OpenF1Key,
   driverNumbers: number[]
 ) {
   const uniqueDriverNumbers = [...new Set(driverNumbers)]
@@ -20,6 +22,6 @@ export function useFetchLapsByDrivers(
   return useQuery({
     queryKey: ['laps', sessionKey, uniqueDriverNumbers],
     queryFn: () => getLapsByDrivers(sessionKey, uniqueDriverNumbers),
-    enabled: sessionKey > 0 && uniqueDriverNumbers.length > 0,
+    enabled: isValidOpenF1Key(sessionKey) && uniqueDriverNumbers.length > 0,
   });
 }
