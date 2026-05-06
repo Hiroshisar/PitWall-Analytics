@@ -6,7 +6,7 @@ const menu_options = [
   { label: 'Live', to: '/live' },
   { label: 'Telemetry', to: '/telemetry' },
   { label: 'Championships', to: '/championships' },
-  { label: 'Starting Grid', to: '/starting-grid' },
+  { label: 'Statistics', to: '/statistics' },
   { label: 'Tyre Strategy', to: '/tyre-strategy' },
   { label: 'Weather', to: '/weather' },
 ];

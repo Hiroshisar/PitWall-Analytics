@@ -174,7 +174,7 @@ function Driver({
       <DriverPortrait>
         <img
           src={driverImageSrc}
-          alt={`${driver.broadcast_name}-${driver.driver_number}`}
+          alt={`${driver.name_acronym}-${driver.driver_number}`}
           width={150}
         />
       </DriverPortrait>

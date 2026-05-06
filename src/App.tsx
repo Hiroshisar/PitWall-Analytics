@@ -8,7 +8,7 @@ import { queryClient } from './hooks/queryClient';
 import { ToastContainer, Bounce } from 'react-toastify';
 import Live from './pages/Live';
 import Telemetry from './pages/Telemetry';
-import { StartingGrid } from './pages/StartingGrid.tsx';
+import { Statistics } from './pages/Statistics.tsx';
 import { TyreStrategy } from './pages/TyreStrategy.tsx';
 import Weather from './pages/Weather.tsx';
 
@@ -38,7 +38,7 @@ function App() {
               <Route path="/championships" element={<Championships />} />
               <Route path="/live" element={<Live />} />
               <Route path="/telemetry" element={<Telemetry />} />
-              <Route path="/starting-grid" element={<StartingGrid />} />
+              <Route path="/statistics" element={<Statistics />} />
               <Route path="/tyre-strategy" element={<TyreStrategy />} />
               <Route path="/weather" element={<Weather />} />
             </Route>

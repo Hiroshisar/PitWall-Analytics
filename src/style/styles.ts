@@ -74,7 +74,6 @@ export const SpinnerRing = styled.div`
 `;
 
 export const StyledNavLink = styled(Link)<{ $isSelected: boolean }>`
-  background: none;
   border: 1px solid var(--color-grey-600);
   padding: 1rem 2rem;
   width: 200px;
