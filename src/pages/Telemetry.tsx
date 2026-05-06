@@ -115,6 +115,7 @@ function Telemetry() {
         .map((carSample) => ({
           ...carSample,
           selectedLapNumber: selectedLap ? undefined : lap.lap_number,
+          selectedLapTime: lap.lap_duration,
         }));
     });
   }, [carsData, lapsData, selectedDrivers, selectedLap]);

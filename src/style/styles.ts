@@ -177,8 +177,9 @@ export const LivePageCenter = styled.div`
 `;
 
 export const LivePageColumn = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 2fr 4fr;
+
   padding: 2px;
   gap: 10px;
   width: 100%;
@@ -585,6 +586,8 @@ export const StyledSelect = styled.select`
   border-radius: 15px;
   max-height: 8rem;
   padding: 5px;
+  font-size: 2rem;
+  text-align: center;
 `;
 
 export const StyledOption = styled.option`
@@ -674,13 +677,13 @@ export const SessionNationAndDate = styled.div`
 export const SessionHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 2rem;
 `;
 
 export const SessionData = styled.div`
   display: flex;
   align-items: start;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
 `;
 

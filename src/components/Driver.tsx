@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import Coloris from '@melloware/coloris';
 import {
   ColoredCircle,
@@ -12,6 +12,18 @@ import type { DriversListVariant } from '../style/styles';
 import type { driverType } from '../utils/types';
 import RemoveButton from '../ui/RemoveButton';
 import { normalizeHexColor } from '../utils/helpers';
+
+const getPublicImageSrc = (fileName: string) =>
+  `${import.meta.env.BASE_URL}${fileName}`;
+
+const fallbackDriverImage = getPublicImageSrc('unknown.png');
+const getDriverImageSrc = (driverNumber: number) =>
+  getPublicImageSrc(`${driverNumber}.png`);
+
+type LoadedDriverImage = {
+  driverNumber: number;
+  src: string;
+};
 
 function Driver({
   driver,
@@ -31,6 +43,36 @@ function Driver({
   const colorCircleRef = useRef<HTMLLabelElement>(null);
   const colorValue = normalizeHexColor(driver.team_colour) ?? '#000000';
   const pendingColorRef = useRef<string | null>(null);
+  const [loadedDriverImage, setLoadedDriverImage] =
+    useState<LoadedDriverImage | null>(null);
+  const driverImageSrc =
+    loadedDriverImage?.driverNumber === driver.driver_number
+      ? loadedDriverImage.src
+      : fallbackDriverImage;
+
+  useEffect(() => {
+    let isCurrentDriver = true;
+    const driverNumber = driver.driver_number;
+    const imageSrc = getDriverImageSrc(driver.driver_number);
+    const image = new Image();
+
+    image.onload = () => {
+      if (isCurrentDriver)
+        setLoadedDriverImage({ driverNumber, src: imageSrc });
+    };
+
+    image.onerror = () => {
+      if (isCurrentDriver) {
+        setLoadedDriverImage({ driverNumber, src: fallbackDriverImage });
+      }
+    };
+
+    image.src = imageSrc;
+
+    return () => {
+      isCurrentDriver = false;
+    };
+  }, [driver.driver_number]);
 
   useEffect(() => {
     const input = colorInputRef.current;
@@ -131,7 +173,7 @@ function Driver({
     <StyledDriverMain $selected={isItemSelected}>
       <DriverPortrait>
         <img
-          src={`./${driver.driver_number}.png`}
+          src={driverImageSrc}
           alt={`${driver.broadcast_name}-${driver.driver_number}`}
           width={150}
         />

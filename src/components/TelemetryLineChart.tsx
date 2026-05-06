@@ -180,9 +180,15 @@ function CustomTelemetryTooltip({
             key={driverSeries.driver.driver_number}
             $color={driverSeries.color}
           >
+            {driverSeries.lapNumber
+              ? `(${driverSeries.lapNumber} ${
+                  driverSeries.lapDuration
+                    ? formatLapTime(driverSeries.lapDuration)
+                    : ''
+                })`
+              : ''}{' '}
             {driverSeries.driver.name_acronym}{' '}
-            {value === null ? 'N/D' : metricConfig.formatValue(value)}{' '}
-            {driverSeries.lapNumber ? `lap ${driverSeries.lapNumber}` : ''}
+            {value === null ? 'N/D' : metricConfig.formatValue(value)}
           </ChartTooltipValue>
         );
       })}
@@ -236,6 +242,7 @@ function TelemetryLineChart({
         color: teamColor,
         points,
         lapNumber: driverCarData[0]?.selectedLapNumber,
+        lapDuration: driverCarData[0]?.selectedLapTime,
       };
     });
   }, [carsData, metricConfig, selectedDrivers]);

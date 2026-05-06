@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { queryClient } from '../hooks/queryClient';
 import type { RootState } from '../store/store';
@@ -15,6 +16,11 @@ import Weather from '../pages/Weather';
 import { Select } from '../ui/Select.tsx';
 import { useFetchNextMeeting } from '../hooks/useFetchMeetings.ts';
 import { useFetchRaceControl } from '../hooks/useFetchRaceControl.ts';
+import { useAppDispatch } from '../store/hooks.ts';
+import { setSelectedSessionKey } from '../store/sessionSlice.ts';
+import { setSelectedMeetingKey } from '../store/meetingSlice.ts';
+import { useLocation } from 'react-router-dom';
+import { useFetchNextSession } from '../hooks/useFetchSession.ts';
 
 function Session({
   selectedLap,
@@ -29,6 +35,10 @@ function Session({
   meeting?: meetingType;
   setSelectedLap?: (lap: number) => void;
 }) {
+  const dispatch = useAppDispatch();
+  const { pathname } = useLocation();
+  const isTelemetryPage = pathname === '/telemetry';
+  const currentDateIso = useMemo(() => new Date().toISOString(), []);
   const selectedMeetingKey = useSelector(
     (store: RootState) => store.meeting.selectedMeetingKey
   );
@@ -48,64 +58,105 @@ function Session({
       new Date().getFullYear(),
     ]) ?? [];
 
+  const sessions =
+    queryClient.getQueryData<sessionType[]>(['sessions', selectedMeetingKey]) ??
+    [];
+
   const selectedMeeting =
     meeting ??
     meetings.find((meeting) => meeting.meeting_key === selectedMeetingKey);
 
-  const { data: nextMeeting } = useFetchNextMeeting(
-    selectedMeeting?.date_end ?? ''
+  const { data: nextMeeting } = useFetchNextMeeting(currentDateIso);
+  const selectedSessionIsLive = selectedSession
+    ? checkIfIsLiveSession(selectedSession.date_start, selectedSession.date_end)
+    : false;
+  const shouldFetchNextSession =
+    !isTelemetryPage && !session && !selectedSessionIsLive;
+  const { data: nextSession } = useFetchNextSession(shouldFetchNextSession);
+  const displaySession =
+    isTelemetryPage || selectedSessionIsLive
+      ? selectedSession
+      : (session ?? nextSession ?? selectedSession);
+
+  const cachedSessionMeeting = meetings.find(
+    (meeting) => meeting.meeting_key === displaySession?.meeting_key
   );
+  const nextSessionMeeting =
+    nextMeeting?.meeting_key === displaySession?.meeting_key
+      ? nextMeeting
+      : undefined;
+  const selectedSessionMeeting =
+    selectedMeeting?.meeting_key === displaySession?.meeting_key
+      ? selectedMeeting
+      : undefined;
 
   const sessionMeeting =
     meeting ??
-    meetings.find(
-      (meeting) => meeting.meeting_key === selectedSession?.meeting_key
-    ) ??
-    (nextMeeting?.meeting_key === selectedSession?.meeting_key
-      ? nextMeeting
-      : undefined) ??
-    selectedMeeting;
+    cachedSessionMeeting ??
+    nextSessionMeeting ??
+    selectedSessionMeeting;
 
-  const sessionKey = selectedSession?.session_key ?? 0;
+  const isLive = displaySession
+    ? checkIfIsLiveSession(displaySession.date_start, displaySession.date_end)
+    : false;
+  const sessionKey = isLive ? (displaySession?.session_key ?? 0) : 0;
   const { data: raceControl = [] } = useFetchRaceControl(sessionKey);
 
-  if (!selectedSession) return null;
+  if (!displaySession) return null;
 
-  const isLive = checkIfIsLiveSession(
-    selectedSession.date_start,
-    selectedSession.date_end
-  );
+  const handleMeetingSelection = (key: number) => {
+    dispatch(setSelectedMeetingKey(key));
+  };
+
+  const handleSessionSelection = (key: number) => {
+    dispatch(setSelectedSessionKey(key));
+  };
 
   return (
     <StyledSession $islive={isLive}>
       <SessionNationAndDate>
         <SessionHeader>
-          <h1>{selectedSession.circuit_short_name}</h1>
+          {isTelemetryPage ? (
+            <Select
+              value={selectedMeetingKey ?? 0}
+              meetings={meetings}
+              onSelect={handleMeetingSelection}
+            />
+          ) : (
+            <h1>{displaySession.circuit_short_name}</h1>
+          )}
           <img
-            src={sessionMeeting?.country_flag}
-            alt="country flag"
-            width={25}
+            src={sessionMeeting?.country_flag ?? ''}
+            alt={sessionMeeting?.country_name ?? ''}
+            width={45}
           />
         </SessionHeader>
-        <h4>{formatDate(selectedSession.date_start)}</h4>
+        <h4>{formatDate(displaySession.date_start)}</h4>
       </SessionNationAndDate>
       <SessionData>
-        <h2>{selectedSession.session_name}</h2>
-        {maxNumberOfLaps && selectedLap !== undefined ? (
-          <h3>
-            Giro{' '}
+        {isTelemetryPage ? (
+          <>
             <Select
-              selectedLap={selectedLap}
-              max={maxNumberOfLaps}
-              onSelect={setSelectedLap}
-            />
-          </h3>
-        ) : null}{' '}
+              value={selectedSessionKey ?? 0}
+              sessions={sessions}
+              onSelect={handleSessionSelection}
+            ></Select>
+            {maxNumberOfLaps && selectedLap !== undefined ? (
+              <Select
+                value={selectedLap}
+                max={maxNumberOfLaps}
+                onSelect={setSelectedLap}
+              />
+            ) : null}{' '}
+          </>
+        ) : (
+          <h2>{displaySession.session_name}</h2>
+        )}
       </SessionData>
       {isLive ? (
         <>
           <div>
-            <Timer dateEnd={selectedSession.date_end} />
+            <Timer dateEnd={displaySession.date_end} />
           </div>
           <div>
             <Weather />

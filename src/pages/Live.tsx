@@ -56,9 +56,10 @@ function Live() {
     (s) => s.session_key === selectedSessionKey
   );
 
-  const isLive = selectedSession
+  const isLive = true; /* selectedSession
     ? checkIfIsLiveSession(selectedSession.date_start, selectedSession.date_end)
     : false;
+    */
   const liveMeetingKey = selectedSession?.meeting_key ?? null;
 
   const { data: nextSession, isLoading: isLoadingNextSession } =
@@ -128,7 +129,7 @@ function Live() {
   if (!selectedSession) return;
 
   if (isLoadingNextSession) return <Spinner />;
-
+  // TODO aggiungere visualizzazione di elementi vuoti nella griglia con solo i DriverTag popolati
   return (
     <>
       {isLive ? (

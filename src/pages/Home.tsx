@@ -4,7 +4,7 @@ import Spinner from '../ui/Spinner';
 import { useEffect, useMemo } from 'react';
 import { useFetchAllSessions } from '../hooks/useFetchSession';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { setSelectedMeeting } from '../store/meetingSlice';
+import { setSelectedMeetingKey } from '../store/meetingSlice';
 import { setSelectedSessionKey } from '../store/sessionSlice';
 import { Outlet, useLocation } from 'react-router-dom';
 import Session from '../components/Session.tsx';
@@ -34,7 +34,7 @@ function Home() {
   useEffect(() => {
     if (selectedMeetingKey || !latestMeeting) return;
 
-    dispatch(setSelectedMeeting(latestMeeting.meeting_key));
+    dispatch(setSelectedMeetingKey(latestMeeting.meeting_key));
   }, [selectedMeetingKey, latestMeeting, dispatch]);
 
   const effectiveMeetingKey =
