@@ -16,7 +16,7 @@ export const StyledModal = styled.div`
   box-sizing: border-box;
   overflow: auto;
   overscroll-behavior: contain;
-  background-color: var(--color-grey-500);
+  background-color: var(--color-grey-700);
   border-radius: var(--border-radius-3xl);
   box-shadow: var(--shadow-lg);
   padding: 2.2rem 3rem;
@@ -55,10 +55,11 @@ export const SpinnerRing = styled.div`
   border-radius: 50%;
   margin: 4.8rem auto;
 
-  ${spinAnimation}
+  ${spinAnimation};
 
-  background: 
-    radial-gradient(farthest-side, var(--color-red-700) 94%, transparent) top/10px 10px no-repeat,
+  background:
+    radial-gradient(farthest-side, var(--color-red-700) 94%, transparent)
+      top/10px 10px no-repeat,
     conic-gradient(transparent 30%, var(--color-red-700));
 
   -webkit-mask: radial-gradient(

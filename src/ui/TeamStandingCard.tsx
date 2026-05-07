@@ -55,6 +55,9 @@ const StyledTeamCard = styled.div<{ $url: string }>`
   overflow: hidden;
 
   color: var(--color-grey-200);
+  border-radius: var(--border-radius-3xl);
+
+  padding-left: 2rem;
 
   column-gap: 1rem;
 
@@ -80,7 +83,7 @@ function TeamStandingCard({ team }: { team: teamStandingsType }) {
   return (
     <StyledTeamCard $url={imageSrc}>
       <StyledDriverRow>
-        <h3>{team.team_name.toLocaleUpperCase()}</h3>
+        <h3>{team.team_name}</h3>
       </StyledDriverRow>
     </StyledTeamCard>
   );

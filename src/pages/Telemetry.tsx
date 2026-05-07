@@ -35,10 +35,12 @@ const telemetryMetrics: TelemetryMetric[] = [
 function Telemetry() {
   const [selectedDrivers, setSelectedDrivers] = useState<driverType[]>([]);
   const [selectedLap, setSelectedLap] = useState<number>(0);
-  const [selectedMeetingKey, setSelectedMeetingKey] =
-    useState<number | null>(null);
-  const [selectedSessionKey, setSelectedSessionKey] =
-    useState<number | null>(null);
+  const [selectedMeetingKey, setSelectedMeetingKey] = useState<number | null>(
+    null
+  );
+  const [selectedSessionKey, setSelectedSessionKey] = useState<number | null>(
+    null
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: meetings = [], isLoading: isLoadingMeetings } =
@@ -213,6 +215,9 @@ function Telemetry() {
     !effectiveSessionKey
   )
     return <Spinner />;
+
+  // TODO risolvere reset lista piloti selezionati cambiando meeting o sessione
+  //  (fallback in caso di assenza pilota)
 
   return (
     <StyledTelemetryPage>
