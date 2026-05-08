@@ -10,7 +10,7 @@ import {
   formatDate,
   latestOpenF1Key,
 } from '../utils/helpers';
-import type { meetingType, sessionType } from '../utils/types';
+import type { SessionProps } from '../utils/types';
 import Flag from './Flag';
 import Timer from './Timer';
 import Weather from '../pages/Weather';
@@ -37,19 +37,7 @@ function Session({
   setSelectedLap = () => {},
   onMeetingSelect,
   onSessionSelect,
-}: {
-  selectedLap?: number;
-  maxNumberOfLaps?: number;
-  session?: sessionType;
-  meeting?: meetingType;
-  meetings?: meetingType[];
-  sessions?: sessionType[];
-  selectedMeetingKey?: number | null;
-  selectedSessionKey?: number | null;
-  setSelectedLap?: (lap: number) => void;
-  onMeetingSelect?: (meetingKey: number) => void;
-  onSessionSelect?: (sessionKey: number) => void;
-}) {
+}: SessionProps) {
   const { pathname } = useLocation();
   const isTelemetryPage = pathname === '/telemetry';
   const { data: latestSession, isFetched: isLatestSessionFetched } =

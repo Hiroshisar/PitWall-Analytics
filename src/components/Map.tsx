@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { locationType, meetingType, OpenF1Key } from '../utils/types';
+import type {
+  CoordinateBounds,
+  ImageSize,
+  locationType,
+  MapProps,
+  meetingType,
+} from '../utils/types';
 import { normalizeHexColor } from '../utils/helpers';
 import { queryClient } from '../hooks/queryClient';
 import { useFetchDrivers } from '../hooks/useFetchDriver';
@@ -25,18 +31,6 @@ const markerStrokeWidth = 2;
 const minCoordinateRange = 1_000;
 const mapUpdateRateHz = 3.7;
 const mapUpdateIntervalMs = Math.round(1000 / mapUpdateRateHz);
-
-type ImageSize = {
-  width: number;
-  height: number;
-};
-
-type CoordinateBounds = {
-  minX: number;
-  maxX: number;
-  minY: number;
-  maxY: number;
-};
 
 function useImageSize(src?: string) {
   const [imageSize, setImageSize] = useState<
@@ -116,10 +110,7 @@ function expandCoordinateBounds(bounds: CoordinateBounds): CoordinateBounds {
 function Map({
   sessionKey,
   meetingKey,
-}: {
-  sessionKey: OpenF1Key;
-  meetingKey: number;
-}) {
+}: MapProps) {
   const { data: drivers } = useFetchDrivers(sessionKey);
   const [locationSamples, setLocationSamples] = useState<locationType[]>([]);
 

@@ -58,19 +58,15 @@ export async function getNextSession(): Promise<sessionType | null> {
   try {
     const now = new Date();
 
-    const res = await api.get(endpoints.sessions);
+    const res = await api.get(
+      `${endpoints.sessions}?date_start>${now.toISOString()}`
+    );
 
     return (
-      res.data
-        .filter(
-          (elem: sessionType) =>
-            !elem.is_cancelled && new Date(elem.date_start) > now
-        )
-        .sort(
-          (sessionA: sessionType, sessionB: sessionType) =>
-            new Date(sessionA.date_start).getTime() -
-            new Date(sessionB.date_start).getTime()
-        )[0] ?? null
+      res.data.filter(
+        (elem: sessionType) =>
+          !elem.is_cancelled && new Date(elem.date_start) > now
+      )[0] ?? null
     );
   } catch (err: unknown) {
     notifyServiceError(

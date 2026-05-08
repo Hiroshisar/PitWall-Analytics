@@ -1,93 +1,23 @@
 import { useFetchStandings } from '../hooks/useFetchStandings.ts';
 import Spinner from '../ui/Spinner.tsx';
-import styled from 'styled-components';
 import DriverStandingCard from '../ui/DriverStandingCard.tsx';
 import { useFetchDrivers } from '../hooks/useFetchDriver.ts';
 import type { driverType } from '../utils/types.ts';
 import TeamStandingCard from '../ui/TeamStandingCard.tsx';
+import {
+  StyledChampionshipsContainer,
+  StyledChampionshipsHeader,
+  StyledChampionshipsRow,
+  StyledChampionshipsTitle,
+  StyledDriversTitle,
+  StyledEmptyStandingCell,
+  StyledPoints,
+  StyledPosition,
+  StyledPositionRow,
+  StyledTeamsTitle,
+} from '../style/styles.ts';
 
-const StyledChampionshipsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  padding: 0 2rem 4rem;
-`;
-
-const StyledChampionshipsRow = styled.div`
-  width: 100%;
-  max-width: 122rem;
-  display: flex;
-  flex-direction: column;
-  margin-top: 5rem;
-  gap: 1.5rem;
-
-  @media (max-width: 1200px) {
-    max-width: 100%;
-    overflow-x: auto;
-  }
-`;
-
-const StyledChampionshipsTitle = styled.h1`
-  margin-top: 5rem;
-`;
-
-const standingsColumns =
-  '10rem minmax(35rem, 1fr) 7rem minmax(35rem, 1fr) 10rem';
-
-const StyledChampionshipsHeader = styled.div`
-  display: grid;
-  grid-template-columns: ${standingsColumns};
-  gap: 1rem;
-  min-width: 100rem;
-  width: 100%;
-  box-sizing: border-box;
-  align-items: center;
-  text-align: center;
-`;
-
-const StyledDriversTitle = styled.h2`
-  grid-column: 1 / 3;
-`;
-
-const StyledTeamsTitle = styled.h2`
-  grid-column: 4 / 6;
-`;
-
-const StyledPositionRow = styled.div`
-  display: grid;
-  grid-template-columns: ${standingsColumns};
-  gap: 1rem;
-  min-width: 100rem;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
-  align-items: center;
-  justify-items: center;
-`;
-
-const StyledPoints = styled.h3`
-  width: 100%;
-`;
-
-const StyledPosition = styled.h3`
-  width: 100%;
-  height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-`;
-
-const StyledEmptyStandingCell = styled.div`
-  width: 35rem;
-  height: 120px;
-`;
-
-function Championships() {
+function Standings() {
   const { data: standings, isLoading: standingsLoading } = useFetchStandings();
   const { data: drivers, isLoading: driversLoading } = useFetchDrivers();
 
@@ -103,11 +33,11 @@ function Championships() {
 
   return (
     <StyledChampionshipsContainer>
-      <StyledChampionshipsTitle>CHAMPIONSHIPS</StyledChampionshipsTitle>
+      <StyledChampionshipsTitle>STANDINGS</StyledChampionshipsTitle>
       <StyledChampionshipsRow>
         <StyledChampionshipsHeader>
-          <StyledDriversTitle>Piloti</StyledDriversTitle>
-          <StyledTeamsTitle>Team</StyledTeamsTitle>
+          <StyledDriversTitle>Drivers</StyledDriversTitle>
+          <StyledTeamsTitle>Teams</StyledTeamsTitle>
         </StyledChampionshipsHeader>
         {sortedPositions.map((position) => {
           const driverStanding = standings.drivers.find(
@@ -147,4 +77,4 @@ function Championships() {
   );
 }
 
-export default Championships;
+export default Standings;

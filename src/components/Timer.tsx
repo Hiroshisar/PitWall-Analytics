@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { formatTime } from '../utils/helpers';
+import type { TimerProps } from '../utils/types.ts';
 
-function Timer({ dateEnd }: { dateEnd: string }) {
+function Timer({ dateEnd }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState<number>(() =>
     getRemainingSeconds(dateEnd)
   );

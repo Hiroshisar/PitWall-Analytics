@@ -4,9 +4,8 @@ import type {
   driverType,
   intervalType,
   lapType,
-  OpenF1Key,
   pitType,
-  sessionType,
+  SessionGridProps,
   stintType,
 } from '../utils/types.ts';
 import { useMemo } from 'react';
@@ -24,10 +23,7 @@ import {
 function SessionGrid({
   session,
   sessionKey = session.session_key,
-}: {
-  session: sessionType;
-  sessionKey?: OpenF1Key;
-}) {
+}: SessionGridProps) {
   const { data: sessionGrid } = useFetchPosition(sessionKey);
   const { data: drivers } = useFetchDrivers(sessionKey);
 

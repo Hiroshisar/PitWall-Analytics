@@ -6,9 +6,9 @@ import {
   WeatherWindDirection,
   WeatherWindRow,
 } from '../style/styles.ts';
-import type { weatherType } from '../utils/types.ts';
+import type { WeatherItemProps } from '../utils/types.ts';
 
-function WeatherItem({ data }: { data: weatherType }) {
+function WeatherItem({ data }: WeatherItemProps) {
   const directionDegrees = data.wind_direction;
 
   return (

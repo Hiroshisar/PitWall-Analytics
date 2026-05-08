@@ -5,7 +5,7 @@ import { Button } from './Button.tsx';
 const menu_options = [
   { label: 'Live', to: '/live' },
   { label: 'Telemetry', to: '/telemetry' },
-  { label: 'Championships', to: '/championships' },
+  { label: 'Standings', to: '/standings' },
   { label: 'Statistics', to: '/statistics' },
   { label: 'Tyre Strategy', to: '/tyre-strategy' },
   { label: 'Weather', to: '/weather' },

@@ -1,22 +1,65 @@
-import styled from 'styled-components';
-import type { teamStandingsType } from '../utils/types.ts';
-import { StyledDriverRow } from '../style/styles.ts';
+import type {
+  TeamImageMatcher,
+  TeamStandingCardProps,
+} from '../utils/types.ts';
+import { StyledCardRow, StyledTeamCard } from '../style/styles.ts';
 
-const teamImageMatchers: { aliases: string[]; fileName: string }[] = [
-  { aliases: ['aston martin', 'aston'], fileName: 'aston martin.png' },
-  { aliases: ['ferrari'], fileName: 'ferrari.png' },
-  { aliases: ['haas'], fileName: 'haas f1 team.png' },
-  { aliases: ['mclaren', 'mc laren'], fileName: 'mclaren.png' },
-  { aliases: ['mercedes'], fileName: 'mercedes.png' },
+const teamImageMatchers: TeamImageMatcher[] = [
+  {
+    aliases: ['aston martin', 'aston'],
+    carImage: 'aston_martin.png',
+    logo: 'aston_martin_logo.png',
+  },
+  {
+    aliases: ['ferrari'],
+    carImage: 'ferrari.png',
+    logo: 'ferrari_logo.png',
+  },
+  {
+    aliases: ['haas'],
+    carImage: 'haas_f1_team.png',
+    logo: 'haas_f1_team_logo.png',
+  },
+  {
+    aliases: ['mclaren', 'mc laren'],
+    carImage: 'mclaren.png',
+    logo: 'mclaren_logo.png',
+  },
+  {
+    aliases: ['mercedes'],
+    carImage: 'mercedes.png',
+    logo: 'mercedes_logo.png',
+  },
   {
     aliases: ['racing bulls', 'vcarb', 'visa cash app', 'rb'],
-    fileName: 'racing bulls.png',
+    carImage: 'racing_bulls.png',
+    logo: 'racing_bulls_logo.png',
   },
-  { aliases: ['red bull', 'oracle'], fileName: 'red bull racing.png' },
-  { aliases: ['williams'], fileName: 'williams.png' },
-  { aliases: ['audi', 'sauber', 'kick'], fileName: 'audi.png' },
-  { aliases: ['cadillac'], fileName: 'cadillac.png' },
-  { aliases: ['alpine'], fileName: 'alpine.png' },
+  {
+    aliases: ['red bull', 'oracle'],
+    carImage: 'red_bull_racing.png',
+    logo: 'red_bull_racing_logo.png',
+  },
+  {
+    aliases: ['williams'],
+    carImage: 'williams.png',
+    logo: 'williams_logo.png',
+  },
+  {
+    aliases: ['audi', 'sauber', 'kick'],
+    carImage: 'audi.png',
+    logo: 'audi_logo.png',
+  },
+  {
+    aliases: ['cadillac'],
+    carImage: 'cadillac.png',
+    logo: 'cadillac_logo.png',
+  },
+  {
+    aliases: ['alpine'],
+    carImage: 'alpine.png',
+    logo: 'alpine_logo.png',
+  },
 ];
 
 const getPublicImageSrc = (fileName: string) =>
@@ -31,60 +74,39 @@ const normalizeTeamName = (teamName: string) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-const getTeamImageFileName = (teamName: string) => {
+const getTeamImageFileName = (teamName: string, type: string) => {
   const normalizedTeamName = normalizeTeamName(teamName);
 
-  return (
-    teamImageMatchers.find(({ aliases }) =>
-      aliases.some((alias) => normalizedTeamName.includes(alias))
-    )?.fileName ?? 'unknown team.png'
-  );
+  if (type === 'background')
+    return (
+      teamImageMatchers.find(({ aliases }) =>
+        aliases.some((alias) => normalizedTeamName.includes(alias))
+      )?.carImage ?? 'unknown_team.png'
+    );
+  if (type === 'logo')
+    return (
+      teamImageMatchers.find(({ aliases }) =>
+        aliases.some((alias) => normalizedTeamName.includes(alias))
+      )?.logo ?? ''
+    );
+  return '';
 };
 
-const getTeamImageSrc = (teamName: string) =>
-  getPublicImageSrc(getTeamImageFileName(teamName));
+const getTeamImageSrc = (teamName: string, type: string) =>
+  getPublicImageSrc(getTeamImageFileName(teamName, type));
 
-const StyledTeamCard = styled.div<{ $url: string }>`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  min-width: 10rem;
-  width: 35rem;
-  height: 120px;
-  overflow: hidden;
-
-  color: var(--color-grey-200);
-  border-radius: var(--border-radius-3xl);
-
-  padding-left: 2rem;
-
-  column-gap: 1rem;
-
-  &::before {
-    position: absolute;
-    inset: 0;
-    content: '';
-    background-image: url('${(props) => props.$url}');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    opacity: 0.7;
-  }
-
-  & > * {
-    position: relative;
-  }
-`;
-
-function TeamStandingCard({ team }: { team: teamStandingsType }) {
-  const imageSrc = getTeamImageSrc(team.team_name);
+function TeamStandingCard({ team }: TeamStandingCardProps) {
+  const imageSrc = getTeamImageSrc(team.team_name, 'background');
 
   return (
     <StyledTeamCard $url={imageSrc}>
-      <StyledDriverRow>
+      <StyledCardRow>
+        <img
+          src={getTeamImageFileName(team.team_name, 'logo')}
+          alt={team.team_name}
+        />
         <h3>{team.team_name}</h3>
-      </StyledDriverRow>
+      </StyledCardRow>
     </StyledTeamCard>
   );
 }

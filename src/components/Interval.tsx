@@ -1,6 +1,6 @@
-import type { intervalType } from '../utils/types.ts';
+import type { IntervalProps } from '../utils/types.ts';
 
-function Interval({ intervals }: { intervals: intervalType[] }) {
+function Interval({ intervals }: IntervalProps) {
   if (!intervals || intervals.length < 1) return;
 
   const lastInterval = intervals[intervals.length - 1];

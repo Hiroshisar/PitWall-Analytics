@@ -1,7 +1,6 @@
 import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
-
-export type DriversListVariant = 'main' | 'secondary';
+import type { DriversListVariant } from '../utils/types';
 
 const driverCardBase = css`
   display: grid;
@@ -512,7 +511,7 @@ export const DriverNumber = styled.div`
   justify-content: start;
 `;
 
-export const StyledDriverRow = styled.div`
+export const StyledCardRow = styled.div`
   display: grid;
   grid-template-rows: auto auto;
   align-items: center;
@@ -792,4 +791,152 @@ export const HomeTitleContainer = styled.div`
 
 export const LogoImage = styled.img`
   width: 100%;
+`;
+
+export const StyledChampionshipsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0 2rem 4rem;
+`;
+
+export const StyledChampionshipsRow = styled.div`
+  width: 100%;
+  max-width: 122rem;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5rem;
+  gap: 1.5rem;
+
+  @media (max-width: 1200px) {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+`;
+
+export const StyledChampionshipsTitle = styled.h1`
+  font-size: 5rem;
+  margin-top: 5rem;
+`;
+
+export const StyledChampionshipsHeader = styled.div`
+  display: grid;
+  grid-template-columns: 10rem minmax(35rem, 1fr) 7rem minmax(35rem, 1fr) 10rem;
+  gap: 1rem;
+  min-width: 100rem;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  text-align: center;
+`;
+
+export const StyledDriversTitle = styled.h2`
+  grid-column: 1 / 3;
+`;
+
+export const StyledTeamsTitle = styled.h2`
+  grid-column: 4 / 6;
+`;
+
+export const StyledPositionRow = styled.div`
+  display: grid;
+  grid-template-columns: 10rem minmax(35rem, 1fr) 7rem minmax(35rem, 1fr) 10rem;
+  gap: 1rem;
+  min-width: 100rem;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  align-items: center;
+  justify-items: center;
+`;
+
+export const StyledPoints = styled.h3`
+  width: 100%;
+`;
+
+export const StyledPosition = styled.h3`
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+`;
+
+export const StyledEmptyStandingCell = styled.div`
+  width: 35rem;
+  height: 120px;
+`;
+
+export const StyledDriverCard = styled.div<{ $url: string }>`
+  position: relative;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  min-width: 10rem;
+  width: 35rem;
+  height: 120px;
+  overflow: hidden;
+
+  padding-left: 1rem;
+  padding-right: 2rem;
+
+  background-color: var(--color-grey-800);
+  border-radius: var(--border-radius-3xl);
+  color: var(--color-grey-200);
+
+  column-gap: 1rem;
+
+  &::before {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background-image: url('${(props) => props.$url}');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.7;
+  }
+
+  & > * {
+    position: relative;
+  }
+`;
+
+export const StyledTeamCard = styled.div<{ $url: string }>`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  min-width: 10rem;
+  width: 35rem;
+  height: 120px;
+  overflow: hidden;
+
+  color: var(--color-grey-200);
+  border-radius: var(--border-radius-3xl);
+
+  padding-left: 2rem;
+
+  column-gap: 1rem;
+
+  &::before {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background-image: url('${(props) => props.$url}');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.7;
+  }
+
+  & > * {
+    position: relative;
+  }
 `;

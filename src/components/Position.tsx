@@ -1,12 +1,6 @@
 import DriverTag from './DriverTag';
 import DriverLastLap from './DriverLastLap';
-import type {
-  driverType,
-  intervalType,
-  lapType,
-  pitType,
-  stintType,
-} from '../utils/types';
+import type { PositionProps } from '../utils/types';
 import DriverBestLap from './DriverBestLap.tsx';
 import Interval from './Interval.tsx';
 import Pit from './Pit.tsx';
@@ -25,14 +19,7 @@ function Position({
   pits,
   stints,
   intervals,
-}: {
-  isRace: boolean;
-  driver: driverType;
-  laps: lapType[];
-  pits: pitType[];
-  stints: stintType[];
-  intervals: intervalType[];
-}) {
+}: PositionProps) {
   return (
     <>
       {isRace ? (

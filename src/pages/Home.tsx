@@ -14,7 +14,7 @@ function Home() {
       </div>
 
       <HomeTitleContainer>
-        <h1>Seleziona uno strumento</h1>
+        <h1>Choose a tool</h1>
       </HomeTitleContainer>
     </div>
   );

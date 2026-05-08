@@ -1,6 +1,6 @@
-import type { pitType } from '../utils/types.ts';
+import type { PitProps } from '../utils/types.ts';
 
-function Pit({ pits }: { pits: pitType[] }) {
+function Pit({ pits }: PitProps) {
   return (
     <div>
       <h4>{pits.length}</h4>

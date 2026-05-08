@@ -1,6 +1,6 @@
 import { Route, BrowserRouter, Navigate, Routes } from 'react-router-dom';
 import Home from './pages/Home';
-import Championships from './pages/Championships';
+import Standings from './pages/Standings';
 import MainLayout from './layout/MainLayout';
 import { QueryClientProvider } from '@tanstack/react-query';
 import GlobalStyles from './style/GlobalStyles';
@@ -35,7 +35,7 @@ function App() {
             <Route path="/" element={<Navigate to="/home" replace />} />
             <Route element={<Home />}>
               <Route path="/home" element={null} />
-              <Route path="/championships" element={<Championships />} />
+              <Route path="/standings" element={<Standings />} />
               <Route path="/live" element={<Live />} />
               <Route path="/telemetry" element={<Telemetry />} />
               <Route path="/statistics" element={<Statistics />} />

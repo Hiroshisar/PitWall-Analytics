@@ -1,7 +1,7 @@
 import { StyledFlagBadge } from '../style/styles.ts';
-import type { raceControlType } from '../utils/types.ts';
+import type { FlagProps } from '../utils/types.ts';
 
-function Flag({ race_control }: { race_control: raceControlType }) {
+function Flag({ race_control }: FlagProps) {
   const flagColor = getFlagColor(race_control.flag);
 
   if (!race_control.flag) return null;

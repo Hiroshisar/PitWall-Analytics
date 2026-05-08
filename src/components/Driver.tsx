@@ -5,11 +5,10 @@ import {
   DriverNumber,
   DriverPortrait,
   StyledDriverMain,
-  StyledDriverRow,
+  StyledCardRow,
   StyledDriverSecondary,
 } from '../style/styles';
-import type { DriversListVariant } from '../style/styles';
-import type { driverType } from '../utils/types';
+import type { DriverProps, LoadedDriverImage } from '../utils/types';
 import RemoveButton from '../ui/RemoveButton';
 import { normalizeHexColor } from '../utils/helpers';
 
@@ -20,24 +19,13 @@ const fallbackDriverImage = getPublicImageSrc('unknown.png');
 const getDriverImageSrc = (driverNumber: number) =>
   getPublicImageSrc(`${driverNumber}.png`);
 
-type LoadedDriverImage = {
-  driverNumber: number;
-  src: string;
-};
-
 function Driver({
   driver,
   isItemSelected,
   type = 'main',
   onRemove,
   onColorChange,
-}: {
-  type?: DriversListVariant;
-  driver: driverType;
-  isItemSelected: boolean;
-  onRemove?: (driverNumber: number) => void;
-  onColorChange?: (driverNumber: number, color: string) => void;
-}) {
+}: DriverProps) {
   const colorInputId = useId();
   const colorInputRef = useRef<HTMLInputElement>(null);
   const colorCircleRef = useRef<HTMLLabelElement>(null);
@@ -178,9 +166,9 @@ function Driver({
           width={150}
         />
       </DriverPortrait>
-      <StyledDriverRow>
+      <StyledCardRow>
         <h3>{driver.last_name.toLocaleUpperCase()}</h3>
-      </StyledDriverRow>
+      </StyledCardRow>
       <DriverNumber>
         <h2>{driver.driver_number}</h2>
       </DriverNumber>

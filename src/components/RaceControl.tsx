@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { raceControlType } from '../utils/types.ts';
+import type { RaceControlProps } from '../utils/types.ts';
 import {
   RaceControlCard,
   RaceControlContainer,
@@ -10,7 +10,7 @@ import {
 
 const MAX_VISIBLE_RACE_CONTROL_MESSAGES = 50;
 
-function RaceControl({ raceControl }: { raceControl: raceControlType[] }) {
+function RaceControl({ raceControl }: RaceControlProps) {
   const visibleRaceControl = useMemo(
     () =>
       (raceControl ?? [])

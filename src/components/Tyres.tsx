@@ -1,7 +1,7 @@
 import { TyresCircle, TyresSummary } from '../style/styles.ts';
-import type { stintType } from '../utils/types.ts';
+import type { TyresProps } from '../utils/types.ts';
 
-function Tyres({ stints }: { stints: stintType[] }) {
+function Tyres({ stints }: TyresProps) {
   if (!stints || stints.length === 0) return null;
 
   const lastStint = stints[stints.length - 1];

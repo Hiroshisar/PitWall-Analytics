@@ -1,9 +1,8 @@
 import { endpoints } from '../api/endpoints';
 import { api } from '../api/telemetryApi';
 import { latestOpenF1Key, stringifyOpenF1Key } from '../utils/helpers';
-import type { meetingType, OpenF1Key } from '../utils/types';
+import type { OpenF1Key, meetingType } from '../utils/types';
 import { notifyServiceError } from './serviceError';
-import { getNextSession } from './sessionService';
 
 export async function getMeetingByYear(year: number): Promise<meetingType[]> {
   try {
@@ -52,12 +51,20 @@ export async function getLatestMeeting(): Promise<meetingType> {
   return getMeetingByKey(latestOpenF1Key);
 }
 
-export async function getNextMeeting(): Promise<meetingType> {
+export async function getNextMeeting(): Promise<meetingType | null> {
   try {
-    const nextSession = await getNextSession();
-    if (!nextSession) return {} as meetingType;
+    const now = new Date();
 
-    return getMeetingByKey(nextSession.meeting_key);
+    const res = await api.get(
+      `${endpoints.meetings}?date_start>${now.toISOString()}`
+    );
+
+    return (
+      res.data.filter(
+        (elem: meetingType) =>
+          !elem.is_cancelled && new Date(elem.date_start) > now
+      )[0] ?? null
+    );
   } catch (err: unknown) {
     notifyServiceError(
       err,
