@@ -22,7 +22,6 @@ function Standings() {
   const { data: drivers, isLoading: driversLoading } = useFetchDrivers();
 
   if (!standings || !drivers) return null;
-  if (standingsLoading || driversLoading) return <Spinner />;
 
   const sortedPositions = Array.from(
     new Set([
@@ -33,6 +32,7 @@ function Standings() {
 
   return (
     <StyledToolContainer>
+      {(standingsLoading || driversLoading) && <Spinner />}
       <StyledTitle>STANDINGS</StyledTitle>
       <StyledChampionshipsRow>
         <StyledChampionshipsHeader>

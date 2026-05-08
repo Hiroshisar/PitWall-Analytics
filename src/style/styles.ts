@@ -931,7 +931,6 @@ export const StyledDriverCard = styled.div<{ $url: string }>`
   background-color: var(--color-grey-800);
   border-radius: var(--border-radius-3xl);
   color: var(--color-grey-200);
-
   column-gap: 1rem;
 
   &::before {

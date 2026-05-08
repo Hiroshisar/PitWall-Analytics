@@ -9,6 +9,7 @@ import {
   StyledToolContainer,
   StyledWeatherContainerRow,
 } from '../style/styles.ts';
+import Spinner from '../ui/Spinner.tsx';
 
 const weatherSampleIntervalMs = 5 * 60 * 1000;
 
@@ -28,7 +29,7 @@ function canAppendWeatherSample(
 
 function Weather() {
   const [dataToShow, setDataToShow] = useState<weatherType[]>([]);
-  const { data: weatherData } = useFetchWeather();
+  const { data: weatherData, isLoading: isLoadingWeather } = useFetchWeather();
   const { data: session, isLoading: isLoadingSession } = useFetchSession();
 
   const isLive = checkIfIsLiveSession(
@@ -75,6 +76,7 @@ function Weather() {
 
   return (
     <StyledToolContainer>
+      {(isLoadingSession || isLoadingWeather) && <Spinner />}
       <StyledWeatherContainerRow $variant="header">
         <StyledTitle>WEATHER</StyledTitle>
       </StyledWeatherContainerRow>
