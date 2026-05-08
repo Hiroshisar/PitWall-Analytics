@@ -5,10 +5,10 @@ import { useFetchDrivers } from '../hooks/useFetchDriver.ts';
 import type { driverType } from '../utils/types.ts';
 import TeamStandingCard from '../ui/TeamStandingCard.tsx';
 import {
-  StyledChampionshipsContainer,
+  StyledToolContainer,
   StyledChampionshipsHeader,
   StyledChampionshipsRow,
-  StyledChampionshipsTitle,
+  StyledTitle,
   StyledDriversTitle,
   StyledEmptyStandingCell,
   StyledPoints,
@@ -32,8 +32,8 @@ function Standings() {
   ).sort((a, b) => a - b);
 
   return (
-    <StyledChampionshipsContainer>
-      <StyledChampionshipsTitle>STANDINGS</StyledChampionshipsTitle>
+    <StyledToolContainer>
+      <StyledTitle>STANDINGS</StyledTitle>
       <StyledChampionshipsRow>
         <StyledChampionshipsHeader>
           <StyledDriversTitle>Drivers</StyledDriversTitle>
@@ -73,7 +73,7 @@ function Standings() {
           );
         })}
       </StyledChampionshipsRow>
-    </StyledChampionshipsContainer>
+    </StyledToolContainer>
   );
 }
 

@@ -51,7 +51,7 @@ export function checkIfIsLiveSession(
   return now >= start && now <= end;
 }
 
-export function formatTime(seconds: number): string {
+export function formatNextSessionTime(seconds: number): string {
   const totalSeconds = Math.max(0, Math.floor(seconds));
   const days = Math.floor(totalSeconds / 86400);
   const hrs = Math.floor((totalSeconds % 86400) / 3600);
@@ -59,4 +59,13 @@ export function formatTime(seconds: number): string {
   const secs = totalSeconds % 60;
 
   return `${days > 1 ? `${days.toString()} days and ` : ''} ${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} hours`;
+}
+
+export function formatHours(date: string): string {
+  const dateItem = new Date(date);
+  const hrs = dateItem.getHours();
+  const mins = dateItem.getMinutes();
+  const secs = dateItem.getSeconds();
+
+  return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }

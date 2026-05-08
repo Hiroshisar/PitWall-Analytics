@@ -746,9 +746,48 @@ export const RacePositionDriverHeader = styled.h5`
 `;
 
 export const WeatherItemContainer = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   align-items: center;
-  gap: 3rem;
+  gap: 4rem;
+  border: 1px solid var(--color-grey-600);
+  border-radius: var(--border-radius-3xl);
+  padding-left: 1rem;
+  width: 35rem;
+`;
+
+export const StyledWeatherContainerRow = styled.div<{
+  $variant?: 'header' | 'list';
+}>`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  padding: 1rem;
+  gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: ${(props) =>
+    props.$variant === 'list' ? 'flex-start' : 'center'};
+  align-content: ${(props) =>
+    props.$variant === 'list' ? 'flex-start' : 'center'};
+  justify-content: flex-start;
+
+  ${(props) =>
+    props.$variant === 'list' &&
+    css`
+      height: calc(100dvh - 18rem);
+      max-height: calc(100dvh - 18rem);
+      overflow-x: auto;
+      overflow-y: hidden;
+    `}
+`;
+
+export const WeatherIconContainer = styled.div`
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-items: center;
+  justify-items: center;
+  row-gap: 5px;
 `;
 
 export const WeatherIcon = styled.div`
@@ -763,10 +802,13 @@ export const WeatherIcon = styled.div`
 
 export const WeatherWindRow = styled.h4`
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
 `;
 
 export const WeatherWindDirection = styled.span<{ $degrees: number }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   svg {
     transform: rotate(${(props) => props.$degrees}deg);
     margin-left: 1rem;
@@ -793,7 +835,7 @@ export const LogoImage = styled.img`
   width: 100%;
 `;
 
-export const StyledChampionshipsContainer = styled.div`
+export const StyledToolContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -818,7 +860,7 @@ export const StyledChampionshipsRow = styled.div`
   }
 `;
 
-export const StyledChampionshipsTitle = styled.h1`
+export const StyledTitle = styled.h1`
   font-size: 5rem;
   margin-top: 5rem;
 `;
