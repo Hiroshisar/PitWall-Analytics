@@ -77,19 +77,22 @@ const normalizeTeamName = (teamName: string) =>
 const getTeamImageFileName = (teamName: string, type: string) => {
   const normalizedTeamName = normalizeTeamName(teamName);
 
-  if (type === 'background')
-    return (
-      teamImageMatchers.find(({ aliases }) =>
-        aliases.some((alias) => normalizedTeamName.includes(alias))
-      )?.carImage ?? 'unknown_team.png'
-    );
-  if (type === 'logo')
-    return (
-      teamImageMatchers.find(({ aliases }) =>
-        aliases.some((alias) => normalizedTeamName.includes(alias))
-      )?.logo ?? ''
-    );
-  return '';
+  switch (type) {
+    case 'background':
+      return (
+        teamImageMatchers.find(({ aliases }) =>
+          aliases.some((alias) => normalizedTeamName.includes(alias))
+        )?.carImage ?? 'unknown_team.png'
+      );
+    case 'logo':
+      return (
+        teamImageMatchers.find(({ aliases }) =>
+          aliases.some((alias) => normalizedTeamName.includes(alias))
+        )?.logo ?? ''
+      );
+    default:
+      return '';
+  }
 };
 
 const getTeamImageSrc = (teamName: string, type: string) =>

@@ -78,7 +78,6 @@ export const StyledNavLink = styled(Link)<{ $isSelected: boolean }>`
   padding: 1rem 2rem;
   width: 200px;
   border-radius: var(--border-radius-3xl);
-  transform: translateX(0.8rem);
   transition: all 0.2s;
   margin-top: 1rem;
   text-align: center;
@@ -118,7 +117,20 @@ export const StyledMainLayout = styled.div`
   }
 `;
 
-export const StyledSidebar = styled.div`
+export const SidebarSlot = styled.aside<{ $isOpen: boolean }>`
+  position: relative;
+  width: ${(props) => (props.$isOpen ? '250px' : '0')};
+  min-height: 100vh;
+  transition: width 200ms ease;
+  z-index: 100;
+
+  @media (max-width: 900px) {
+    width: 0;
+    min-height: 0;
+  }
+`;
+
+export const StyledSidebar = styled.div<{ $isOpen: boolean }>`
   position: sticky;
   top: 10px;
   align-self: start;
@@ -138,6 +150,82 @@ export const StyledSidebar = styled.div`
   box-shadow: var(--shadow-lg);
 
   gap: 0.5rem;
+  background-color: var(--color-grey-900);
+  opacity: ${(props) => (props.$isOpen ? 1 : 0)};
+  pointer-events: ${(props) => (props.$isOpen ? 'auto' : 'none')};
+  transform: translateX(
+    ${(props) => (props.$isOpen ? '0' : 'calc(-100% - 1rem)')}
+  );
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+
+  @media (max-width: 900px) {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    height: calc(100dvh - 2rem);
+    z-index: 1200;
+  }
+`;
+
+export const SidebarHeader = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  border-bottom: 1px solid var(--color-grey-600);
+
+  a {
+    display: block;
+    width: 100%;
+  }
+
+  img {
+    border-bottom: 0;
+  }
+
+  button {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    margin: 0;
+  }
+`;
+
+export const SidebarIconButton = styled.button`
+  width: 4.4rem;
+  height: 4.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.6rem;
+  border: 0;
+  border-radius: var(--border-radius-lg);
+  background-color: transparent;
+  color: var(--color-grey-200);
+  box-shadow: var(--shadow-md);
+
+  &:focus {
+    outline: 0;
+  }
+
+  &:hover {
+    background-color: var(--color-grey-700);
+  }
+
+  svg {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+`;
+
+export const SidebarOpenButton = styled(SidebarIconButton)`
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 1201;
+  margin: 0;
 `;
 
 export const StyledLivePage = styled.div`
@@ -766,10 +854,8 @@ export const StyledWeatherContainerRow = styled.div<{
   gap: 1rem;
   width: 100%;
   box-sizing: border-box;
-  align-items: ${(props) =>
-    props.$variant === 'list' ? 'flex-start' : 'center'};
-  align-content: ${(props) =>
-    props.$variant === 'list' ? 'flex-start' : 'center'};
+  align-items: center;
+  align-content: center;
   justify-content: flex-start;
 
   ${(props) =>
@@ -833,6 +919,7 @@ export const HomeTitleContainer = styled.div`
 
 export const LogoImage = styled.img`
   width: 100%;
+  border-bottom: 1px solid var(--color-grey-600);
 `;
 
 export const StyledToolContainer = styled.div`
@@ -848,11 +935,16 @@ export const StyledToolContainer = styled.div`
 
 export const StyledChampionshipsRow = styled.div`
   width: 100%;
-  max-width: 122rem;
+  max-width: 130rem;
   display: flex;
   flex-direction: column;
   margin-top: 5rem;
   gap: 1.5rem;
+
+  padding: 4rem 6rem;
+
+  background-color: var(--color-grey-800);
+  border-radius: var(--border-radius-3xl);
 
   @media (max-width: 1200px) {
     max-width: 100%;
@@ -928,7 +1020,7 @@ export const StyledDriverCard = styled.div<{ $url: string }>`
   padding-left: 1rem;
   padding-right: 2rem;
 
-  background-color: var(--color-grey-800);
+  background-color: var(--color-grey-900);
   border-radius: var(--border-radius-3xl);
   color: var(--color-grey-200);
   column-gap: 1rem;

@@ -22,26 +22,34 @@ function WeatherItem({ data }: WeatherItemProps) {
   return (
     <WeatherItemContainer>
       <WeatherIconContainer>
-        <p>{formatHours(data.date)}</p>
         <WeatherIcon>
           {data.rainfall === 1 ? (
-            <RiShowersLine />
-          ) : hour > 6 && hour < 20 ? (
-            <RiSunLine />
+            <div style={{ color: 'grey' }}>
+              <RiShowersLine />
+            </div>
+          ) : hour > 6 && hour < 19 ? (
+            <div style={{ color: 'yellow' }}>
+              <RiSunLine />
+            </div>
           ) : (
-            <RiMoonLine />
+            <div style={{ color: 'aquamarine' }}>
+              <RiMoonLine />
+            </div>
           )}
         </WeatherIcon>
+        <p>{formatHours(data.date)}</p>
       </WeatherIconContainer>
       <div>
         <h4>{`Air ${data.air_temperature}°`}</h4>
         <h4>{`Track ${data.track_temperature}°`}</h4>
         <WeatherWindRow>
           {`Wind ${data.wind_speed} m/s`}
-          <WeatherWindDirection $degrees={directionDegrees}>
-            <RiArrowRightLongFill />
-            <h4>{`${setDirectionString(directionDegrees)}`}</h4>
-          </WeatherWindDirection>
+          {data.wind_speed > 0 ? (
+            <WeatherWindDirection $degrees={directionDegrees}>
+              <RiArrowRightLongFill />
+              <h4>{`${setDirectionString(directionDegrees)}`}</h4>
+            </WeatherWindDirection>
+          ) : null}
         </WeatherWindRow>
       </div>
     </WeatherItemContainer>
