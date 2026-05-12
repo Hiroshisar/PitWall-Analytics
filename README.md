@@ -1,27 +1,23 @@
 # PitWall Analytics
 
-PitWall Analytics is a personal open source project built to explore Formula 1 session data and telemetry through a focused web interface. The application uses OpenF1 data to provide a practical driver comparison workflow centered on lap-based telemetry analysis.
+PitWall Analytics is a personal open source project built to explore Formula 1 session data, telemetry, live timing, standings, weather, and tyre strategy through a focused web interface. The application uses OpenF1 data to provide practical Formula 1 analysis tools centered on session context and driver comparison.
 
-## What the program does
+## Implemented features
 
-PitWall Analytics currently focuses on helping users inspect and compare telemetry from a Formula 1 session.
+PitWall Analytics currently includes these working areas:
 
-- It loads meeting and session data for the current season from OpenF1.
-- It automatically selects the latest available meeting and the most relevant session so the user can start analyzing data with minimal setup.
-- It fetches the drivers available in the selected session and lets the user choose one or more drivers to compare.
-- It retrieves lap data and car telemetry samples for the selected drivers.
-- It narrows telemetry samples down to a specific lap, so the comparison is based on the same lap number across the selected drivers.
-- It renders reusable comparison charts for speed, brake, RPM, and gear.
-- It presents session context such as circuit name, country, date, and lap selection in a dedicated session header.
-- It uses driver numbers, acronyms, portraits, and team colors to make side-by-side comparisons easier to read.
+- Session context: loads OpenF1 meetings and sessions, selects sensible defaults, and shows circuit, country, date, session, and lap controls.
+- Telemetry analysis: lets users choose drivers, select a meeting/session/lap, fetch lap and car data, and compare speed, throttle, brake, RPM, and gear charts.
+- Live timing: connects to the OpenF1 live stream during active sessions, caches live messages, and shows a session grid, track map, and race control updates; outside live sessions it shows a countdown to the next event.
+- Tyre strategy: displays stint data as a compound-colored horizontal bar chart, with hover details for stint length, tyre age, compound changes, and pit stop timing.
+- Standings: shows current driver and team championship positions with points, driver cards, team branding, and aligned ranking rows.
+- Weather: shows weather samples for the selected session, including air and track temperature ranges and time-spaced weather cards.
 
 ## Current project scope
 
-The main implemented area of the application is the analysis flow.
+The main implemented areas are telemetry comparison, live timing, standings, weather, and tyre strategy.
 
-The live feature is still under development and has not been implemented yet.
-
-The repository already contains additional service modules and structural groundwork for future sections related to weather, team radio, race control, positions, pit stops, overtakes, standings, track data, and other session resources.
+The statistics page is still a placeholder. The repository also contains service modules and structural groundwork for future sections related to team radio, overtakes, additional session resources, and deeper race analysis.
 
 ## Technical overview
 
