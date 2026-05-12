@@ -24,7 +24,6 @@ The statistics page is still a placeholder. The repository also contains service
 PitWall Analytics is a React and TypeScript single-page application built with Vite.
 
 - React Router manages the application routes.
-- Redux Toolkit stores shared session and meeting state.
 - TanStack Query handles remote data fetching, caching, and asynchronous loading states.
 - Axios provides the HTTP client used to access OpenF1 endpoints.
 - Recharts powers the telemetry comparison charts.
