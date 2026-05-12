@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export type carType = {
   brake: number;
   date: string;
@@ -218,17 +220,7 @@ export type weatherType = {
   wind_speed: number;
 };
 
-export type meetingStateType = {
-  selectedMeetingKey: number | null;
-};
-
-export type sessionStateType = {
-  selectedSessionKey: number | null;
-};
-
-export type driverStateType = {
-  drivers: driverType[];
-};
+export type OpenF1Key = number | 'latest';
 
 export type TelemetryMetric = 'speed' | 'brake' | 'gear' | 'rpm' | 'throttle';
 
@@ -276,31 +268,178 @@ export type SelectedLapCarSample = carType & {
   selectedLapTime?: number;
 };
 
-/**
- *
- * TYPES DELLA TELEMETRIA LIVE
- *
- * NON CANCELLARE E NON TOCCARE
- *
- */
+export type DriversListVariant = 'main' | 'secondary';
 
-export type TelemetrySample = { t: number; v: number };
-
-export type RingBuffer = {
-  capacity: number;
-  head: number; // prossimo indice di scrittura
-  size: number; // quanti elementi validi
-  data: (TelemetrySample | null)[];
-  last: TelemetrySample | null;
+export type LoadedDriverImage = {
+  driverNumber: number;
+  src: string;
 };
 
-export type ChannelState = {
-  id: string;
-  ring: RingBuffer;
+export type DriverProps = {
+  type?: DriversListVariant;
+  driver: driverType;
+  isItemSelected: boolean;
+  onRemove?: (driverNumber: number) => void;
+  onColorChange?: (driverNumber: number, color: string) => void;
 };
 
-export type TelemetryState = {
-  channels: Record<string, ChannelState>;
-  lookbackMs: number; // finestra grafico
-  uiFps: number; // frequenza rendering desiderata
+export type DriversListProps = {
+  drivers: driverType[];
+  selectedDrivers?: driverType[];
+  type?: DriversListVariant;
+  onSelect: (drivers: driverType[]) => void;
+  onOpen?: (value: boolean) => void;
+};
+
+export type DriverBestLapProps = {
+  laps: lapType[];
+};
+
+export type DriverLastLapProps = {
+  laps: lapType[];
+};
+
+export type DriverTagProps = {
+  driverTag: string;
+  position: number;
+  color?: string;
+};
+
+export type FlagProps = {
+  race_control: raceControlType;
+};
+
+export type IntervalProps = {
+  intervals: intervalType[];
+};
+
+export type PitProps = {
+  pits: pitType[];
+};
+
+export type TimerProps = {
+  dateEnd: string;
+};
+
+export type TyresProps = {
+  stints: stintType[];
+};
+
+export type PositionProps = {
+  isRace: boolean;
+  driver: driverType;
+  laps: lapType[];
+  pits: pitType[];
+  stints: stintType[];
+  intervals: intervalType[];
+};
+
+export type RaceControlProps = {
+  raceControl: raceControlType[];
+};
+
+export type SessionProps = {
+  selectedLap?: number;
+  maxNumberOfLaps?: number;
+  session?: sessionType;
+  meeting?: meetingType;
+  meetings?: meetingType[];
+  sessions?: sessionType[];
+  selectedMeetingKey?: number | null;
+  selectedSessionKey?: number | null;
+  setSelectedLap?: (lap: number) => void;
+  onMeetingSelect?: (meetingKey: number) => void;
+  onSessionSelect?: (sessionKey: number) => void;
+};
+
+export type SessionGridProps = {
+  session: sessionType;
+  sessionKey?: OpenF1Key;
+};
+
+export type ImageSize = {
+  width: number;
+  height: number;
+};
+
+export type CoordinateBounds = {
+  minX: number;
+  maxX: number;
+  minY: number;
+  maxY: number;
+};
+
+export type MapProps = {
+  sessionKey: OpenF1Key;
+  meetingKey: number;
+};
+
+export type TelemetryField = 'speed' | 'brake' | 'n_gear' | 'rpm' | 'throttle';
+export type LineType = 'monotone' | 'stepAfter';
+export type YAxisDomain = [number | string, number | string];
+
+export type TelemetryMetricConfig = {
+  field: TelemetryField;
+  label: string;
+  yAxisLabel: string;
+  lineType: LineType;
+  interpolate: boolean;
+  yAxisDomain?: YAxisDomain;
+  normalizeValue?: (value: number) => number;
+  formatValue: (value: number) => string;
+};
+
+export type ChartProps = {
+  carsData: SelectedLapCarSample[];
+  selectedDrivers: driverType[];
+  metric?: TelemetryMetric;
+};
+
+export type CustomTelemetryTooltipProps = {
+  active?: boolean;
+  label?: number | string;
+  telemetryData: DriverSeries[];
+  metricConfig: TelemetryMetricConfig;
+};
+
+export type ButtonProps = {
+  to: string;
+  children: ReactNode;
+};
+
+export type LogoProps = {
+  redirect: string;
+};
+
+export type SelectProps = {
+  value: number;
+  meetings?: meetingType[];
+  sessions?: sessionType[];
+  max?: number;
+  onSelect: (value: number) => void;
+};
+
+export type ModalProps = {
+  drivers: driverType[];
+  selectedDrivers: driverType[];
+  onSelect: (driver: driverType[]) => void;
+  onClose: () => void;
+};
+
+export type DriverStandingCardProps = {
+  driver: driverType;
+};
+
+export type TeamImageMatcher = {
+  aliases: string[];
+  carImage: string;
+  logo: string;
+};
+
+export type TeamStandingCardProps = {
+  team: teamStandingsType;
+};
+
+export type WeatherItemProps = {
+  data: weatherType;
 };

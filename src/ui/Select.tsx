@@ -1,5 +1,5 @@
 import { StyledOption, StyledSelect } from '../style/styles.ts';
-import type { meetingType, sessionType } from '../utils/types.ts';
+import type { SelectProps } from '../utils/types.ts';
 
 export function Select({
   value,
@@ -7,13 +7,7 @@ export function Select({
   sessions,
   max,
   onSelect,
-}: {
-  value: number;
-  meetings?: meetingType[];
-  sessions?: sessionType[];
-  max?: number;
-  onSelect: (value: number) => void;
-}) {
+}: SelectProps) {
   const sortedMeetings = meetings
     ? [...meetings].sort(
         (a, b) =>
@@ -48,20 +42,24 @@ export function Select({
           )}
         </>
       )}
-      {meetings &&
-        !sessions &&
-        sortedMeetings?.map((meeting) => (
-          <StyledOption key={meeting.meeting_key} value={meeting.meeting_key}>
-            {meeting.circuit_short_name}
-          </StyledOption>
-        ))}
-      {sessions &&
-        !meetings &&
-        sortedSessions?.map((session) => (
-          <StyledOption key={session.session_key} value={session.session_key}>
-            {session.session_name}
-          </StyledOption>
-        ))}
+      {meetings && !sessions && (
+        <>
+          {sortedMeetings?.map((meeting) => (
+            <StyledOption key={meeting.meeting_key} value={meeting.meeting_key}>
+              {meeting.circuit_short_name}
+            </StyledOption>
+          ))}
+        </>
+      )}
+      {sessions && !meetings && (
+        <>
+          {sortedSessions?.map((session) => (
+            <StyledOption key={session.session_key} value={session.session_key}>
+              {session.session_name}
+            </StyledOption>
+          ))}
+        </>
+      )}
     </StyledSelect>
   );
 }

@@ -5,7 +5,7 @@ import type {
   intervalType,
   lapType,
   pitType,
-  sessionType,
+  SessionGridProps,
   stintType,
 } from '../utils/types.ts';
 import { useMemo } from 'react';
@@ -20,9 +20,12 @@ import {
   StyledRacePositionTags,
 } from '../style/styles.ts';
 
-function SessionGrid({ session }: { session: sessionType }) {
-  const { data: sessionGrid } = useFetchPosition(session.session_key);
-  const { data: drivers } = useFetchDrivers(session.session_key);
+function SessionGrid({
+  session,
+  sessionKey = session.session_key,
+}: SessionGridProps) {
+  const { data: sessionGrid } = useFetchPosition(sessionKey);
+  const { data: drivers } = useFetchDrivers(sessionKey);
 
   const updatedDriversList = useMemo<driverType[]>(() => {
     const positionByDriverNumber = new Map(
@@ -48,13 +51,13 @@ function SessionGrid({ session }: { session: sessionType }) {
     [updatedDriversList]
   );
 */
-  const { data: laps = [] } = useFetchLaps(session.session_key);
+  const { data: laps = [] } = useFetchLaps(sessionKey);
 
-  const { data: pits = [] } = useFetchPit(session.session_key);
+  const { data: pits = [] } = useFetchPit(sessionKey);
 
-  const { data: stints = [] } = useFetchStints(session.session_key);
+  const { data: stints = [] } = useFetchStints(sessionKey);
 
-  const { data: intervals = [] } = useFetchIntervals(session.session_key);
+  const { data: intervals = [] } = useFetchIntervals(sessionKey);
 
   const lapsByDriverNumber = useMemo(() => {
     return laps.reduce<Map<number, lapType[]>>((groupedLaps, lap) => {

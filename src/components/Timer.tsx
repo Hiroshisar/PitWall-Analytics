@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { formatTime } from '../utils/helpers';
+import { formatNextSessionTime } from '../utils/helpers';
+import type { TimerProps } from '../utils/types.ts';
 
-function Timer({ dateEnd }: { dateEnd: string }) {
+function Timer({ dateEnd }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState<number>(() =>
     getRemainingSeconds(dateEnd)
   );
@@ -29,7 +30,7 @@ function Timer({ dateEnd }: { dateEnd: string }) {
 
   return (
     <div>
-      <h1>{formatTime(timeLeft)}</h1>
+      <h1>{formatNextSessionTime(timeLeft)}</h1>
       {!isRunning && <p>Tempo scaduto!</p>}
     </div>
   );

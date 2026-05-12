@@ -12,18 +12,9 @@ import {
   StyledTeamNameContainer,
   AddDriverButton,
 } from '../style/styles';
-import type { DriversListVariant } from '../style/styles';
-import type { driverType } from '../utils/types';
+import type { driverType, DriversListProps } from '../utils/types';
 import Driver from './Driver';
 import { FaPlus } from 'react-icons/fa';
-
-type DriversListProps = {
-  drivers: driverType[];
-  selectedDrivers?: driverType[];
-  type?: DriversListVariant;
-  onSelect: (drivers: driverType[]) => void;
-  onOpen?: (value: boolean) => void;
-};
 
 const noSelectedDrivers: driverType[] = [];
 
@@ -126,31 +117,25 @@ function DriversList({
                   </StyledTeamNameContainer>
                 )}
                 <StyledDriversRowContainer $variant={type}>
-                  {teamDrivers.map((driver) => {
-                    return (
-                      <>
-                        <DriverListItem
-                          key={`${driver.broadcast_name}-${driver.driver_number}`}
-                          $isInteractive={canSelectDrivers}
-                          onClick={
-                            canSelectDrivers
-                              ? () => handleClick(driver.driver_number)
-                              : undefined
-                          }
-                        >
-                          <Driver
-                            driver={driver}
-                            isItemSelected={isItemSelected(
-                              driver.driver_number
-                            )}
-                            type={type}
-                            onRemove={handleRemoveDriver}
-                            onColorChange={handleColorChange}
-                          />
-                        </DriverListItem>
-                      </>
-                    );
-                  })}
+                  {teamDrivers.map((driver) => (
+                    <DriverListItem
+                      key={`${driver.broadcast_name}-${driver.driver_number}`}
+                      $isInteractive={canSelectDrivers}
+                      onClick={
+                        canSelectDrivers
+                          ? () => handleClick(driver.driver_number)
+                          : undefined
+                      }
+                    >
+                      <Driver
+                        driver={driver}
+                        isItemSelected={isItemSelected(driver.driver_number)}
+                        type={type}
+                        onRemove={handleRemoveDriver}
+                        onColorChange={handleColorChange}
+                      />
+                    </DriverListItem>
+                  ))}
                 </StyledDriversRowContainer>
               </StyledDriversGridRows>
             ))}

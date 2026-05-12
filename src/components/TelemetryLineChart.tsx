@@ -10,10 +10,12 @@ import {
   YAxis,
 } from 'recharts';
 import type {
+  ChartProps,
+  CustomTelemetryTooltipProps,
   DriverSeries,
-  driverType,
   SelectedLapCarSample,
   TelemetryMetric,
+  TelemetryMetricConfig,
 } from '../utils/types';
 import { formatLapTime, normalizeHexColor } from '../utils/helpers';
 import {
@@ -32,21 +34,6 @@ const fallbackColors = [
   '#eab308',
   '#475569',
 ];
-
-type TelemetryField = 'speed' | 'brake' | 'n_gear' | 'rpm' | 'throttle';
-type LineType = 'monotone' | 'stepAfter';
-type YAxisDomain = [number | string, number | string];
-
-type TelemetryMetricConfig = {
-  field: TelemetryField;
-  label: string;
-  yAxisLabel: string;
-  lineType: LineType;
-  interpolate: boolean;
-  yAxisDomain?: YAxisDomain;
-  normalizeValue?: (value: number) => number;
-  formatValue: (value: number) => string;
-};
 
 const capPercentageValue = (value: number) => Math.min(value, 100);
 
@@ -101,12 +88,6 @@ const telemetryMetricConfigs: Record<TelemetryMetric, TelemetryMetricConfig> = {
   },
 };
 
-export type ChartProps = {
-  carsData: SelectedLapCarSample[];
-  selectedDrivers: driverType[];
-  metric?: TelemetryMetric;
-};
-
 function getTelemetryValueAtTime(
   points: DriverSeries['points'],
   targetTimeSec: number,
@@ -152,12 +133,7 @@ function CustomTelemetryTooltip({
   label,
   telemetryData,
   metricConfig,
-}: {
-  active?: boolean;
-  label?: number | string;
-  telemetryData: DriverSeries[];
-  metricConfig: TelemetryMetricConfig;
-}) {
+}: CustomTelemetryTooltipProps) {
   if (!active) return null;
 
   const lapTimeSec = Number(label);

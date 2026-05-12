@@ -2,6 +2,7 @@ import mqtt, { type IClientOptions, type MqttClient } from 'mqtt';
 import type { QueryClient, QueryKey } from '@tanstack/react-query';
 import { WEBSOCKET_URL } from './endpoints';
 import { getAccessToken, getOpenF1Username } from './telemetryApi';
+import { latestOpenF1Key } from '../utils/helpers';
 import type {
   carType,
   intervalType,
@@ -185,14 +186,21 @@ function getPayloadSemanticKey(
     }
   }
 
-  if (topic === 'v1/race_control' && 'date' in payload && 'message' in payload) {
+  if (
+    topic === 'v1/race_control' &&
+    'date' in payload &&
+    'message' in payload
+  ) {
     return `race-control:${payload.date}:${payload.message}`;
   }
 
   return null;
 }
 
-function getPayloadIdentity(topic: OpenF1LiveTopic, payload: OpenF1LivePayload) {
+function getPayloadIdentity(
+  topic: OpenF1LiveTopic,
+  payload: OpenF1LivePayload
+) {
   const semanticKey = getPayloadSemanticKey(topic, payload);
   if (semanticKey) return `${topic}:${semanticKey}`;
   if (payload._key) return `${topic}:key:${payload._key}`;
@@ -240,7 +248,10 @@ function compactByDriverNumber(
 function compactPayloads(topic: OpenF1LiveTopic, items: OpenF1LivePayload[]) {
   switch (topic) {
     case 'v1/location':
-      return compactByDriverNumber(items, MAX_RECENT_LOCATION_SAMPLES_PER_DRIVER);
+      return compactByDriverNumber(
+        items,
+        MAX_RECENT_LOCATION_SAMPLES_PER_DRIVER
+      );
     case 'v1/car_data':
       return compactByDriverNumber(items, MAX_RECENT_CAR_SAMPLES_PER_DRIVER);
     case 'v1/position':
@@ -317,9 +328,11 @@ export function cacheOpenF1LiveMessages(
   }
 
   for (const group of groupedMessages.values()) {
-    const queries = queryClient
-      .getQueryCache()
-      .findAll({ queryKey: [group.keyRoot, group.sessionKey] });
+    const queries = [group.sessionKey, latestOpenF1Key].flatMap((sessionKey) =>
+      queryClient.getQueryCache().findAll({
+        queryKey: [group.keyRoot, sessionKey],
+      })
+    );
 
     for (const query of queries) {
       const payloads = group.messages

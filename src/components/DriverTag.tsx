@@ -1,14 +1,11 @@
 import { StyledDriverTag } from '../style/styles.ts';
+import type { DriverTagProps } from '../utils/types.ts';
 
 function DriverTag({
   driverTag,
   position,
   color = '',
-}: {
-  driverTag: string;
-  position: number;
-  color: string;
-}) {
+}: DriverTagProps) {
   return (
     <StyledDriverTag $color={color}>
       {position} {driverTag}

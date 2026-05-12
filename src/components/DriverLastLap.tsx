@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { formatLapTime } from '../utils/helpers.ts';
-import type { lapType } from '../utils/types.ts';
+import type { DriverLastLapProps, lapType } from '../utils/types.ts';
 import { StyledLastLap } from '../style/styles.ts';
 
-function DriverLastLap({ laps }: { laps: lapType[] }) {
+function DriverLastLap({ laps }: DriverLastLapProps) {
   const validLaps = useMemo<lapType[]>(() => {
     return laps.filter(
       (lap) => Number.isFinite(lap.lap_duration) && lap.lap_duration > 0

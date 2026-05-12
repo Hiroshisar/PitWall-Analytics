@@ -1,7 +1,6 @@
 import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
-
-export type DriversListVariant = 'main' | 'secondary';
+import type { DriversListVariant } from '../utils/types';
 
 const driverCardBase = css`
   display: grid;
@@ -16,7 +15,7 @@ export const StyledModal = styled.div`
   box-sizing: border-box;
   overflow: auto;
   overscroll-behavior: contain;
-  background-color: var(--color-grey-500);
+  background-color: var(--color-grey-700);
   border-radius: var(--border-radius-3xl);
   box-shadow: var(--shadow-lg);
   padding: 2.2rem 3rem;
@@ -55,10 +54,11 @@ export const SpinnerRing = styled.div`
   border-radius: 50%;
   margin: 4.8rem auto;
 
-  ${spinAnimation}
+  ${spinAnimation};
 
-  background: 
-    radial-gradient(farthest-side, var(--color-red-700) 94%, transparent) top/10px 10px no-repeat,
+  background:
+    radial-gradient(farthest-side, var(--color-red-700) 94%, transparent)
+      top/10px 10px no-repeat,
     conic-gradient(transparent 30%, var(--color-red-700));
 
   -webkit-mask: radial-gradient(
@@ -74,12 +74,10 @@ export const SpinnerRing = styled.div`
 `;
 
 export const StyledNavLink = styled(Link)<{ $isSelected: boolean }>`
-  background: none;
   border: 1px solid var(--color-grey-600);
   padding: 1rem 2rem;
   width: 200px;
   border-radius: var(--border-radius-3xl);
-  transform: translateX(0.8rem);
   transition: all 0.2s;
   margin-top: 1rem;
   text-align: center;
@@ -103,10 +101,10 @@ export const StyledMainLayout = styled.div`
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 0;
-  width: 100%;
+  width: calc(100% - 2rem);
   min-height: 100vh;
   box-sizing: border-box;
-  margin-left: 1rem;
+  margin: 0 1rem;
 
   & > :nth-child(2) {
     min-width: 0;
@@ -119,7 +117,20 @@ export const StyledMainLayout = styled.div`
   }
 `;
 
-export const StyledSidebar = styled.div`
+export const SidebarSlot = styled.aside<{ $isOpen: boolean }>`
+  position: relative;
+  width: ${(props) => (props.$isOpen ? '250px' : '0')};
+  min-height: 100vh;
+  transition: width 200ms ease;
+  z-index: 100;
+
+  @media (max-width: 900px) {
+    width: 0;
+    min-height: 0;
+  }
+`;
+
+export const StyledSidebar = styled.div<{ $isOpen: boolean }>`
   position: sticky;
   top: 10px;
   align-self: start;
@@ -139,6 +150,81 @@ export const StyledSidebar = styled.div`
   box-shadow: var(--shadow-lg);
 
   gap: 0.5rem;
+  background-color: var(--color-grey-900);
+  opacity: ${(props) => (props.$isOpen ? 1 : 0)};
+  pointer-events: ${(props) => (props.$isOpen ? 'auto' : 'none')};
+  transform: translateX(
+    ${(props) => (props.$isOpen ? '0' : 'calc(-100% - 1rem)')}
+  );
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+
+  @media (max-width: 900px) {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    height: calc(100dvh - 2rem);
+    z-index: 1200;
+  }
+`;
+
+export const SidebarHeader = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  a {
+    display: block;
+    width: 100%;
+  }
+
+  img {
+    border-bottom: 0;
+  }
+
+  button {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    margin: 0;
+  }
+`;
+
+export const SidebarIconButton = styled.button`
+  width: 4.4rem;
+  height: 4.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.6rem;
+  border: 0;
+  border-radius: var(--border-radius-lg);
+  background-color: transparent;
+  color: var(--color-grey-200);
+  box-shadow: var(--shadow-md);
+
+  &:focus {
+    outline: 0;
+  }
+
+  &:hover {
+    background-color: var(--color-grey-700);
+  }
+
+  svg {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+`;
+
+export const SidebarOpenButton = styled(SidebarIconButton)`
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 1201;
+  margin: 0;
 `;
 
 export const StyledLivePage = styled.div`
@@ -512,7 +598,7 @@ export const DriverNumber = styled.div`
   justify-content: start;
 `;
 
-export const StyledDriverRow = styled.div`
+export const StyledCardRow = styled.div`
   display: grid;
   grid-template-rows: auto auto;
   align-items: center;
@@ -747,9 +833,46 @@ export const RacePositionDriverHeader = styled.h5`
 `;
 
 export const WeatherItemContainer = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   align-items: center;
-  gap: 3rem;
+  gap: 4rem;
+  border: 1px solid var(--color-grey-600);
+  border-radius: var(--border-radius-3xl);
+  padding-left: 1rem;
+  width: 35rem;
+`;
+
+export const StyledWeatherContainerRow = styled.div<{
+  $variant?: 'header' | 'list';
+}>`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  padding: 1rem;
+  gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  align-content: center;
+  justify-content: flex-start;
+
+  ${(props) =>
+    props.$variant === 'list' &&
+    css`
+      height: calc(100dvh - 18rem);
+      max-height: calc(100dvh - 18rem);
+      overflow-x: auto;
+      overflow-y: hidden;
+    `}
+`;
+
+export const WeatherIconContainer = styled.div`
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-items: center;
+  justify-items: center;
+  row-gap: 5px;
 `;
 
 export const WeatherIcon = styled.div`
@@ -764,10 +887,13 @@ export const WeatherIcon = styled.div`
 
 export const WeatherWindRow = styled.h4`
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
 `;
 
 export const WeatherWindDirection = styled.span<{ $degrees: number }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   svg {
     transform: rotate(${(props) => props.$degrees}deg);
     margin-left: 1rem;
@@ -792,4 +918,208 @@ export const HomeTitleContainer = styled.div`
 
 export const LogoImage = styled.img`
   width: 100%;
+`;
+
+export const StyledToolContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0 2rem 4rem;
+`;
+
+export const StyledChampionshipsRow = styled.div`
+  width: 100%;
+  max-width: 130rem;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5rem;
+  gap: 1.5rem;
+
+  padding: 4rem 6rem;
+
+  background-color: var(--color-grey-800);
+  border-radius: var(--border-radius-3xl);
+
+  @media (max-width: 1200px) {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+`;
+
+export const StyledTyreStrategyPanel = styled.div`
+  width: 100%;
+  max-width: 150rem;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5rem;
+  gap: 2rem;
+  padding: 4rem 6rem;
+  background-color: var(--color-grey-800);
+  border-radius: var(--border-radius-3xl);
+  box-sizing: border-box;
+
+  @media (max-width: 1200px) {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  @media (max-width: 700px) {
+    padding: 2.4rem 2rem;
+  }
+`;
+
+export const StyledTyreStrategyLegend = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem 2rem;
+  width: 100%;
+`;
+
+export const StyledTyreStrategyLegendItem = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+`;
+
+export const StyledTyreStrategyLegendSwatch = styled.span<{ $color: string }>`
+  display: inline-block;
+  width: 1.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
+  background-color: ${(props) => props.$color};
+  border: 1px solid var(--color-grey-500);
+  border-radius: var(--border-radius-full);
+`;
+
+export const StyledTyreStrategyChartArea = styled.div`
+  width: 100%;
+  min-width: 80rem;
+`;
+
+export const StyledTitle = styled.h1`
+  font-size: 5rem;
+  margin-top: 5rem;
+  text-align: center;
+`;
+
+export const StyledChampionshipsHeader = styled.div`
+  display: grid;
+  grid-template-columns: 10rem minmax(35rem, 1fr) 7rem minmax(35rem, 1fr) 10rem;
+  gap: 1rem;
+  min-width: 100rem;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  text-align: center;
+`;
+
+export const StyledDriversTitle = styled.h2`
+  grid-column: 1 / 3;
+`;
+
+export const StyledTeamsTitle = styled.h2`
+  grid-column: 4 / 6;
+`;
+
+export const StyledPositionRow = styled.div`
+  display: grid;
+  grid-template-columns: 10rem minmax(35rem, 1fr) 7rem minmax(35rem, 1fr) 10rem;
+  gap: 1rem;
+  min-width: 100rem;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  align-items: center;
+  justify-items: center;
+`;
+
+export const StyledPoints = styled.h3`
+  width: 100%;
+`;
+
+export const StyledPosition = styled.h3`
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+`;
+
+export const StyledEmptyStandingCell = styled.div`
+  width: 35rem;
+  height: 120px;
+`;
+
+export const StyledDriverCard = styled.div<{ $url: string }>`
+  position: relative;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  min-width: 10rem;
+  width: 35rem;
+  height: 120px;
+  overflow: hidden;
+
+  padding-left: 1rem;
+  padding-right: 2rem;
+
+  background-color: var(--color-grey-900);
+  border-radius: var(--border-radius-3xl);
+  color: var(--color-grey-200);
+  column-gap: 1rem;
+
+  &::before {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background-image: url('${(props) => props.$url}');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.7;
+  }
+
+  & > * {
+    position: relative;
+  }
+`;
+
+export const StyledTeamCard = styled.div<{ $url: string }>`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  min-width: 10rem;
+  width: 35rem;
+  height: 120px;
+  overflow: hidden;
+
+  color: var(--color-grey-200);
+  border-radius: var(--border-radius-3xl);
+
+  padding-left: 2rem;
+
+  column-gap: 1rem;
+
+  &::before {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background-image: url('${(props) => props.$url}');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.7;
+  }
+
+  & > * {
+    position: relative;
+  }
 `;

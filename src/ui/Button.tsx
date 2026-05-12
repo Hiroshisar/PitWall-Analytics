@@ -1,8 +1,8 @@
 import { useLocation } from 'react-router-dom';
-import type { ReactNode } from 'react';
 import { StyledNavLink } from '../style/styles.ts';
+import type { ButtonProps } from '../utils/types.ts';
 
-export function Button({ to, children }: { to: string; children: ReactNode }) {
+export function Button({ to, children }: ButtonProps) {
   const { pathname } = useLocation();
 
   const isSelected = pathname === to;
