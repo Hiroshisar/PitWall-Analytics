@@ -101,10 +101,10 @@ export const StyledMainLayout = styled.div`
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 0;
-  width: 100%;
+  width: calc(100% - 2rem);
   min-height: 100vh;
   box-sizing: border-box;
-  margin-left: 1rem;
+  margin: 0 1rem;
 
   & > :nth-child(2) {
     min-width: 0;
@@ -174,7 +174,6 @@ export const SidebarHeader = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  border-bottom: 1px solid var(--color-grey-600);
 
   a {
     display: block;
@@ -919,7 +918,6 @@ export const HomeTitleContainer = styled.div`
 
 export const LogoImage = styled.img`
   width: 100%;
-  border-bottom: 1px solid var(--color-grey-600);
 `;
 
 export const StyledToolContainer = styled.div`
@@ -952,9 +950,61 @@ export const StyledChampionshipsRow = styled.div`
   }
 `;
 
+export const StyledTyreStrategyPanel = styled.div`
+  width: 100%;
+  max-width: 150rem;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5rem;
+  gap: 2rem;
+  padding: 4rem 6rem;
+  background-color: var(--color-grey-800);
+  border-radius: var(--border-radius-3xl);
+  box-sizing: border-box;
+
+  @media (max-width: 1200px) {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  @media (max-width: 700px) {
+    padding: 2.4rem 2rem;
+  }
+`;
+
+export const StyledTyreStrategyLegend = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem 2rem;
+  width: 100%;
+`;
+
+export const StyledTyreStrategyLegendItem = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+`;
+
+export const StyledTyreStrategyLegendSwatch = styled.span<{ $color: string }>`
+  display: inline-block;
+  width: 1.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
+  background-color: ${(props) => props.$color};
+  border: 1px solid var(--color-grey-500);
+  border-radius: var(--border-radius-full);
+`;
+
+export const StyledTyreStrategyChartArea = styled.div`
+  width: 100%;
+  min-width: 80rem;
+`;
+
 export const StyledTitle = styled.h1`
   font-size: 5rem;
   margin-top: 5rem;
+  text-align: center;
 `;
 
 export const StyledChampionshipsHeader = styled.div`

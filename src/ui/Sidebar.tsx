@@ -15,10 +15,10 @@ const reducedScreenQuery = '(max-width: 900px)';
 const menu_options = [
   { label: 'Live', to: '/live' },
   { label: 'Telemetry', to: '/telemetry' },
-  { label: 'Standings', to: '/standings' },
   { label: 'Statistics', to: '/statistics' },
   { label: 'Tyre Strategy', to: '/tyre-strategy' },
   { label: 'Weather', to: '/weather' },
+  { label: 'Standings', to: '/standings' },
 ];
 
 function Sidebar() {
