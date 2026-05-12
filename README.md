@@ -8,7 +8,7 @@ PitWall Analytics currently includes these working areas:
 
 - Session context: loads OpenF1 meetings and sessions, selects sensible defaults, and shows circuit, country, date, session, and lap controls.
 - Telemetry analysis: lets users choose drivers, select a meeting/session/lap, fetch lap and car data, and compare speed, throttle, brake, RPM, and gear charts.
-- Live timing: connects to the OpenF1 live stream during active sessions, caches live messages, and shows a session grid, track map, and race control updates; outside live sessions it shows a countdown to the next event.
+- Live timing: connects to the OpenF1 live stream during active sessions, caches live messages, and shows a session grid, track map, and race control updates; outside live sessions it shows a countdown to the next event. (Still WIP)
 - Tyre strategy: displays stint data as a compound-colored horizontal bar chart, with hover details for stint length, tyre age, compound changes, and pit stop timing.
 - Standings: shows current driver and team championship positions with points, driver cards, team branding, and aligned ranking rows.
 - Weather: shows weather samples for the selected session, including air and track temperature ranges and time-spaced weather cards.
