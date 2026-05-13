@@ -836,11 +836,12 @@ export const WeatherItemContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 2fr;
   align-items: center;
-  gap: 4rem;
+  gap: clamp(1rem, 5vw, 4rem);
   border: 1px solid var(--color-grey-600);
   border-radius: var(--border-radius-3xl);
   padding-left: 1rem;
-  width: 35rem;
+  width: 100%;
+  min-width: 0;
 `;
 
 export const StyledWeatherContainerRow = styled.div<{
@@ -851,7 +852,8 @@ export const StyledWeatherContainerRow = styled.div<{
   flex-wrap: wrap;
   padding: 1rem;
   gap: 1rem;
-  width: 100%;
+  width: min(100%, calc(100vw - 1rem));
+  margin: 0 auto;
   box-sizing: border-box;
   align-items: center;
   align-content: center;
@@ -860,10 +862,15 @@ export const StyledWeatherContainerRow = styled.div<{
   ${(props) =>
     props.$variant === 'list' &&
     css`
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(35rem, 100%), 1fr));
+      align-items: stretch;
+      align-content: start;
+      justify-items: stretch;
       height: calc(100dvh - 18rem);
       max-height: calc(100dvh - 18rem);
-      overflow-x: auto;
-      overflow-y: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
     `}
 `;
 
@@ -951,11 +958,10 @@ export const StyledChampionshipsRow = styled.div`
 `;
 
 export const StyledTyreStrategyPanel = styled.div`
-  width: 100%;
-  max-width: 150rem;
+  width: min(100%, calc(100vw - 1rem));
   display: flex;
   flex-direction: column;
-  margin-top: 5rem;
+  margin: 5rem auto 0;
   gap: 2rem;
   padding: 4rem 6rem;
   background-color: var(--color-grey-800);
@@ -963,7 +969,6 @@ export const StyledTyreStrategyPanel = styled.div`
   box-sizing: border-box;
 
   @media (max-width: 1200px) {
-    max-width: 100%;
     overflow-x: auto;
   }
 

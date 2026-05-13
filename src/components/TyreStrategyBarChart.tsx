@@ -115,7 +115,7 @@ function TyreStrategyTooltip({
           {`Change after lap ${previousStint.lapEnd}: ${previousStint.compound} -> ${nextStint.compound}`}
         </ChartTooltipValue>
         <ChartTooltipValue $color="var(--color-grey-500)">
-          {`Lane duration ${pit.lane_duration ? `${pit.lane_duration} s` : 'N/D'} - pit duration ${pit.stop_duration ? `${pit.stop_duration} s` : 'N/D'}`}
+          {`Lane duration ${pit.lane_duration ? `${pit.lane_duration} s` : 'N/D'} - ${pit.stop_duration ? `pit duration ${pit.stop_duration} s` : 'DRIVE THROUGH'}`}
         </ChartTooltipValue>
       </ChartTooltip>
     );
