@@ -7,7 +7,7 @@ import {
   StyledSidebar,
 } from '../style/styles';
 import { Logo } from './Logo.tsx';
-import { Button } from './Button.tsx';
+import Button from './Button.tsx';
 import { RiSidebarFoldLine, RiSidebarUnfoldLine } from 'react-icons/ri';
 
 const reducedScreenQuery = '(max-width: 900px)';
@@ -57,7 +57,7 @@ function Sidebar() {
         </SidebarHeader>
 
         {menu_options.map((option) => (
-          <Button key={option.to} to={option.to}>
+          <Button type="link" key={option.to} to={option.to}>
             {option.label}
           </Button>
         ))}

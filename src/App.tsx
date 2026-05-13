@@ -8,8 +8,8 @@ import { queryClient } from './hooks/queryClient';
 import { ToastContainer, Bounce } from 'react-toastify';
 import Live from './pages/Live';
 import Telemetry from './pages/Telemetry';
-import { Statistics } from './pages/Statistics.tsx';
-import { TyreStrategy } from './pages/TyreStrategy.tsx';
+import Statistics from './pages/Statistics.tsx';
+import TyreStrategy from './pages/TyreStrategy.tsx';
 import Weather from './pages/Weather.tsx';
 
 function App() {

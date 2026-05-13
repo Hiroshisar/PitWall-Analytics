@@ -449,6 +449,34 @@ export const StyledDriverMain = styled.div<{ $selected: boolean }>`
   }
 `;
 
+export const StyledDriverRemoveButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0;
+  min-width: 0;
+  margin-left: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-red-700);
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateX(-0.4rem) scale(0.85);
+  transition:
+    width 200ms ease,
+    margin-left 200ms ease,
+    opacity 200ms ease,
+    transform 200ms ease;
+
+  svg {
+    width: 1.8rem;
+    height: 1.8rem;
+    flex-shrink: 0;
+  }
+`;
+
 export const StyledDriverSecondary = styled.div`
   ${driverCardBase};
 
@@ -465,45 +493,17 @@ export const StyledDriverSecondary = styled.div`
     background-color 200ms ease,
     border-color 200ms ease;
 
-  .remove-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 0;
-    min-width: 0;
-    margin-left: 0;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--color-red-700);
-    opacity: 0;
-    overflow: hidden;
-    pointer-events: none;
-    transform: translateX(-0.4rem) scale(0.85);
-    transition:
-      width 200ms ease,
-      margin-left 200ms ease,
-      opacity 200ms ease,
-      transform 200ms ease;
-  }
-
   &:hover,
   &:focus-within {
     padding-right: 0.9rem;
 
-    .remove-button {
+    ${StyledDriverRemoveButton} {
       width: 2.2rem;
       margin-left: 0.6rem;
       opacity: 1;
       pointer-events: auto;
       transform: translateX(0) scale(1);
     }
-  }
-
-  .remove-button svg {
-    width: 1.8rem;
-    height: 1.8rem;
-    flex-shrink: 0;
   }
 `;
 
@@ -555,9 +555,10 @@ export const StyledCloseButton = styled.button`
   }
 `;
 
-export const AddDriverButton = styled.div`
+export const StyledButton = styled.button`
   ${driverCardBase};
 
+  background-color: transparent;
   min-width: 14.5rem;
   position: relative;
   display: inline-flex;
@@ -734,6 +735,7 @@ export const DriversConfirmButton = styled.button`
   width: 30rem;
   height: 5rem;
   color: var(--color-grey-900);
+  border-radius: var(--border-radius-3xl);
 `;
 
 export const StyledSession = styled.div<{
@@ -1127,4 +1129,36 @@ export const StyledTeamCard = styled.div<{ $url: string }>`
   & > * {
     position: relative;
   }
+`;
+
+export const StyledTabContainer = styled.div<{
+  $quantity: number;
+}>`
+  width: 100%;
+  height: min(100%, calc(100vw - 1rem));
+  display: grid;
+  grid-template-columns: repeat(${(props) => props.$quantity}, 1fr);
+
+  margin-top: 3rem;
+  gap: 1px;
+`;
+
+export const StyledTab = styled.div<{
+  $isSelected: boolean;
+}>`
+  width: 100%;
+  height: 5rem;
+
+  background-color: var(
+    ${(props) => (props.$isSelected ? '--color-grey-300' : '--color-grey-800')}
+  );
+  color: var(
+    ${(props) => (props.$isSelected ? '--color-grey-800' : '--color-grey-300')}
+  );
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: var(--font-size-xl);
 `;

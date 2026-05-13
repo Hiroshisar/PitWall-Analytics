@@ -65,7 +65,6 @@ export function formatHours(date: string): string {
   const dateItem = new Date(date);
   const hrs = dateItem.getHours();
   const mins = dateItem.getMinutes();
-  const secs = dateItem.getSeconds();
 
-  return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
 }

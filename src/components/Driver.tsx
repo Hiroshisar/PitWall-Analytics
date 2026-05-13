@@ -9,11 +9,11 @@ import {
   StyledDriverSecondary,
 } from '../style/styles';
 import type { DriverProps, LoadedDriverImage } from '../utils/types';
-import RemoveButton from '../ui/RemoveButton';
+import Button from '../ui/Button';
 import { normalizeHexColor } from '../utils/helpers';
 
 const getPublicImageSrc = (fileName: string) =>
-  `${import.meta.env.BASE_URL}${fileName}`;
+  `${import.meta.env.BASE_URL}drivers/${fileName}`;
 
 const fallbackDriverImage = getPublicImageSrc('unknown.png');
 const getDriverImageSrc = (driverNumber: number) =>
@@ -147,8 +147,8 @@ function Driver({
           />
         </ColoredCircle>
         <h3>{`${driver.name_acronym} ${driver.driver_number}`}</h3>
-        <RemoveButton
-          className="remove-button"
+        <Button
+          type={'remove'}
           onClick={() => {
             onRemove?.(driver.driver_number);
           }}

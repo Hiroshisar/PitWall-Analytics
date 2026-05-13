@@ -1,20 +1,15 @@
 import { ModalHeader, ModalTitle, Overlay, StyledModal } from '../style/styles';
 import DriversList from '../components/DriversList.tsx';
 import type { ModalProps } from '../utils/types.ts';
-import CloseButton from './CloseButton.tsx';
+import Button from './Button.tsx';
 
-function Modal({
-  drivers,
-  selectedDrivers,
-  onSelect,
-  onClose,
-}: ModalProps) {
+function Modal({ drivers, selectedDrivers, onSelect, onClose }: ModalProps) {
   return (
     <Overlay>
       <StyledModal>
         <ModalHeader>
           <ModalTitle>Select drivers</ModalTitle>
-          <CloseButton onClick={() => onClose()} />
+          <Button type="close" onClick={() => onClose()} />
         </ModalHeader>
         <DriversList
           drivers={drivers}

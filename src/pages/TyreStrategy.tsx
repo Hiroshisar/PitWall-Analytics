@@ -5,7 +5,7 @@ import { StyledTitle, StyledToolContainer } from '../style/styles.ts';
 import { useFetchPit } from '../hooks/useFetchPit.ts';
 import { TyreStrategyBarChart } from '../components/TyreStrategyBarChart.tsx';
 
-export function TyreStrategy() {
+function TyreStrategy() {
   const { data: stints = [], isLoading: isLoadingStints } = useFetchStints();
   const { data: drivers = [], isLoading: isLoadingDrivers } = useFetchDrivers();
   const { data: pits = [], isLoading: isLoadingPits } = useFetchPit();
@@ -20,3 +20,5 @@ export function TyreStrategy() {
     </StyledToolContainer>
   );
 }
+
+export default TyreStrategy;

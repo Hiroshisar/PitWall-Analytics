@@ -15,7 +15,7 @@ function DriverStandingCard({ driver }: DriverStandingCardProps) {
   const imageSrc = getDriverImageSrc(driver.driver_number);
 
   return (
-    <StyledDriverCard $url={imageSrc}>
+    <StyledDriverCard $url={`drivers${imageSrc}`}>
       <DriverNumber>
         <h2>{driver.driver_number}</h2>
       </DriverNumber>

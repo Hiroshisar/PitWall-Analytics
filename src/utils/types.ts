@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export type carType = {
   brake: number;
@@ -402,10 +402,13 @@ export type CustomTelemetryTooltipProps = {
   metricConfig: TelemetryMetricConfig;
 };
 
+type buttonTypes = 'button' | 'link' | 'close' | 'remove' | 'confirm';
+
 export type ButtonProps = {
-  to: string;
-  children: ReactNode;
-};
+  to?: string;
+  type: buttonTypes;
+  children?: ReactNode;
+} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>;
 
 export type LogoProps = {
   redirect: string;

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   DriverListItem,
   DriversListContainer,
-  DriversConfirmButton,
   StyledDriversGrid,
   StyledDriversGridColumn,
   StyledDriversGridRows,
@@ -10,11 +9,12 @@ import {
   StyledDriversRowContainer,
   StyledTeamName,
   StyledTeamNameContainer,
-  AddDriverButton,
+  StyledButton,
 } from '../style/styles';
 import type { driverType, DriversListProps } from '../utils/types';
 import Driver from './Driver';
 import { FaPlus } from 'react-icons/fa';
+import Button from '../ui/Button.tsx';
 
 const noSelectedDrivers: driverType[] = [];
 
@@ -140,28 +140,26 @@ function DriversList({
               </StyledDriversGridRows>
             ))}
             {type === 'secondary' && (
-              <DriverListItem
-                $isInteractive={true}
-                onClick={() => {
-                  if (onOpen) onOpen(true);
-                }}
-              >
-                <AddDriverButton>
+              <DriverListItem $isInteractive={true}>
+                <StyledButton
+                  onClick={() => {
+                    if (onOpen) onOpen(true);
+                  }}
+                >
                   <FaPlus />
-                </AddDriverButton>
+                </StyledButton>
               </DriverListItem>
             )}
           </StyledDriversGridColumn>
         </StyledDriversGrid>
         {type === 'main' ? (
-          <div>
-            <DriversConfirmButton
-              disabled={tempDrivers.length === 0}
-              onClick={handleConfirmSelection}
-            >
-              PROCEDI
-            </DriversConfirmButton>
-          </div>
+          <Button
+            type="confirm"
+            disabled={tempDrivers.length < 1}
+            onClick={handleConfirmSelection}
+          >
+            PROCEDI
+          </Button>
         ) : null}
       </StyledDriversList>
     </DriversListContainer>
