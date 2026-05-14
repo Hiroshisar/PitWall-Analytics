@@ -1,13 +1,13 @@
 import { endpoints } from '../api/endpoints';
 import { api } from '../api/telemetryApi';
 import { isValidOpenF1Key, stringifyOpenF1Key } from '../utils/helpers';
-import type { locationType, OpenF1Key } from '../utils/types';
+import type { LocationType, OpenF1Key } from '../utils/types';
 import { getHttpStatus, notifyServiceError } from './serviceError';
 
 export async function getDriverLocation(
   session_key: OpenF1Key,
   driver_number: number
-): Promise<locationType[]> {
+): Promise<LocationType[]> {
   try {
     const res = await api.get(
       `${endpoints.location}?session_key=${stringifyOpenF1Key(session_key)}&driver_number=${driver_number}`
@@ -28,7 +28,7 @@ export async function getDriverLocation(
 export async function getLocationsByDrivers(
   session_key: OpenF1Key,
   driver_numbers: number[]
-): Promise<locationType[]> {
+): Promise<LocationType[]> {
   const uniqueDriverNumbers = [...new Set(driver_numbers)].filter(
     (driverNumber) => driverNumber > 0
   );
@@ -52,7 +52,7 @@ export async function getLocationsByDrivers(
     const status = getHttpStatus(err);
 
     if (status === 400 || status === 404 || status === 422) {
-      const mergedLocationsData: locationType[] = [];
+      const mergedLocationsData: LocationType[] = [];
       let hasFallbackErrors = false;
 
       for (const driverNumber of uniqueDriverNumbers) {

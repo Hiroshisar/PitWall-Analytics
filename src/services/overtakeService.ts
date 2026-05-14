@@ -1,12 +1,12 @@
 import { endpoints } from '../api/endpoints';
 import { api } from '../api/telemetryApi';
 import { latestOpenF1Key, stringifyOpenF1Key } from '../utils/helpers';
-import type { OpenF1Key, overtakeType } from '../utils/types';
+import type { OpenF1Key, OvertakeType } from '../utils/types';
 import { notifyServiceError } from './serviceError';
 
 export async function getOvertakes(
   session_key: OpenF1Key = latestOpenF1Key
-): Promise<overtakeType[]> {
+): Promise<OvertakeType[]> {
   try {
     const res = await api.get(
       `${endpoints.overtakes}?session_key=${stringifyOpenF1Key(session_key)}`

@@ -2,17 +2,17 @@ import { endpoints } from '../api/endpoints';
 import { api } from '../api/telemetryApi';
 import { latestOpenF1Key, stringifyOpenF1Key } from '../utils/helpers';
 import type {
-  driverStandingsType,
+  DriverStandingsType,
   OpenF1Key,
-  teamStandingsType,
+  TeamStandingsType,
 } from '../utils/types';
 import { notifyServiceError } from './serviceError';
 
 export async function getStandings(
   session_key: OpenF1Key = latestOpenF1Key
-): Promise<{ drivers: driverStandingsType[]; teams: teamStandingsType[] }> {
-  let driversRes = [] as driverStandingsType[];
-  let teamsRes = [] as teamStandingsType[];
+): Promise<{ drivers: DriverStandingsType[]; teams: TeamStandingsType[] }> {
+  let driversRes = [] as DriverStandingsType[];
+  let teamsRes = [] as TeamStandingsType[];
 
   try {
     const res = await api.get(

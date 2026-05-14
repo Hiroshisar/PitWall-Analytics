@@ -1,12 +1,12 @@
 import { endpoints } from '../api/endpoints';
 import { api } from '../api/telemetryApi';
 import { latestOpenF1Key, stringifyOpenF1Key } from '../utils/helpers';
-import type { OpenF1Key, raceControlType } from '../utils/types';
+import type { OpenF1Key, RaceControlType } from '../utils/types';
 import { notifyServiceError } from './serviceError';
 
 export async function getSessionRaceControl(
   session_key: OpenF1Key = latestOpenF1Key
-): Promise<raceControlType[]> {
+): Promise<RaceControlType[]> {
   try {
     const res = await api.get(
       `${endpoints.race_control}?session_key=${stringifyOpenF1Key(session_key)}`

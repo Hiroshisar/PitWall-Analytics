@@ -1,12 +1,12 @@
 import { useFetchPosition } from '../hooks/useFetchPosition.ts';
 import Position from './Position.tsx';
 import type {
-  driverType,
-  intervalType,
-  lapType,
-  pitType,
+  DriverType,
+  IntervalType,
+  LapType,
+  PitType,
   SessionGridProps,
-  stintType,
+  StintType,
 } from '../utils/types.ts';
 import { useMemo } from 'react';
 import { useFetchDrivers } from '../hooks/useFetchDriver.ts';
@@ -27,7 +27,7 @@ function SessionGrid({
   const { data: sessionGrid } = useFetchPosition(sessionKey);
   const { data: drivers } = useFetchDrivers(sessionKey);
 
-  const updatedDriversList = useMemo<driverType[]>(() => {
+  const updatedDriversList = useMemo<DriverType[]>(() => {
     const positionByDriverNumber = new Map(
       (sessionGrid ?? []).map((position) => [
         position.driver_number,
@@ -60,7 +60,7 @@ function SessionGrid({
   const { data: intervals = [] } = useFetchIntervals(sessionKey);
 
   const lapsByDriverNumber = useMemo(() => {
-    return laps.reduce<Map<number, lapType[]>>((groupedLaps, lap) => {
+    return laps.reduce<Map<number, LapType[]>>((groupedLaps, lap) => {
       const driverLaps = groupedLaps.get(lap.driver_number) ?? [];
       driverLaps.push(lap);
       groupedLaps.set(lap.driver_number, driverLaps);
@@ -70,7 +70,7 @@ function SessionGrid({
   }, [laps]);
 
   const pitsByDriverNumber = useMemo(() => {
-    return pits.reduce<Map<number, pitType[]>>((groupedPits, pit) => {
+    return pits.reduce<Map<number, PitType[]>>((groupedPits, pit) => {
       const driverPits = groupedPits.get(pit.driver_number) ?? [];
       driverPits.push(pit);
       groupedPits.set(pit.driver_number, driverPits);
@@ -80,7 +80,7 @@ function SessionGrid({
   }, [pits]);
 
   const stintsByDriverNumber = useMemo(() => {
-    return stints.reduce<Map<number, stintType[]>>((groupedStints, stint) => {
+    return stints.reduce<Map<number, StintType[]>>((groupedStints, stint) => {
       const driverPits = groupedStints.get(stint.driver_number) ?? [];
       driverPits.push(stint);
       groupedStints.set(stint.driver_number, driverPits);
@@ -90,7 +90,7 @@ function SessionGrid({
   }, [stints]);
 
   const intervalsByDriverNumber = useMemo(() => {
-    return intervals.reduce<Map<number, intervalType[]>>(
+    return intervals.reduce<Map<number, IntervalType[]>>(
       (groupedIntervals, interval) => {
         const driverIntervals =
           groupedIntervals.get(interval.driver_number) ?? [];

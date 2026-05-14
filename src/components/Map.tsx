@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import type {
   CoordinateBounds,
   ImageSize,
-  locationType,
+  LocationType,
   MapProps,
-  meetingType,
+  MeetingType,
 } from '../utils/types';
 import { normalizeHexColor } from '../utils/helpers';
 import { queryClient } from '../hooks/queryClient';
@@ -79,7 +79,7 @@ function getRenderedMapWidth(imageSize: ImageSize | null) {
 }
 
 function getMarkerPosition(
-  point: Pick<locationType, 'x' | 'y'>,
+  point: Pick<LocationType, 'x' | 'y'>,
   coordinateBounds: CoordinateBounds,
   width: number,
   height: number
@@ -107,15 +107,12 @@ function expandCoordinateBounds(bounds: CoordinateBounds): CoordinateBounds {
   };
 }
 
-function Map({
-  sessionKey,
-  meetingKey,
-}: MapProps) {
+function Map({ sessionKey, meetingKey }: MapProps) {
   const { data: drivers } = useFetchDrivers(sessionKey);
-  const [locationSamples, setLocationSamples] = useState<locationType[]>([]);
+  const [locationSamples, setLocationSamples] = useState<LocationType[]>([]);
 
   const meetings =
-    queryClient.getQueryData<meetingType[]>([
+    queryClient.getQueryData<MeetingType[]>([
       'meetings',
       new Date().getFullYear(),
     ]) ?? [];
@@ -143,14 +140,14 @@ function Map({
   );
 
   useEffect(() => {
-    queryClient.setQueryData<locationType[]>(
+    queryClient.setQueryData<LocationType[]>(
       locationQueryKey,
       (current) => current ?? []
     );
 
     const intervalId = window.setInterval(() => {
       setLocationSamples(
-        queryClient.getQueryData<locationType[]>(locationQueryKey) ?? []
+        queryClient.getQueryData<LocationType[]>(locationQueryKey) ?? []
       );
     }, mapUpdateIntervalMs);
 
@@ -158,7 +155,7 @@ function Map({
   }, [locationQueryKey]);
 
   const latestLocationByDriverNumber = useMemo(() => {
-    const latestLocations = new globalThis.Map<number, locationType>();
+    const latestLocations = new globalThis.Map<number, LocationType>();
 
     for (const locationSample of locationSamples) {
       const currentLocation = latestLocations.get(locationSample.driver_number);

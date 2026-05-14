@@ -4,20 +4,17 @@ import {
   ColoredCircle,
   DriverNumber,
   DriverPortrait,
-  StyledDriverMain,
+  StyledListMain,
   StyledCardRow,
-  StyledDriverSecondary,
+  StyledListSecondary,
 } from '../style/styles';
 import type { DriverProps, LoadedDriverImage } from '../utils/types';
 import Button from '../ui/Button';
-import { normalizeHexColor } from '../utils/helpers';
-
-const getPublicImageSrc = (fileName: string) =>
-  `${import.meta.env.BASE_URL}drivers/${fileName}`;
-
-const fallbackDriverImage = getPublicImageSrc('unknown.png');
-const getDriverImageSrc = (driverNumber: number) =>
-  getPublicImageSrc(`${driverNumber}.png`);
+import {
+  fallbackDriverImage,
+  getDriverImageSrc,
+  normalizeHexColor,
+} from '../utils/helpers';
 
 function Driver({
   driver,
@@ -36,7 +33,7 @@ function Driver({
   const driverImageSrc =
     loadedDriverImage?.driverNumber === driver.driver_number
       ? loadedDriverImage.src
-      : fallbackDriverImage;
+      : fallbackDriverImage();
 
   useEffect(() => {
     let isCurrentDriver = true;
@@ -51,7 +48,7 @@ function Driver({
 
     image.onerror = () => {
       if (isCurrentDriver) {
-        setLoadedDriverImage({ driverNumber, src: fallbackDriverImage });
+        setLoadedDriverImage({ driverNumber, src: fallbackDriverImage() });
       }
     };
 
@@ -130,7 +127,7 @@ function Driver({
 
   if (type === 'secondary') {
     return (
-      <StyledDriverSecondary>
+      <StyledListSecondary>
         <ColoredCircle
           as="label"
           ref={colorCircleRef}
@@ -153,12 +150,12 @@ function Driver({
             onRemove?.(driver.driver_number);
           }}
         />
-      </StyledDriverSecondary>
+      </StyledListSecondary>
     );
   }
 
   return (
-    <StyledDriverMain $selected={isItemSelected}>
+    <StyledListMain $selected={isItemSelected}>
       <DriverPortrait>
         <img
           src={driverImageSrc}
@@ -172,7 +169,7 @@ function Driver({
       <DriverNumber>
         <h2>{driver.driver_number}</h2>
       </DriverNumber>
-    </StyledDriverMain>
+    </StyledListMain>
   );
 }
 

@@ -1,12 +1,12 @@
 import { endpoints } from '../api/endpoints';
 import { api } from '../api/telemetryApi';
 import { latestOpenF1Key, stringifyOpenF1Key } from '../utils/helpers';
-import type { OpenF1Key, teamRadioType } from '../utils/types';
+import type { OpenF1Key, TeamRadioType } from '../utils/types';
 import { notifyServiceError } from './serviceError';
 
 export async function getSessionTeamRadio(
   session_key: OpenF1Key = latestOpenF1Key
-): Promise<teamRadioType[]> {
+): Promise<TeamRadioType[]> {
   try {
     const res = await api.get(
       `${endpoints.team_radio}?session_key=${stringifyOpenF1Key(session_key)}`

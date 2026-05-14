@@ -1,12 +1,12 @@
 import { endpoints } from '../api/endpoints';
 import { api } from '../api/telemetryApi';
 import { latestOpenF1Key, stringifyOpenF1Key } from '../utils/helpers';
-import type { OpenF1Key, sessionResultType } from '../utils/types';
+import type { OpenF1Key, SessionResultType } from '../utils/types';
 import { notifyServiceError } from './serviceError';
 
 export async function getSessionResults(
   session_key: OpenF1Key = latestOpenF1Key
-): Promise<sessionResultType[]> {
+): Promise<SessionResultType[]> {
   try {
     const res = await api.get(
       `${endpoints.session_result}?session_key=${stringifyOpenF1Key(session_key)}`

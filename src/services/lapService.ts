@@ -5,12 +5,12 @@ import {
   latestOpenF1Key,
   stringifyOpenF1Key,
 } from '../utils/helpers';
-import type { lapType, OpenF1Key } from '../utils/types';
+import type { LapType, OpenF1Key } from '../utils/types';
 import { getHttpStatus, notifyServiceError } from './serviceError';
 
 export async function getLaps(
   session_key: OpenF1Key = latestOpenF1Key
-): Promise<lapType[]> {
+): Promise<LapType[]> {
   try {
     const res = await api.get(
       `${endpoints.laps}?session_key=${stringifyOpenF1Key(session_key)}`
@@ -26,7 +26,7 @@ export async function getLaps(
 export async function getLapsByDrivers(
   session_key: OpenF1Key,
   driver_numbers: number[]
-): Promise<lapType[]> {
+): Promise<LapType[]> {
   const uniqueDriverNumbers = [...new Set(driver_numbers)].filter(
     (driverNumber) => driverNumber > 0
   );
@@ -49,7 +49,7 @@ export async function getLapsByDrivers(
     const status = getHttpStatus(err);
 
     if (status === 400 || status === 404 || status === 422) {
-      const mergedLapsData: lapType[] = [];
+      const mergedLapsData: LapType[] = [];
       let hasFallbackErrors = false;
 
       try {

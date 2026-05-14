@@ -1,22 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-  DriverListItem,
-  DriversListContainer,
-  StyledDriversGrid,
-  StyledDriversGridColumn,
-  StyledDriversGridRows,
-  StyledDriversList,
-  StyledDriversRowContainer,
+  ListItem,
+  ListContainer,
+  StyledListGrid,
+  StyledListGridColumn,
+  StyledListGridRows,
+  StyledList,
+  StyledListRowContainer,
   StyledTeamName,
   StyledTeamNameContainer,
   StyledButton,
 } from '../style/styles';
-import type { driverType, DriversListProps } from '../utils/types';
+import type { DriverType, DriversListProps } from '../utils/types';
 import Driver from './Driver';
 import { FaPlus } from 'react-icons/fa';
 import Button from '../ui/Button.tsx';
 
-const noSelectedDrivers: driverType[] = [];
+const noSelectedDrivers: DriverType[] = [];
 
 function DriversList({
   drivers,
@@ -25,7 +25,7 @@ function DriversList({
   type = 'main',
   onOpen,
 }: DriversListProps) {
-  const [tempDrivers, setTempDrivers] = useState<driverType[]>(selectedDrivers);
+  const [tempDrivers, setTempDrivers] = useState<DriverType[]>(selectedDrivers);
   const canSelectDrivers = Boolean(onSelect);
 
   useEffect(() => {
@@ -89,7 +89,7 @@ function DriversList({
   };
 
   const sortedDrivers = useMemo(() => {
-    const groupedDrivers: Record<string, driverType[]> = {};
+    const groupedDrivers: Record<string, DriverType[]> = {};
 
     [...drivers]
       .sort((a, b) => a.team_name.localeCompare(b.team_name))
@@ -105,20 +105,20 @@ function DriversList({
   }, [drivers]);
 
   return (
-    <DriversListContainer>
-      <StyledDriversList $variant={type}>
-        <StyledDriversGrid $variant={type}>
-          <StyledDriversGridColumn $variant={type}>
+    <ListContainer>
+      <StyledList $variant={type}>
+        <StyledListGrid $variant={type}>
+          <StyledListGridColumn $variant={type}>
             {Object.entries(sortedDrivers).map(([team, teamDrivers]) => (
-              <StyledDriversGridRows key={team} $variant={type}>
+              <StyledListGridRows key={team} $variant={type}>
                 {type === 'main' && (
                   <StyledTeamNameContainer>
                     <StyledTeamName>{team}</StyledTeamName>
                   </StyledTeamNameContainer>
                 )}
-                <StyledDriversRowContainer $variant={type}>
+                <StyledListRowContainer $variant={type}>
                   {teamDrivers.map((driver) => (
-                    <DriverListItem
+                    <ListItem
                       key={`${driver.broadcast_name}-${driver.driver_number}`}
                       $isInteractive={canSelectDrivers}
                       onClick={
@@ -134,13 +134,13 @@ function DriversList({
                         onRemove={handleRemoveDriver}
                         onColorChange={handleColorChange}
                       />
-                    </DriverListItem>
+                    </ListItem>
                   ))}
-                </StyledDriversRowContainer>
-              </StyledDriversGridRows>
+                </StyledListRowContainer>
+              </StyledListGridRows>
             ))}
             {type === 'secondary' && (
-              <DriverListItem $isInteractive={true}>
+              <ListItem $isInteractive={true}>
                 <StyledButton
                   onClick={() => {
                     if (onOpen) onOpen(true);
@@ -148,10 +148,10 @@ function DriversList({
                 >
                   <FaPlus />
                 </StyledButton>
-              </DriverListItem>
+              </ListItem>
             )}
-          </StyledDriversGridColumn>
-        </StyledDriversGrid>
+          </StyledListGridColumn>
+        </StyledListGrid>
         {type === 'main' ? (
           <Button
             type="confirm"
@@ -161,8 +161,8 @@ function DriversList({
             PROCEDI
           </Button>
         ) : null}
-      </StyledDriversList>
-    </DriversListContainer>
+      </StyledList>
+    </ListContainer>
   );
 }
 

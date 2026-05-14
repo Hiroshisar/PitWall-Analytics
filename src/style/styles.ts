@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
-import type { DriversListVariant } from '../utils/types';
+import type { ListVariant } from '../utils/types';
 
 const driverCardBase = css`
   display: grid;
@@ -9,7 +9,20 @@ const driverCardBase = css`
   border-radius: var(--border-radius-3xl);
 `;
 
-export const StyledModal = styled.div`
+export const StyledDriverModal = styled.div`
+  position: fixed;
+  inset: 5rem 10rem;
+  box-sizing: border-box;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background-color: var(--color-grey-700);
+  border-radius: var(--border-radius-3xl);
+  box-shadow: var(--shadow-lg);
+  padding: 2.2rem 3rem;
+  transition: all 0.5s;
+`;
+
+export const StyledTeamModal = styled.div`
   position: fixed;
   inset: 5rem 10rem;
   box-sizing: border-box;
@@ -337,7 +350,7 @@ export const SvgMap = styled.svg`
   overflow: visible;
 `;
 
-export const DriversListContainer = styled.div`
+export const ListContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -348,7 +361,7 @@ export const DriversListContainer = styled.div`
   box-shadow: var(--shadow-lg);
 `;
 
-export const StyledDriversList = styled.div<{ $variant: DriversListVariant }>`
+export const StyledList = styled.div<{ $variant: ListVariant }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -361,7 +374,7 @@ export const StyledDriversList = styled.div<{ $variant: DriversListVariant }>`
   gap: ${(props) => (props.$variant === 'main' ? '1rem' : '0.8rem')};
 `;
 
-export const StyledDriversGrid = styled.div<{ $variant: DriversListVariant }>`
+export const StyledListGrid = styled.div<{ $variant: ListVariant }>`
   display: grid;
   grid-template-columns: 1fr;
   gap: ${(props) => (props.$variant === 'main' ? '2rem' : '1rem')};
@@ -427,7 +440,7 @@ export const TyresCircle = styled.div<{ $color: string }>`
   color: var(--color-grey-300);
 `;
 
-export const StyledDriverMain = styled.div<{ $selected: boolean }>`
+export const StyledListMain = styled.div<{ $selected: boolean }>`
   ${driverCardBase};
 
   min-width: 10rem;
@@ -477,7 +490,7 @@ export const StyledDriverRemoveButton = styled.button`
   }
 `;
 
-export const StyledDriverSecondary = styled.div`
+export const StyledListSecondary = styled.div`
   ${driverCardBase};
 
   min-width: 14.5rem;
@@ -692,8 +705,8 @@ export const StyledTeamNameContainer = styled.div`
   align-items: center;
 `;
 
-export const StyledDriversRowContainer = styled.div<{
-  $variant: DriversListVariant;
+export const StyledListRowContainer = styled.div<{
+  $variant: ListVariant;
 }>`
   display: flex;
   flex-direction: row;
@@ -702,8 +715,8 @@ export const StyledDriversRowContainer = styled.div<{
   justify-content: center;
 `;
 
-export const StyledDriversGridColumn = styled.div<{
-  $variant: DriversListVariant;
+export const StyledListGridColumn = styled.div<{
+  $variant: ListVariant;
 }>`
   display: ${(props) => (props.$variant === 'main' ? 'grid' : 'flex')};
   grid-template-columns: ${(props) =>
@@ -717,8 +730,8 @@ export const StyledDriversGridColumn = styled.div<{
   width: 100%;
 `;
 
-export const StyledDriversGridRows = styled.div<{
-  $variant: DriversListVariant;
+export const StyledListGridRows = styled.div<{
+  $variant: ListVariant;
 }>`
   display: grid;
   grid-template-rows: ${(props) =>
@@ -727,7 +740,7 @@ export const StyledDriversGridRows = styled.div<{
   justify-content: center;
 `;
 
-export const DriverListItem = styled.div<{ $isInteractive: boolean }>`
+export const ListItem = styled.div<{ $isInteractive: boolean }>`
   cursor: ${(props) => (props.$isInteractive ? 'pointer' : 'default')};
 `;
 
@@ -1135,7 +1148,7 @@ export const StyledTabContainer = styled.div<{
   $quantity: number;
 }>`
   width: 100%;
-  height: min(100%, calc(100vw - 1rem));
+  height: fit-content;
   display: grid;
   grid-template-columns: repeat(${(props) => props.$quantity}, 1fr);
 

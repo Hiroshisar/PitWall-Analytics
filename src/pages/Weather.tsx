@@ -1,7 +1,7 @@
 import { useFetchWeather } from '../hooks/useFetchWeather.ts';
 import WeatherItem from '../components/WeatherItem.tsx';
 import { useEffect, useMemo, useState } from 'react';
-import type { weatherType } from '../utils/types.ts';
+import type { WeatherType } from '../utils/types.ts';
 import { checkIfIsLiveSession } from '../utils/helpers.ts';
 import { useFetchSession } from '../hooks/useFetchSession.ts';
 import {
@@ -21,8 +21,8 @@ type WeatherInfoType = {
 };
 
 function canAppendWeatherSample(
-  sample: weatherType,
-  currentData: weatherType[]
+  sample: WeatherType,
+  currentData: WeatherType[]
 ) {
   if (currentData.length === 0) return true;
 
@@ -35,7 +35,7 @@ function canAppendWeatherSample(
 }
 
 function Weather() {
-  const [dataToShow, setDataToShow] = useState<weatherType[]>([]);
+  const [dataToShow, setDataToShow] = useState<WeatherType[]>([]);
   const { data: weatherData, isLoading: isLoadingWeather } = useFetchWeather();
   const { data: session, isLoading: isLoadingSession } = useFetchSession();
 
@@ -91,7 +91,7 @@ function Weather() {
           return [...currentData, latestWeatherSample];
         }
 
-        return sortedWeatherData.reduce<weatherType[]>((nextData, item) => {
+        return sortedWeatherData.reduce<WeatherType[]>((nextData, item) => {
           if (!canAppendWeatherSample(item, nextData)) return nextData;
 
           return [...nextData, item];

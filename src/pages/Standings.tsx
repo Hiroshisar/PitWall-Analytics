@@ -2,7 +2,7 @@ import { useFetchStandings } from '../hooks/useFetchStandings.ts';
 import Spinner from '../ui/Spinner.tsx';
 import DriverStandingCard from '../ui/DriverStandingCard.tsx';
 import { useFetchDrivers } from '../hooks/useFetchDriver.ts';
-import type { driverType } from '../utils/types.ts';
+import type { DriverType } from '../utils/types.ts';
 import TeamStandingCard from '../ui/TeamStandingCard.tsx';
 import {
   StyledToolContainer,
@@ -56,13 +56,13 @@ function Standings() {
                 {driverStanding ? `${driverStanding.points_current} pts` : ''}
               </StyledPoints>
               {driverStanding ? (
-                <DriverStandingCard driver={driver ?? ({} as driverType)} />
+                <DriverStandingCard driver={driver ?? ({} as DriverType)} />
               ) : (
                 <StyledEmptyStandingCell />
               )}
               <StyledPosition>{`${position}\u00b0`}</StyledPosition>
               {teamStanding ? (
-                <TeamStandingCard team={teamStanding} />
+                <TeamStandingCard teamStandings={teamStanding} />
               ) : (
                 <StyledEmptyStandingCell />
               )}

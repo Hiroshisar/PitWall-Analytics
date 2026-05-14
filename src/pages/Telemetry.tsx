@@ -15,9 +15,9 @@ import {
 } from '../style/styles';
 import Spinner from '../ui/Spinner';
 import type {
-  driverType,
-  meetingType,
-  sessionType,
+  DriverType,
+  MeetingType,
+  SessionType,
   SelectedLapCarSample,
   TelemetryMetric,
 } from '../utils/types';
@@ -33,7 +33,7 @@ const telemetryMetrics: TelemetryMetric[] = [
 ];
 
 function Telemetry() {
-  const [selectedDrivers, setSelectedDrivers] = useState<driverType[]>([]);
+  const [selectedDrivers, setSelectedDrivers] = useState<DriverType[]>([]);
   const [selectedLap, setSelectedLap] = useState<number>(0);
   const [selectedMeetingKey, setSelectedMeetingKey] = useState<number | null>(
     null
@@ -73,13 +73,13 @@ function Telemetry() {
   const { data: drivers, isLoading: isLoadingDrivers } =
     useFetchDrivers(effectiveSessionKey);
 
-  const selectedMeeting = useMemo<meetingType | undefined>(
+  const selectedMeeting = useMemo<MeetingType | undefined>(
     () =>
       meetings.find((meeting) => meeting.meeting_key === effectiveMeetingKey),
     [meetings, effectiveMeetingKey]
   );
 
-  const selectedSession = useMemo<sessionType | undefined>(
+  const selectedSession = useMemo<SessionType | undefined>(
     () =>
       sessions.find((session) => session.session_key === effectiveSessionKey),
     [effectiveSessionKey, sessions]
@@ -154,8 +154,12 @@ function Telemetry() {
     });
   }, [carsData, lapsData, selectedDrivers, selectedLap]);
 
-  const handleDriversSelection = (drivers: driverType[]) => {
+  const handleDriversSelection = (drivers: DriverType[]) => {
     setSelectedDrivers(drivers);
+    setIsModalOpen(false);
+  };
+
+  const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
@@ -178,10 +182,6 @@ function Telemetry() {
 
     return Math.min(...lapsByDriver);
   }, [lapsData, selectedDrivers]);
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
 
   const handleMeetingSelection = (meetingKey: number) => {
     setSelectedMeetingKey(meetingKey);
@@ -240,7 +240,7 @@ function Telemetry() {
       />
 
       <DriversList
-        drivers={selectedDrivers}
+        teams={selectedDrivers}
         onSelect={handleDriversSelection}
         type="secondary"
         onOpen={setIsModalOpen}

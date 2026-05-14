@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-export type carType = {
+export type CarType = {
   brake: number;
   date: string;
   driver_number: number;
@@ -13,7 +13,7 @@ export type carType = {
   throttle: number;
 };
 
-export type driverStandingsType = {
+export type DriverStandingsType = {
   driver_number: number;
   meeting_key: number;
   points_current: number;
@@ -23,7 +23,7 @@ export type driverStandingsType = {
   session_key: number;
 };
 
-export type teamStandingsType = {
+export type TeamStandingsType = {
   meeting_key: number;
   points_current: number;
   points_start: number;
@@ -33,7 +33,7 @@ export type teamStandingsType = {
   team_name: string;
 };
 
-export type driverType = {
+export type DriverType = {
   broadcast_name: string;
   driver_number: number;
   first_name: string;
@@ -48,7 +48,7 @@ export type driverType = {
   position?: number;
 };
 
-export type intervalType = {
+export type IntervalType = {
   date: string;
   driver_number: number;
   gap_to_leader: number;
@@ -57,7 +57,7 @@ export type intervalType = {
   session_key: number;
 };
 
-export type lapType = {
+export type LapType = {
   date_start: string;
   driver_number: number;
   duration_sector_1: number;
@@ -76,7 +76,7 @@ export type lapType = {
   st_speed: number;
 };
 
-export type locationType = {
+export type LocationType = {
   date: string;
   driver_number: number;
   meeting_key: number;
@@ -86,7 +86,7 @@ export type locationType = {
   z: number;
 };
 
-export type meetingType = {
+export type MeetingType = {
   circuit_key: number;
   circuit_info_url: string;
   circuit_image: string;
@@ -107,7 +107,7 @@ export type meetingType = {
   year: number;
 };
 
-export type overtakeType = {
+export type OvertakeType = {
   date: string;
   meeting_key: number;
   overtaken_driver_number: number;
@@ -116,7 +116,7 @@ export type overtakeType = {
   session_key: number;
 };
 
-export type pitType = {
+export type PitType = {
   date: string;
   driver_number: number;
   lane_duration: number;
@@ -127,7 +127,7 @@ export type pitType = {
   stop_duration: number;
 };
 
-export type positionType = {
+export type PositionType = {
   date: string;
   driver_number: number;
   meeting_key: number;
@@ -135,7 +135,7 @@ export type positionType = {
   session_key: number;
 };
 
-export type raceControlType = {
+export type RaceControlType = {
   category: string;
   date: string;
   driver_number: number;
@@ -149,7 +149,7 @@ export type raceControlType = {
   session_key: number;
 };
 
-export type sessionType = {
+export type SessionType = {
   circuit_key: number;
   circuit_short_name: string;
   country_code: string;
@@ -167,7 +167,7 @@ export type sessionType = {
   year: number;
 };
 
-export type sessionResultType = {
+export type SessionResultType = {
   dnf: boolean;
   dns: boolean;
   dsq: boolean;
@@ -180,7 +180,7 @@ export type sessionResultType = {
   session_key: number;
 };
 
-export type startingGridType = {
+export type StartingGridType = {
   position: number;
   driver_number: number;
   lap_duration: number;
@@ -188,7 +188,7 @@ export type startingGridType = {
   session_key: number;
 };
 
-export type stintType = {
+export type StintType = {
   compound: string;
   driver_number: number;
   lap_end: number;
@@ -199,7 +199,7 @@ export type stintType = {
   tyre_age_at_start: number;
 };
 
-export type teamRadioType = {
+export type TeamRadioType = {
   date: string;
   driver_number: number;
   meeting_key: number;
@@ -207,7 +207,7 @@ export type teamRadioType = {
   session_key: number;
 };
 
-export type weatherType = {
+export type WeatherType = {
   air_temperature: number;
   date: string;
   humidity: number;
@@ -230,7 +230,7 @@ export type DriverSeriesPoint = {
 };
 
 export type DriverSeries = {
-  driver: driverType;
+  driver: DriverType;
   color: string;
   points: DriverSeriesPoint[];
   lapNumber?: number;
@@ -245,7 +245,7 @@ export type LocationSeriesPoint = {
 };
 
 export type DriverLocationSeries = {
-  driver: driverType;
+  driver: DriverType;
   color: string;
   points: LocationSeriesPoint[];
 };
@@ -263,12 +263,12 @@ export type CircuitDataType = {
   location: string;
 };
 
-export type SelectedLapCarSample = carType & {
+export type SelectedLapCarSample = CarType & {
   selectedLapNumber?: number;
   selectedLapTime?: number;
 };
 
-export type DriversListVariant = 'main' | 'secondary';
+export type ListVariant = 'main' | 'secondary';
 
 export type LoadedDriverImage = {
   driverNumber: number;
@@ -276,27 +276,50 @@ export type LoadedDriverImage = {
 };
 
 export type DriverProps = {
-  type?: DriversListVariant;
-  driver: driverType;
+  type?: ListVariant;
+  driver: DriverType;
   isItemSelected: boolean;
   onRemove?: (driverNumber: number) => void;
   onColorChange?: (driverNumber: number, color: string) => void;
 };
 
 export type DriversListProps = {
-  drivers: driverType[];
-  selectedDrivers?: driverType[];
-  type?: DriversListVariant;
-  onSelect: (drivers: driverType[]) => void;
+  drivers: DriverType[];
+  selectedDrivers?: DriverType[];
+  type?: ListVariant;
+  onSelect: (drivers: DriverType[]) => void;
+  onOpen?: (value: boolean) => void;
+};
+
+export type TeamType = {
+  team_name: string;
+  team_colour: string;
+  team_drivers: DriverType[];
+  car_image: string;
+  logo: string;
+};
+
+export type TeamProps = {
+  type?: ListVariant;
+  team: TeamType;
+  isItemSelected: boolean;
+  onRemove?: (teamName: string) => void;
+};
+
+export type TeamsListProps = {
+  teams: TeamType[];
+  selectedTeams?: TeamType[];
+  type?: ListVariant;
+  onSelect: (teams: TeamType[]) => void;
   onOpen?: (value: boolean) => void;
 };
 
 export type DriverBestLapProps = {
-  laps: lapType[];
+  laps: LapType[];
 };
 
 export type DriverLastLapProps = {
-  laps: lapType[];
+  laps: LapType[];
 };
 
 export type DriverTagProps = {
@@ -306,15 +329,15 @@ export type DriverTagProps = {
 };
 
 export type FlagProps = {
-  race_control: raceControlType;
+  race_control: RaceControlType;
 };
 
 export type IntervalProps = {
-  intervals: intervalType[];
+  intervals: IntervalType[];
 };
 
 export type PitProps = {
-  pits: pitType[];
+  pits: PitType[];
 };
 
 export type TimerProps = {
@@ -322,29 +345,29 @@ export type TimerProps = {
 };
 
 export type TyresProps = {
-  stints: stintType[];
+  stints: StintType[];
 };
 
 export type PositionProps = {
   isRace: boolean;
-  driver: driverType;
-  laps: lapType[];
-  pits: pitType[];
-  stints: stintType[];
-  intervals: intervalType[];
+  driver: DriverType;
+  laps: LapType[];
+  pits: PitType[];
+  stints: StintType[];
+  intervals: IntervalType[];
 };
 
 export type RaceControlProps = {
-  raceControl: raceControlType[];
+  raceControl: RaceControlType[];
 };
 
 export type SessionProps = {
   selectedLap?: number;
   maxNumberOfLaps?: number;
-  session?: sessionType;
-  meeting?: meetingType;
-  meetings?: meetingType[];
-  sessions?: sessionType[];
+  session?: SessionType;
+  meeting?: MeetingType;
+  meetings?: MeetingType[];
+  sessions?: SessionType[];
   selectedMeetingKey?: number | null;
   selectedSessionKey?: number | null;
   setSelectedLap?: (lap: number) => void;
@@ -353,7 +376,7 @@ export type SessionProps = {
 };
 
 export type SessionGridProps = {
-  session: sessionType;
+  session: SessionType;
   sessionKey?: OpenF1Key;
 };
 
@@ -391,7 +414,7 @@ export type TelemetryMetricConfig = {
 
 export type ChartProps = {
   carsData: SelectedLapCarSample[];
-  selectedDrivers: driverType[];
+  selectedDrivers: DriverType[];
   metric?: TelemetryMetric;
 };
 
@@ -402,11 +425,11 @@ export type CustomTelemetryTooltipProps = {
   metricConfig: TelemetryMetricConfig;
 };
 
-type buttonTypes = 'button' | 'link' | 'close' | 'remove' | 'confirm';
+type ButtonTypes = 'button' | 'link' | 'close' | 'remove' | 'confirm';
 
 export type ButtonProps = {
   to?: string;
-  type: buttonTypes;
+  type: ButtonTypes;
   children?: ReactNode;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>;
 
@@ -416,21 +439,23 @@ export type LogoProps = {
 
 export type SelectProps = {
   value: number;
-  meetings?: meetingType[];
-  sessions?: sessionType[];
+  meetings?: MeetingType[];
+  sessions?: SessionType[];
   max?: number;
   onSelect: (value: number) => void;
 };
 
 export type ModalProps = {
-  drivers: driverType[];
-  selectedDrivers: driverType[];
-  onSelect: (driver: driverType[]) => void;
+  drivers?: DriverType[];
+  teams?: TeamType[];
+  selectedDrivers?: DriverType[];
+  selectedTeams?: TeamType[];
+  onSelect: ((drivers: DriverType[]) => void) | ((teams: TeamType[]) => void);
   onClose: () => void;
 };
 
 export type DriverStandingCardProps = {
-  driver: driverType;
+  driver: DriverType;
 };
 
 export type TeamImageMatcher = {
@@ -440,9 +465,10 @@ export type TeamImageMatcher = {
 };
 
 export type TeamStandingCardProps = {
-  team: teamStandingsType;
+  teamStandings?: TeamStandingsType;
+  team?: TeamType;
 };
 
 export type WeatherItemProps = {
-  data: weatherType;
+  data: WeatherType;
 };

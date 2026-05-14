@@ -1,17 +1,17 @@
 import { endpoints } from '../api/endpoints';
 import { api } from '../api/telemetryApi';
 import { latestOpenF1Key, stringifyOpenF1Key } from '../utils/helpers';
-import type { OpenF1Key, meetingType } from '../utils/types';
+import type { OpenF1Key, MeetingType } from '../utils/types';
 import { notifyServiceError } from './serviceError';
 
-export async function getMeetingByYear(year: number): Promise<meetingType[]> {
+export async function getMeetingByYear(year: number): Promise<MeetingType[]> {
   try {
     const today = new Date();
 
     const res = await api.get(`${endpoints.meetings}?year=${year}`);
 
     const filteredMeetings = res.data.filter(
-      (elem: meetingType) =>
+      (elem: MeetingType) =>
         new Date(elem.date_start) <= today && !elem.is_cancelled
     );
 
@@ -29,13 +29,13 @@ export async function getMeetingByYear(year: number): Promise<meetingType[]> {
 
 export async function getMeetingByKey(
   key: OpenF1Key = latestOpenF1Key
-): Promise<meetingType> {
+): Promise<MeetingType> {
   try {
     const res = await api.get(
       `${endpoints.meetings}?meeting_key=${stringifyOpenF1Key(key)}`
     );
 
-    return res.data[0] ?? ({} as meetingType);
+    return res.data[0] ?? ({} as MeetingType);
   } catch (err: unknown) {
     notifyServiceError(
       err,
@@ -43,15 +43,15 @@ export async function getMeetingByKey(
       'meeting-data-error'
     );
 
-    return {} as meetingType;
+    return {} as MeetingType;
   }
 }
 
-export async function getLatestMeeting(): Promise<meetingType> {
+export async function getLatestMeeting(): Promise<MeetingType> {
   return getMeetingByKey(latestOpenF1Key);
 }
 
-export async function getNextMeeting(): Promise<meetingType | null> {
+export async function getNextMeeting(): Promise<MeetingType | null> {
   try {
     const now = new Date();
 
@@ -61,7 +61,7 @@ export async function getNextMeeting(): Promise<meetingType | null> {
 
     return (
       res.data.filter(
-        (elem: meetingType) =>
+        (elem: MeetingType) =>
           !elem.is_cancelled && new Date(elem.date_start) > now
       )[0] ?? null
     );
@@ -72,6 +72,6 @@ export async function getNextMeeting(): Promise<meetingType | null> {
       'meeting-data-error'
     );
 
-    return {} as meetingType;
+    return {} as MeetingType;
   }
 }

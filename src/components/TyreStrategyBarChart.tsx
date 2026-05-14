@@ -20,12 +20,12 @@ import {
   StyledTyreStrategyLegendSwatch,
   StyledTyreStrategyPanel,
 } from '../style/styles.ts';
-import type { driverType, pitType, stintType } from '../utils/types.ts';
+import type { DriverType, PitType, StintType } from '../utils/types.ts';
 
 type TyreStrategyBarChartProps = {
-  drivers: driverType[];
-  pits: pitType[];
-  stints: stintType[];
+  drivers: DriverType[];
+  pits: PitType[];
+  stints: StintType[];
 };
 
 type TyreStrategyChartItem = {
@@ -63,7 +63,7 @@ type TyreStrategyTooltipState =
       driverName: string;
       previousStint: TyreStrategyStintSegment;
       nextStint: TyreStrategyStintSegment;
-      pit: pitType;
+      pit: PitType;
     };
 
 type TyreStrategyBarShapeProps = BarShapeProps & {
@@ -225,7 +225,7 @@ export function TyreStrategyBarChart({
     const driversByNumber = new Map(
       drivers.map((driver) => [driver.driver_number, driver])
     );
-    const stintsByDriver = new Map<number, stintType[]>();
+    const stintsByDriver = new Map<number, StintType[]>();
 
     for (const stint of stints) {
       if (
@@ -339,7 +339,7 @@ export function TyreStrategyBarChart({
           (p) =>
             p.lap_number === previousStint.lapEnd ||
             p.lap_number === nextStint.lapStart
-        ) ?? ({} as pitType);
+        ) ?? ({} as PitType);
 
     setTooltip({
       type: 'stint-change',

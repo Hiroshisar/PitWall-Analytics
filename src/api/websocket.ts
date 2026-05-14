@@ -4,17 +4,17 @@ import { WEBSOCKET_URL } from './endpoints';
 import { getAccessToken, getOpenF1Username } from './telemetryApi';
 import { latestOpenF1Key } from '../utils/helpers';
 import type {
-  carType,
-  intervalType,
-  lapType,
-  locationType,
-  pitType,
-  positionType,
-  raceControlType,
-  startingGridType,
-  stintType,
-  teamRadioType,
-  weatherType,
+  CarType,
+  IntervalType,
+  LapType,
+  LocationType,
+  PitType,
+  PositionType,
+  RaceControlType,
+  StartingGridType,
+  StintType,
+  TeamRadioType,
+  WeatherType,
 } from '../utils/types';
 
 export const OPENF1_LIVE_TOPICS = [
@@ -39,17 +39,17 @@ type OpenF1RealtimeFields = {
 };
 
 type OpenF1LivePayloadByTopic = {
-  'v1/car_data': carType & OpenF1RealtimeFields;
-  'v1/intervals': intervalType & OpenF1RealtimeFields;
-  'v1/laps': lapType & OpenF1RealtimeFields;
-  'v1/location': locationType & OpenF1RealtimeFields;
-  'v1/pit': pitType & OpenF1RealtimeFields;
-  'v1/position': positionType & OpenF1RealtimeFields;
-  'v1/race_control': raceControlType & OpenF1RealtimeFields;
-  'v1/starting_grid': startingGridType & OpenF1RealtimeFields;
-  'v1/stints': stintType & OpenF1RealtimeFields;
-  'v1/team_radio': teamRadioType & OpenF1RealtimeFields;
-  'v1/weather': weatherType & OpenF1RealtimeFields;
+  'v1/car_data': CarType & OpenF1RealtimeFields;
+  'v1/intervals': IntervalType & OpenF1RealtimeFields;
+  'v1/laps': LapType & OpenF1RealtimeFields;
+  'v1/location': LocationType & OpenF1RealtimeFields;
+  'v1/pit': PitType & OpenF1RealtimeFields;
+  'v1/position': PositionType & OpenF1RealtimeFields;
+  'v1/race_control': RaceControlType & OpenF1RealtimeFields;
+  'v1/starting_grid': StartingGridType & OpenF1RealtimeFields;
+  'v1/stints': StintType & OpenF1RealtimeFields;
+  'v1/team_radio': TeamRadioType & OpenF1RealtimeFields;
+  'v1/weather': WeatherType & OpenF1RealtimeFields;
 };
 
 export type OpenF1LivePayload = OpenF1LivePayloadByTopic[OpenF1LiveTopic];

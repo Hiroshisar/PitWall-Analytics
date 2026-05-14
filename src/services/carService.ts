@@ -5,13 +5,13 @@ import {
   latestOpenF1Key,
   stringifyOpenF1Key,
 } from '../utils/helpers';
-import type { carType, OpenF1Key } from '../utils/types';
+import type { CarType, OpenF1Key } from '../utils/types';
 import { getHttpStatus, notifyServiceError } from './serviceError';
 
 export async function getCar(
   driver_number: number,
   session_key: OpenF1Key = latestOpenF1Key
-): Promise<carType[]> {
+): Promise<CarType[]> {
   try {
     const res = await api.get(
       `${endpoints.car}?driver_number=${driver_number}&session_key=${stringifyOpenF1Key(session_key)}`
@@ -27,7 +27,7 @@ export async function getCar(
 export async function getCarsByDrivers(
   driver_numbers: number[],
   session_key: OpenF1Key = latestOpenF1Key
-): Promise<carType[]> {
+): Promise<CarType[]> {
   const uniqueDriverNumbers = [...new Set(driver_numbers)].filter(
     (driverNumber) => driverNumber > 0
   );
@@ -50,7 +50,7 @@ export async function getCarsByDrivers(
     const status = getHttpStatus(err);
 
     if (status === 400 || status === 404 || status === 422) {
-      const mergedCarsData: carType[] = [];
+      const mergedCarsData: CarType[] = [];
       let hasFallbackErrors = false;
 
       for (const driverNumber of uniqueDriverNumbers) {

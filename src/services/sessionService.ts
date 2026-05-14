@@ -1,12 +1,12 @@
 import { endpoints } from '../api/endpoints';
 import { api } from '../api/telemetryApi';
 import { latestOpenF1Key, stringifyOpenF1Key } from '../utils/helpers';
-import type { OpenF1Key, sessionType } from '../utils/types';
+import type { OpenF1Key, SessionType } from '../utils/types';
 import { notifyServiceError } from './serviceError';
 
 export async function getSessions(
   meeting_key: OpenF1Key = latestOpenF1Key
-): Promise<sessionType[]> {
+): Promise<SessionType[]> {
   try {
     const today = new Date();
 
@@ -15,7 +15,7 @@ export async function getSessions(
     );
 
     const filteredSessions = res.data.filter(
-      (elem: sessionType) => new Date(elem.date_start) <= today
+      (elem: SessionType) => new Date(elem.date_start) <= today
     );
 
     return filteredSessions;
@@ -32,7 +32,7 @@ export async function getSessions(
 
 export async function getSession(
   session_key: OpenF1Key = latestOpenF1Key
-): Promise<sessionType | null> {
+): Promise<SessionType | null> {
   try {
     const res = await api.get(
       `${endpoints.sessions}?session_key=${stringifyOpenF1Key(session_key)}`
@@ -50,11 +50,11 @@ export async function getSession(
   }
 }
 
-export async function getLatestSession(): Promise<sessionType | null> {
+export async function getLatestSession(): Promise<SessionType | null> {
   return getSession(latestOpenF1Key);
 }
 
-export async function getNextSession(): Promise<sessionType | null> {
+export async function getNextSession(): Promise<SessionType | null> {
   try {
     const now = new Date();
 
@@ -64,7 +64,7 @@ export async function getNextSession(): Promise<sessionType | null> {
 
     return (
       res.data.filter(
-        (elem: sessionType) =>
+        (elem: SessionType) =>
           !elem.is_cancelled && new Date(elem.date_start) > now
       )[0] ?? null
     );

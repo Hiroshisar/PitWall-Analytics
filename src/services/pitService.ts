@@ -5,12 +5,12 @@ import {
   latestOpenF1Key,
   stringifyOpenF1Key,
 } from '../utils/helpers';
-import type { OpenF1Key, pitType } from '../utils/types';
+import type { OpenF1Key, PitType } from '../utils/types';
 import { getHttpStatus, notifyServiceError } from './serviceError';
 
 export async function getPitStops(
   session_key: OpenF1Key = latestOpenF1Key
-): Promise<pitType[]> {
+): Promise<PitType[]> {
   try {
     const res = await api.get(
       `${endpoints.pit}?session_key=${stringifyOpenF1Key(session_key)}`
@@ -27,7 +27,7 @@ export async function getPitStops(
 export async function getPitsByDrivers(
   session_key: OpenF1Key,
   driver_numbers: number[]
-): Promise<pitType[]> {
+): Promise<PitType[]> {
   const uniqueDriverNumbers = [...new Set(driver_numbers)].filter(
     (driverNumber) => driverNumber > 0
   );
@@ -50,7 +50,7 @@ export async function getPitsByDrivers(
     const status = getHttpStatus(err);
 
     if (status === 400 || status === 404 || status === 422) {
-      const mergedPitsData: pitType[] = [];
+      const mergedPitsData: PitType[] = [];
       let hasFallbackErrors = false;
 
       try {
