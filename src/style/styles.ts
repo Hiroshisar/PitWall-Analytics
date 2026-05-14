@@ -1145,12 +1145,12 @@ export const StyledTeamCard = styled.div<{ $url: string }>`
 `;
 
 export const StyledTabContainer = styled.div<{
-  $quantity: number;
+  $numberOfElements: number;
 }>`
   width: 100%;
   height: fit-content;
   display: grid;
-  grid-template-columns: repeat(${(props) => props.$quantity}, 1fr);
+  grid-template-columns: repeat(${(props) => props.$numberOfElements}, 1fr);
 
   margin-top: 3rem;
   gap: 1px;

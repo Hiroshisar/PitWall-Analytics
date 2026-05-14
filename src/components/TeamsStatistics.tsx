@@ -1,10 +1,11 @@
 import type { DriverType, TeamType } from '../utils/types.ts';
 import { useFetchDrivers } from '../hooks/useFetchDriver.ts';
 import { useMemo, useState } from 'react';
-import { getTeamImageSrc } from '../utils/helpers.ts';
 import Modal from '../ui/Modal.tsx';
 import TeamsList from './TeamsList.tsx';
 import Spinner from '../ui/Spinner.tsx';
+import StatisticsItem from './StatisticsItem.tsx';
+import { StyledTabContainer } from '../style/styles.ts';
 
 function TeamsStatistics({
   selectedTeams,
@@ -30,8 +31,6 @@ function TeamsStatistics({
           team_name: driver.team_name,
           team_colour: driver.team_colour,
           team_drivers: [driver],
-          car_image: getTeamImageSrc(driver.team_name, 'background'),
-          logo: getTeamImageSrc(driver.team_name, 'logo'),
         });
       }
     });
@@ -71,8 +70,13 @@ function TeamsStatistics({
         />
       </div>
       <div>
-        {selectedTeams &&
-          selectedTeams.map((team: TeamType) => <h1>{team.team_name}</h1>)}
+        {selectedTeams.length > 0 && (
+          <StyledTabContainer $numberOfElements={selectedTeams.length}>
+            {selectedTeams.map((team: TeamType) => {
+              return <StatisticsItem team={team} />;
+            })}
+          </StyledTabContainer>
+        )}
       </div>
     </div>
   );

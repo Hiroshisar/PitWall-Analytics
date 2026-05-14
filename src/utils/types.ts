@@ -45,7 +45,6 @@ export type DriverType = {
   session_key: number;
   team_colour: string;
   team_name: string;
-  position?: number;
 };
 
 export type IntervalType = {
@@ -295,8 +294,6 @@ export type TeamType = {
   team_name: string;
   team_colour: string;
   team_drivers: DriverType[];
-  car_image: string;
-  logo: string;
 };
 
 export type TeamProps = {

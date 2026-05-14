@@ -211,6 +211,7 @@ function Telemetry() {
     isLoadingSessions ||
     isLoadingDrivers ||
     isLoadingLaps ||
+    isLoadingCars ||
     !effectiveMeetingKey ||
     !effectiveSessionKey
   )
@@ -221,7 +222,6 @@ function Telemetry() {
 
   return (
     <StyledTelemetryPage>
-      {(isLoadingCars || isLoadingDrivers) && <Spinner />}
       {(isErrorCars || isErrorLaps) && (
         <div>Alcuni dati non sono disponibili al momento.</div>
       )}
@@ -240,7 +240,7 @@ function Telemetry() {
       />
 
       <DriversList
-        teams={selectedDrivers}
+        drivers={selectedDrivers}
         onSelect={handleDriversSelection}
         type="secondary"
         onOpen={setIsModalOpen}

@@ -20,7 +20,7 @@ function Statistics() {
     <StyledToolContainer>
       <StyledTitle>STATISTICS</StyledTitle>
 
-      <StyledTabContainer $quantity={tab_options.length}>
+      <StyledTabContainer $numberOfElements={tab_options.length}>
         {tab_options.map((option) => (
           <StyledTab
             key={option}

@@ -5,6 +5,7 @@ import Modal from '../ui/Modal.tsx';
 import DriversList from './DriversList.tsx';
 import Spinner from '../ui/Spinner.tsx';
 import StatisticsItem from './StatisticsItem.tsx';
+import { StyledTabContainer } from '../style/styles.ts';
 
 function DriversStatistics({
   selectedDrivers,
@@ -45,10 +46,13 @@ function DriversStatistics({
         type="secondary"
         onOpen={setIsModalOpen}
       />
-      {selectedDrivers.length > 0 &&
-        selectedDrivers.map((driver: DriverType) => (
-          <StatisticsItem driver={driver} />
-        ))}
+      {selectedDrivers.length > 0 && (
+        <StyledTabContainer $numberOfElements={selectedDrivers.length}>
+          {selectedDrivers.map((driver: DriverType) => (
+            <StatisticsItem driver={driver} />
+          ))}
+        </StyledTabContainer>
+      )}
     </>
   );
 }
